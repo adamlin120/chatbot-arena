@@ -10,8 +10,30 @@ type Props = {
 };
 
 export default function Column({ isPrompt, original, edited, rating, setRating }: Props) {
-  const [toggle, setToggle] = useState<boolean>(false);
-  const feedbackDescription = ["Much worse than Original", "Worse than Original", "No noticeable difference compared to the original", "Better than Original", "Much better than Original"];
+  const feedbackDescription = [
+    {
+      id: 1 + (isPrompt ? 0 : 5),
+      text: "Much worse than Original"
+    },
+    {
+      id: 2 + (isPrompt ? 0 : 5),
+      text: "Worse than Original"
+    },
+    {
+      id: 3 + (isPrompt ? 0 : 5),
+      text: "No noticeable difference compared to the original"
+    },
+    {
+      id: 4 + (isPrompt ? 0 : 5),
+      text: "Better than Original"
+    },
+    {
+      id: 5 + (isPrompt ? 0 : 5),
+      text: "Much better than Original"
+    }
+  ];
+
+  const [toggle, setToggle] = useState(false);
 
   const type = isPrompt ? "Prompts" : "Completions";
   return (
@@ -27,6 +49,7 @@ export default function Column({ isPrompt, original, edited, rating, setRating }
         <textarea 
           className="p-3 rounded-lg text-black"
           value={original}
+          readOnly
         />
       </div>
 
@@ -50,6 +73,7 @@ export default function Column({ isPrompt, original, edited, rating, setRating }
         <textarea 
           className="p-3 rounded-lg text-black"
           value={edited}
+          readOnly
         />
 
         <div>
@@ -63,19 +87,20 @@ export default function Column({ isPrompt, original, edited, rating, setRating }
            Is the edited {type.toLowerCase().slice(0, -1)} an improvement over the original?
         </div>
         <div className="flex flex-col gap-1">
-          {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (
+          {feedbackDescription.map((feedback) => (
             <div 
               className="flex gap-2" 
-              key={i}
+              key={feedback.id}
             >
               <input 
                 type="radio" 
-                id={i.toString()} 
-                checked={rating === i}
-                onChange={() => {setRating(i)}}
+                id={feedback.id.toString()} 
+                value={feedback.text}
+                checked={rating === feedback.id}
+                onChange={() => {setRating(feedback.id)}}
               />
-              <label htmlFor={i.toString()}>
-                {i} - {feedbackDescription[i - 1]}
+              <label htmlFor={feedback.id.toString()}>
+                {feedback.id - (isPrompt ? 0 : 5)} - {feedback.text}
               </label>
             </div>
           ))}

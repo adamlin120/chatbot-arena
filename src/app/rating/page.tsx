@@ -5,8 +5,9 @@ import { useState } from "react";
 export default function RatingPage() {
   const contributor = "[contributor name here]";
   const [feedbackText, setFeedbackText] = useState<string>("");
-  const [promptRating, setPromptRating] = useState<number | undefined>();
-  const [completionRating, setCompletionRating] = useState<number | undefined>();
+  const [promptRating, setPromptRating] = useState<number | undefined>(); // 1 - 5
+  const [completionRating, setCompletionRating] = useState<number | undefined>(); // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
+  // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
 
   const handleSkip = () => {
 
@@ -16,7 +17,7 @@ export default function RatingPage() {
     console.log("Submit feedback");
     console.log(feedbackText);
     console.log(promptRating);
-    console.log(completionRating);
+    console.log(completionRating! - 5);
 
     if(promptRating === undefined || completionRating === undefined) {
       console.log("Please rate both prompts and completions");
