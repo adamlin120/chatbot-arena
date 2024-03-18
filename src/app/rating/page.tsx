@@ -1,6 +1,8 @@
 "use client";
+import { useRouter } from "next/navigation";
 import Column from "./_components/Column";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
 
 export default function RatingPage() {
   const contributor = "[contributor name here]";
@@ -8,7 +10,23 @@ export default function RatingPage() {
   const [promptRating, setPromptRating] = useState<number | undefined>(); // 1 - 5
   const [completionRating, setCompletionRating] = useState<number | undefined>(); // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
   // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    (async () => {
+      const session = await getSession();
+      if (session?.user?.verified==false) {
+        router.push('/login');
+      } else {
+        setLoading(false); // Set loading to false when session verified
+      }
+    })();
+  }, [router]);
+
+  if (loading) {
+    return <div></div>; //TODO: think of more elegant way
+  }
   const handleSkip = () => {
 
   }
@@ -25,7 +43,6 @@ export default function RatingPage() {
       return;
     }
   }
-  
   return (
     <div className="p-5 px-44">
       <div className="flex flex-col gap-3">
