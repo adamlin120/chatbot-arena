@@ -18,7 +18,9 @@ export default function RatingPage() {
       const session = await getSession();
       if (session?.user?.verified==false) {
         router.push('/login');
-      } else {
+      } else if (!session){
+        router.push('/login')
+      }else {
         setLoading(false); // Set loading to false when session verified
       }
     })();

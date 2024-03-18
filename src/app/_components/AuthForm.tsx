@@ -27,7 +27,7 @@ function AuthForm(props: Props) {
             email,
             username,
             password,
-            callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
+            callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating`,
         },{mode: isSignUp})
     };
 

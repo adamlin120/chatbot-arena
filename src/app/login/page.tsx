@@ -16,6 +16,9 @@ export default function LoginPage(props: Props) {
             if (session?.user?.verified==false) {
                 router.push('?error=NotVerified');
             }
+            else if (session) {
+                router.push('/rating')
+            }
         });
     }, []);
     return (
