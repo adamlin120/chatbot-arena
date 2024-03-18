@@ -1,24 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ChatBot Arena
 
 ## Getting Started
 
-First, run the development server:
+First, go to [neon](https://neon.tech/) and get your own postgreSQL connection string.
 
+- It may look like this: postgresql://chatbot-arena_owner:???????@ep-square-block-??????.ap-southeast-1.aws.neon.tech/chatbot-arena?sslmode=require'
+
+- Fill that string in POSTGRES_URL= field in .env file. (there is an .env.example which tells you how .env looks like)
+
+Then go to [resend](https://resend.com/) and get an email API KEY (This is used for email verification)
+
+- Fill the key in RESEND_API_KEY= field in .env file, too.
+
+Second, run the following command.
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+yarn
+
 ```
+To install the packages.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Third, run the following command:
+```bash
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+yarn migrate
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+This gives your database an initial structure based on @/db/schema.ts
+
+Last, run:
+```bash
+
+yarn dev
+
+```
+To start the app. Now you can open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
 
 ## Learn More
 

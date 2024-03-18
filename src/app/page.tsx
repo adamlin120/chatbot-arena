@@ -1,6 +1,12 @@
+import { auth } from "@/lib/auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  if(session?.user?.email) {
+    redirect("/rating");
+  }
   return (
     <>
       <div className="flex flex-col p-5 gap-0 text-xl z-10 animate-slide-up">
