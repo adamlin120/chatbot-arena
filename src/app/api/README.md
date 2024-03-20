@@ -2,7 +2,7 @@
 
 Note: The database schema is in the format of dbdiagra.io. You can copy and paste the following code to dbdiagram.io to visualize the schema.
 
-
+```sql
 Table User {
   email varchar(255) [primary key]
   username varchar(255)
@@ -42,7 +42,7 @@ Ref: Rating.prompt > Prompt.id
 Ref: Rating.user_id > User.email
 Ref: Rating.completion_b > Completion.id
 Ref: Rating.completion_a > Completion.id
-
+```
 
 # API Reference
 
