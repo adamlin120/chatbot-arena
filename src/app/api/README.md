@@ -4,6 +4,8 @@ Table User {
   email varchar(255) [primary key]
   username varchar(255)
   provider varchar(63)
+  hashedPassword varchar(255)
+  coins integer
 }
 
 Table Prompt {
