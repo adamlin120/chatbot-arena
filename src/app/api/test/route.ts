@@ -1,0 +1,32 @@
+// pages/api/createUser.ts
+
+import { PrismaClient } from '@prisma/client'
+import { NextRequest, NextResponse } from "next/server";
+
+const prisma = new PrismaClient()
+
+
+export async function POST (req: NextRequest, res: NextResponse) {
+
+  const reqBody = await req.json();
+  const { email, username, provider, hashedPassword, coins } = reqBody
+
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        username,
+        provider,
+        hashedPassword,
+        coins
+      }
+    })
+
+    return NextResponse.json({ message: "Created Successfully!" },{status: 201});
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Something went wrong!" },{status: 500});
+  } finally {
+    await prisma.$disconnect()
+  }
+}
