@@ -15,11 +15,12 @@ export async function POST(request: NextRequest) {
     const requestBody = await request.json();
     // Please use a validator in production
     const messages = requestBody.messages as Message[];
+    const model = requestBody.model as string;
 
     // Send the message to OpenAI
     const response = await openai.chat.completions.create({
       messages: messages,
-      model: "gpt-3.5-turbo",
+      model: model, //"gpt-3.5-turbo",
       temperature: 0,
       max_tokens: 1000,
       // Set stream to true
