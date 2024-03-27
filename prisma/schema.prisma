@@ -1,9 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
-const db = new PrismaClient();
-
-/* schema
-
 // schema.prisma
 
 datasource db {
@@ -58,31 +52,3 @@ model Completion {
   conversationDetail ConversationDetail @relation(fields: [conversationDetailId], references: [id])
   conversationDetailId String @db.ObjectId
 }
-
-*/
-export const getVerificationTokenByToken = async (token: string) => {
-    try {
-        const vtoken = await db.verification.findFirst({
-            where: {
-                token: token
-            }
-        });
-        return vtoken;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-};
-export const getVerificationTokenByEmail = async (email: string) => {
-    try {
-        const vtoken = await db.verification.findFirst({
-            where: {
-                email: email
-            }
-        });
-        return vtoken;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-};
