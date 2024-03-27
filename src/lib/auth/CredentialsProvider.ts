@@ -1,13 +1,13 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
-
-import { db } from "@/db";
-import { usersTable } from "@/db/schema";
+import { PrismaClient } from '@prisma/client'
 import { authSchema } from "@/validators/auth";
 import { generateVerificationToken } from "../token/tokens";
 import { sendVerificationEmail } from "../mail/mail";
+import { validate } from "uuid";
+
+const db = new PrismaClient();
 
 export default CredentialsProvider({
   name: "credentials",
@@ -33,17 +33,11 @@ export default CredentialsProvider({
     }
     const { email, username, password } = validatedCredentials;
 
-    const [existedUser] = await db
-      .select({
-        id: usersTable.userId,
-        username: usersTable.username,
-        email: usersTable.email,
-        hashedPassword: usersTable.hashedPassword,
-        verified: usersTable.verified,
-      })
-      .from(usersTable)
-      .where(eq(usersTable.email, validatedCredentials.email.toLowerCase()))
-      .execute();
+    const existedUser = await db.user.findFirst({
+      where: {
+        email: email.toLowerCase(),
+      },
+    });
     if (!existedUser) {
       // Sign up
       if (!username) {
@@ -51,24 +45,26 @@ export default CredentialsProvider({
         return null;
       }
       const hashedPassword = await bcrypt.hash(password, 10);
-      const [createdUser] = await db
-        .insert(usersTable)
-        .values({
-          username,
+      const createdUser = await db.user.create({
+        data: {
           email: email.toLowerCase(),
+          username,
           hashedPassword,
-          coins: 1000,
-        })
-        .returning();
-
+          provider: "credentials",
+          coins: 0,
+          avatarUrl: "",
+          bio: "",
+          verified: false,
+        },
+      });
       const verificationToken = await generateVerificationToken(email);
       
-      await sendVerificationEmail(verificationToken[0].email,verificationToken[0].token);
+      await sendVerificationEmail(verificationToken.email,verificationToken.token);
 
       return {
-        email: createdUser.email,
-        username: createdUser.username,
-        id: createdUser.userId
+        email: email.toLowerCase(),
+        username: username,
+        id: createdUser.id,
       };
     }
 
@@ -83,8 +79,7 @@ export default CredentialsProvider({
     }
     if (!existedUser.verified) {
       const verificationToken = await generateVerificationToken(existedUser.email);
-      
-      await sendVerificationEmail(verificationToken[0].email,verificationToken[0].token);
+      await sendVerificationEmail(verificationToken.email,verificationToken.token);
     }
     return {
       email: existedUser.email,

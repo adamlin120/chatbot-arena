@@ -1,11 +1,72 @@
-import { db } from "@/db";
-import { verificationToken } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { PrismaClient } from '@prisma/client';
+
+const db = new PrismaClient();
+
+/* schema
+
+// schema.prisma
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  email         String   @unique
+  username      String
+  provider      String
+  hashedPassword String
+  coins         Int
+  avatarUrl     String
+  bio           String
+  verified      Boolean
+  conversations Conversation[]
+}
+
+model Verification {
+  email         String    @id @map("_id")
+  token         String         
+  expires       DateTime 
+}
+
+model Conversation {
+  id             String   @id @map("_id") @default(auto()) @db.ObjectId
+  contributor    User     @relation(fields: [contributorId], references: [id])
+  contributorId  String   @db.ObjectId
+  details  ConversationDetail[]
+}
+
+model ConversationDetail {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  prompt     String
+  completions Completion[]
+  feedback   String?
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String @db.ObjectId
+}
+
+model Completion {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  content    String
+  model_name String
+  rating     Int
+  conversationDetail ConversationDetail @relation(fields: [conversationDetailId], references: [id])
+  conversationDetailId String @db.ObjectId
+}
+
+*/
 export const getVerificationTokenByToken = async (token: string) => {
     try {
-        const vtoken = await db.query.verificationToken.findFirst({
-            where: eq(verificationToken.token,token)
-        }).execute();
+        const vtoken = await db.verification.findFirst({
+            where: {
+                token: token
+            }
+        });
         return vtoken;
     } catch (error) {
         console.error(error);
@@ -14,9 +75,11 @@ export const getVerificationTokenByToken = async (token: string) => {
 };
 export const getVerificationTokenByEmail = async (email: string) => {
     try {
-        const vtoken = await db.query.verificationToken.findFirst({
-            where: eq(verificationToken.email,email)
-        }).execute();
+        const vtoken = await db.verification.findFirst({
+            where: {
+                email: email
+            }
+        });
         return vtoken;
     } catch (error) {
         console.error(error);
