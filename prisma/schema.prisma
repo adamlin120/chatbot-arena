@@ -16,7 +16,16 @@ model User {
   provider      String
   hashedPassword String
   coins         Int
+  avatarUrl     String
+  bio           String
+  verified      Boolean
   conversations Conversation[]
+}
+
+model Verification {
+  email         String    @id @map("_id")
+  token         String         
+  expires       DateTime 
 }
 
 model Conversation {
