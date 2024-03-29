@@ -4,6 +4,8 @@ import MessageContainer from "./MessageContainer";
 import type { Message } from "@/lib/types/db";
 import { toast, ToastContainer } from "react-toastify";
 
+const MAX_TOKENS = 1024;
+
 export default function ChatSection() { 
   const [messageA, setMessageA] = useState<Message[]>([
     { role: "user", content: "You are a helpful chatbot that aims to assist human." },
@@ -15,8 +17,6 @@ export default function ChatSection() {
     { role: "assistant", content: "No problem, I can do my best to assist you" }
   ]);
 
-  const modelA = "gpt-3.5-turbo";
-  const modelB = "gpt-4";
 
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
   const messageBEndRef = useRef<HTMLDivElement | null>(null);
@@ -43,7 +43,7 @@ export default function ChatSection() {
     }
   }, [messageB]);
 
-  const processMessages = async (currPrompt: string, messages: Message[], setMessages: React.Dispatch<React.SetStateAction<Message[]>>, model: string) => {
+  const processMessages = async (currPrompt: string, messages: Message[], setMessages: React.Dispatch<React.SetStateAction<Message[]>>) => {
     const newMessages: Message[] = [
       ...messages,
       {
@@ -56,8 +56,7 @@ export default function ChatSection() {
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify({
-        messages: newMessages,
-        model: model,
+        messages: newMessages
       }),
     });
 
@@ -78,7 +77,7 @@ export default function ChatSection() {
     const decoder = new TextDecoder();
     let count = 0;
     let buffer = "";
-    while (count < 1000) {
+    while (count < MAX_TOKENS) {
       const { value, done } = await reader.read();
       if (done) break;
       const text = decoder.decode(value);
@@ -107,8 +106,8 @@ export default function ChatSection() {
   }
 
   const sendMessage = async () => {
-    processMessages(prompt, messageA, setMessageA, modelA);
-    processMessages(prompt, messageB, setMessageB, modelB);
+    processMessages(prompt, messageA, setMessageA);
+    processMessages(prompt, messageB, setMessageB);
     setPrompt("");
   };
 

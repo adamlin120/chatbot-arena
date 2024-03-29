@@ -10,7 +10,7 @@ import MistralClient  from '@mistralai/mistralai';
 import Anthropic from '@anthropic-ai/sdk';
 import { privateEnv } from "@/lib/env/private";
 
-const MAX_TOKENS = 1024;
+export const MAX_TOKENS = 1024;
 
 //Randomly choose between OpenAI, Anthropic, and Mistral
 
