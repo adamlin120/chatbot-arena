@@ -1,12 +1,11 @@
 import { getUserByEmail } from "@/data/user";
 import { getVerificationTokenByToken } from "@/data/verification-token";
-import { db } from "@/db";
-import { usersTable, verificationToken } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST (req: NextRequest) {
     try {
+        const db = new PrismaClient();
         const reqBody = await req.json();
         //console.log(reqBody)
         const existingToken = await getVerificationTokenByToken(reqBody.token);
@@ -29,8 +28,9 @@ export async function POST (req: NextRequest) {
           return NextResponse.json({ error: "User does not exist!" },{status: 404});
         }
     
-        await db.update(usersTable).set({ verified: true }).where(eq(usersTable.email, existingUser.email));
-        await db.delete(verificationToken).where(eq(verificationToken.email, existingUser.email));
+       
+       await db.user.update({where: {email: existingUser.email}, data: {verified: true}});
+       await db.verification.delete({where: {email: existingUser.email}});
         
         return NextResponse.json({ success: "Email verified!" },{status: 200});
       } catch (error) {
