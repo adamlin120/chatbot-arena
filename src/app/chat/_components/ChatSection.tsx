@@ -6,21 +6,13 @@ import { toast, ToastContainer } from "react-toastify";
 
 export default function ChatSection() { 
   const [messageA, setMessageA] = useState<Message[]>([
-    { role: "assistant", content: "Hello, how are you?" },
-    { role: "user", content: "I am good, thank you." },
-    { role: "assistant", content: "What are you up to?" },
-    { role: "user", content: "Just working on some code." },
-    { role: "assistant", content: "Cool! What are you building?" },
-    { role: "user", content: "I am building a chat application." },
+    { role: "user", content: "You are a helpful chatbot that aims to assist human." },
+    { role: "assistant", content: "No problem, I can do my best to assist you" }
   ]);
 
   const [messageB, setMessageB] = useState<Message[]>([
-    { role: "assistant", content: "Hello, how are you?" },
-    { role: "user", content: "I am good, thank you." },
-    { role: "assistant", content: "What are you up to?" },
-    { role: "user", content: "Just working on some code." },
-    { role: "assistant", content: "Cool! What are you building?" },
-    { role: "user", content: "I am building a chat application." },
+    { role: "user", content: "You are a helpful chatbot that aims to assist human." },
+    { role: "assistant", content: "No problem, I can do my best to assist you" }
   ]);
 
   const modelA = "gpt-3.5-turbo";

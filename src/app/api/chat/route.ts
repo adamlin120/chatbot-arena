@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     //ConversationId might be null, if it is, create a new conversation
     const conversationId = requestBody.conversationId?.toString();
 
-    const stream = await getStream(model, messages, async (response) => {
+    const stream = await getStream(messages, async (response) => {
       // Save the response to the database
     });
 

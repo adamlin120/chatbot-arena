@@ -15,11 +15,9 @@ const MAX_TOKENS = 1024;
 //Randomly choose between OpenAI, Anthropic, and Mistral
 
 const openai = new OpenAI({apiKey: privateEnv.OPENAI_KEY});
-const mistral = new MistralClient(process.env.MISTRAL_KEY);
-//const anthropic = new Anthropic({apiKey: privateEnv.ANTHROPIC_KEY});
-//'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'
-//'mistral-large-latest', 'mistral-medium-latest', 'mistral-small-latest'
-export default async function getStream(prompt: string, messages: Message[], callback: Function, model_list: string[] = ['gpt-4', 'gpt-3.5-turbo']) {
+const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
+const anthropic = new Anthropic({apiKey: privateEnv.ANTHROPIC_KEY});
+export default async function getStream(messages: Message[], callback: Function, model_list: string[] = ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307', 'mistral-large-latest', 'mistral-medium-latest', 'mistral-small-latest', 'gpt-4', 'gpt-3.5-turbo']) {
     const model = model_list[Math.floor(Math.random() * model_list.length)];
     if (model.includes('gpt')) {
         const response = await openai.chat.completions.create({
