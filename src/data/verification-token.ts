@@ -1,14 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 
-const db = new PrismaClient();
-
 export const getVerificationTokenByToken = async (token: string) => {
+    
     try {
+        const db = new PrismaClient();
         const vtoken = await db.verification.findFirst({
             where: {
                 token: token
             }
         });
+        db.$disconnect();
         return vtoken;
     } catch (error) {
         console.error(error);
@@ -17,11 +18,13 @@ export const getVerificationTokenByToken = async (token: string) => {
 };
 export const getVerificationTokenByEmail = async (email: string) => {
     try {
+        const db = new PrismaClient();
         const vtoken = await db.verification.findFirst({
             where: {
                 email: email
             }
         });
+        db.$disconnect();
         return vtoken;
     } catch (error) {
         console.error(error);

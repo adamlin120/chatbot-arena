@@ -61,22 +61,22 @@ model Completion {
 */
 
 
-const db = new PrismaClient();
-
 export async function POST(request: NextRequest) {
   try {
+    const db = new PrismaClient();
 
     // Get the message from the request query
     const requestBody = await request.json();
     // Please use a validator in production
     const messages = requestBody.messages as Message[];
-    const model = requestBody.model as string;
     //ConversationId might be null, if it is, create a new conversation
     const conversationId = requestBody.conversationId?.toString();
 
     const stream = await getStream(messages, async (response) => {
       // Save the response to the database
     });
+    
+    db.$disconnect();
 
     return new StreamingTextResponse(stream || new ReadableStream(), {
       status: 200,
