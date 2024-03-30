@@ -23,6 +23,31 @@ export default function ChatSection() {
 
   const [prompt, setPrompt] = useState<string>("");
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  var conversationRecordIds : String[] = [];
+
+  useEffect(() => {
+    const initiateChat = async () => {
+      const response = await fetch("/api/chat/initiate", {
+        method: "POST",
+      });
+
+      if (!response.body) {
+        return;
+      } else if(response.status !== 200) {
+        toast.error("Error in response", {
+        type: "error",
+        position: "top-center",
+        });
+        console.error("Error in response", response);
+        return;
+      }
+
+      const data = await response.json();
+      conversationRecordIds = data.conversationRecordId;
+    }
+    initiateChat();
+  }
+  , []);
 
   useEffect(() => {
     if (promptInputRef.current) {
@@ -43,7 +68,7 @@ export default function ChatSection() {
     }
   }, [messageB]);
 
-  const processMessages = async (currPrompt: string, messages: Message[], setMessages: React.Dispatch<React.SetStateAction<Message[]>>) => {
+  const processMessages = async (currPrompt: string, messages: Message[], conversationRecordId : String, setMessages: React.Dispatch<React.SetStateAction<Message[]>>) => {
     const newMessages: Message[] = [
       ...messages,
       {
@@ -56,7 +81,8 @@ export default function ChatSection() {
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify({
-        messages: newMessages
+        messages: newMessages,
+        conversationRecordId: conversationRecordId
       }),
     });
 
@@ -106,8 +132,8 @@ export default function ChatSection() {
   }
 
   const sendMessage = async () => {
-    processMessages(prompt, messageA, setMessageA);
-    processMessages(prompt, messageB, setMessageB);
+    processMessages(prompt, messageA, conversationRecordIds[0], setMessageA);
+    processMessages(prompt, messageB, conversationRecordIds[1], setMessageB);
     setPrompt("");
   };
 
