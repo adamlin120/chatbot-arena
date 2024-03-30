@@ -14,3 +14,8 @@ export type Message = {
   content: string;
 };
   
+export type ModelResponse = {
+  prompt: string;
+  completion: string;
+  model_name: string;
+};

@@ -1,5 +1,3 @@
-// schema.prisma
-
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -15,9 +13,9 @@ model User {
   username      String
   provider      String
   hashedPassword String
-  coins         Int
-  avatarUrl     String
-  bio           String
+  coins         Int?
+  avatarUrl     String?
+  bio           String?
   verified      Boolean
   conversations Conversation[]
 }
@@ -32,23 +30,19 @@ model Conversation {
   id             String   @id @map("_id") @default(auto()) @db.ObjectId
   contributor    User     @relation(fields: [contributorId], references: [id])
   contributorId  String   @db.ObjectId
-  details  ConversationDetail[]
+  records        ConversationRecord[]
 }
 
-model ConversationDetail {
+model ConversationRecord {
   id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  prompt     String
-  completions Completion[]
-  feedback   String?
+  rounds ConversationRound[]
   conversation Conversation @relation(fields: [conversationId], references: [id])
   conversationId String @db.ObjectId
 }
 
-model Completion {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  content    String
+type ConversationRound {
+  prompt     String
+  completion    String
   model_name String
-  rating     Int
-  conversationDetail ConversationDetail @relation(fields: [conversationDetailId], references: [id])
-  conversationDetailId String @db.ObjectId
+  rating     Int?
 }

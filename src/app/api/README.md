@@ -2,8 +2,83 @@
 
 All headers should contain Authorization header with JWT token
 
+## Schema
+
+See ./prisma/schema.prisma for the schema definition.
+The conversation related part needs extra explanation.
+Below is the schema for conversation:
+
+```
+model Conversation {
+  id             String   @id @map("_id") @default(auto()) @db.ObjectId
+  contributor    User     @relation(fields: [contributorId], references: [id])
+  contributorId  String   @db.ObjectId
+  records        ConversationRecord[]
+}
+
+model ConversationRecord {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  rounds ConversationRound[]
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String @db.ObjectId
+}
+
+type ConversationRound {
+  prompt     String
+  completion    String
+  model_name String
+  rating     Int?
+}
+```
+
+Conversation is the main entity, which contains a list of conversation records in a session. For Chatbot Arena, there are two conversation records in a session since there are two conversations going on at the same time. Each conversation record contains a list of conversation rounds, which are the conversation history of the user and the chatbot. Each conversation round contains the prompt, completion, model name, and rating.
+
+For the rating part, the rating is an integer. 1 means the completion is better than the other completion, 0 means equal, -1 means the completion is worse than the other completion.
+
 ## User API
-Pass for now since some of which are currently handled by Liliang.
+
+Currently we use NextAuth.js for authentication. The user API is used to get the user information.
+
+## Chat API
+
+### Initiate Chat
+
+Endpoint: /api/chat/initiate
+
+Method: POST
+
+Request: No request body
+
+Response:
+
+```typescript
+{
+  "conversationRecordId": [
+    String,
+    String
+  ]
+}
+```
+
+### Get Chat Streaming
+
+Endpoint: /api/chat/
+
+method: POST
+
+Request:
+
+```typescript
+{
+  "message": Messages[],
+  "conversationRecordId": String
+
+}
+```
+
+Response:
+
+TextStreamingResponse object
 
 ## Rating API
 
@@ -13,30 +88,27 @@ Endpoint: /api/rating
 Method: POST
 
 Request:
+
 ```json
 {
-  "prompt": "Prompt Content",
-  "completions": [
+  "ratings": [
     {
-      "content": "Completion A Content",
-      "model_name": "Model A Name"
-    },
-    {
-      "content": "Completion B Content",
-      "model_name": "Model B Name"
+      "conversationRecordId": "Conversation Record ID",
+      "rating": 1
     }
-  ],
-    "rating": 1, // 1 means completion A is better, 0 means equally good, 2means completion B is better, -1 means equally bad
-    "feedback": "Feedback"
+  ]
 }
 ```
 
 Response:
+
 ```json
 {
-    "success": true
+  "success": true
 }
 ```
+
+The rating is an integer. 1 means the completion is better than the other completion, 0 means equal, -1 means the completion is worse than the other completion. If one element in the ratings array is rated as 1, the other element should be rated as -1. The ratings array should contain two elements since there are two conversations going on at the same time.
 
 ### Get All Ratings as JSON file
 
@@ -46,25 +118,26 @@ Method: GET
 Response: JSON file
 
 Format of JSON file:
+
 ```json
 {
-    "ratings": [
+  "ratings": [
+    {
+      "prompt": "Prompt Content",
+      "completions": [
         {
-            "prompt": "Prompt Content",
-            "completions": [
-                {
-                    "content": "Completion A Content",
-                    "model_name": "Model A Name"
-                },
-                {
-                    "content": "Completion B Content",
-                    "model_name": "Model B Name"
-                }
-            ],
-            "rating": 1,
-            "feedback": "Feedback"
+          "content": "Completion A Content",
+          "model_name": "Model A Name"
+        },
+        {
+          "content": "Completion B Content",
+          "model_name": "Model B Name"
         }
-    ]
+      ],
+      "rating": 1,
+      "feedback": "Feedback"
+    }
+  ]
 }
 ```
 
@@ -74,6 +147,7 @@ Endpoint: /api/rating/model
 Method: GET
 
 Request:
+
 ```json
 {
   "model_name": "Model Name"
@@ -81,25 +155,26 @@ Request:
 ```
 
 Response:
+
 ```json
 {
-    "ratings": [
+  "ratings": [
+    {
+      "prompt": "Prompt Content",
+      "completions": [
         {
-            "prompt": "Prompt Content",
-            "completions": [
-                {
-                    "content": "Completion A Content",
-                    "model_name": "Model A Name"
-                },
-                {
-                    "content": "Completion B Content",
-                    "model_name": "Model B Name"
-                }
-            ],
-            "rating": 1,
-            "feedback": "Feedback"
+          "content": "Completion A Content",
+          "model_name": "Model A Name"
+        },
+        {
+          "content": "Completion B Content",
+          "model_name": "Model B Name"
         }
-    ]
+      ],
+      "rating": 1,
+      "feedback": "Feedback"
+    }
+  ]
 }
 ```
 
@@ -109,6 +184,7 @@ Endpoint: /api/rating/model/average
 Method: GET
 
 Request:
+
 ```json
 {
   "model_name": "Model Name"
@@ -116,9 +192,10 @@ Request:
 ```
 
 Response:
+
 ```json
 {
-    "average_rating": 0.6
+  "average_rating": 0.6
 }
 ```
 
@@ -130,18 +207,19 @@ Endpoint: /api/rating/ranking
 Method: GET
 
 Response:
+
 ```json
 {
-    "rankings": [
-        {
-            "model_name": "Model A Name",
-            "average_rating": 0.6
-        },
-        {
-            "model_name": "Model B Name",
-            "average_rating": 0.4
-        }
-    ]
+  "rankings": [
+    {
+      "model_name": "Model A Name",
+      "average_rating": 0.6
+    },
+    {
+      "model_name": "Model B Name",
+      "average_rating": 0.4
+    }
+  ]
 }
 ```
 
@@ -158,15 +236,16 @@ Method: GET
 Response: JSON file
 
 Format of JSON file:
+
 ```json
 {
-    "conversations": [
-        {
-            "prompt": "Prompt Content",
-            "completions": "Completion Content",
-            "model_name": "Model Name"
-        }
-    ]
+  "conversations": [
+    {
+      "prompt": "Prompt Content",
+      "completions": "Completion Content",
+      "model_name": "Model Name"
+    }
+  ]
 }
 ```
 
