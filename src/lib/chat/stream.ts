@@ -55,8 +55,17 @@ export default async function getStream(messages: Message[], callback: Function,
         return stream;
     } else if (model.includes('claude')) {
         //First change the message to a messageParams object instead of a Message object
+
+        // TODO: temporary fix, need to fix the type of messages
+        type MessageParams = {
+            role: "user" | "assistant";
+            content: string;
+        }
+
+        const filteredMessages = messages.filter(message => message.role !== "system") as MessageParams[];
+
         const response = await anthropic.messages.stream({
-            messages: messages,
+            messages: filteredMessages,
             model: model,
             max_tokens: MAX_TOKENS,
           });
