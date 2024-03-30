@@ -40,12 +40,9 @@ model ConversationRecord {
   conversationId String @db.ObjectId
 }
 
-model ConversationRound {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+type ConversationRound {
   prompt     String
   completion    String
   model_name String
   rating     Int?
-  ConversationRecord ConversationRecord @relation(fields: [ConversationRecordId], references: [id])
-  ConversationRecordId String @db.ObjectId
 }

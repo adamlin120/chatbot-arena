@@ -48,14 +48,11 @@ model ConversationRecord {
   conversationId String @db.ObjectId
 }
 
-model ConversationRound {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+type ConversationRound {
   prompt     String
   completion    String
   model_name String
-  rating     Int
-  ConversationRecord ConversationRecord @relation(fields: [ConversationRecordId], references: [id])
-  ConversationRecordId String @db.ObjectId
+  rating     Int?
 }
 
 
@@ -100,15 +97,19 @@ export async function POST(request: NextRequest) {
       
       if (!response.completion)
         return;
-      await db.conversationRound.create({
+      await db.conversationRecord.update({
+        where: {
+          id: conversationRecordId,
+        },
         data: {
-          prompt: response.prompt,
-          completion: response.completion,
-          model_name: response.model_name,
-          ConversationRecord: {
-            connect: {
-              id: conversationRecordId,
-            },
+          rounds: {
+            push: [
+              {
+                prompt: response.prompt,
+                completion: response.completion,
+                model_name: response.model_name,
+              },
+            ]
           },
         },
       });
