@@ -30,23 +30,22 @@ model Conversation {
   id             String   @id @map("_id") @default(auto()) @db.ObjectId
   contributor    User     @relation(fields: [contributorId], references: [id])
   contributorId  String   @db.ObjectId
-  rounds  ConversationRound[]
+  records        ConversationRecord[]
+}
+
+model ConversationRecord {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  rounds ConversationRound[]
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String @db.ObjectId
 }
 
 model ConversationRound {
   id         String   @id @map("_id") @default(auto()) @db.ObjectId
   prompt     String
-  completions Completion[]
-  feedback   String
-  conversation Conversation @relation(fields: [conversationId], references: [id])
-  conversationId String @db.ObjectId
-}
-
-model Completion {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  content    String
+  completion    String
   model_name String
   rating     Int
-  ConversationRound ConversationRound @relation(fields: [ConversationRoundId], references: [id])
-  ConversationRoundId String @db.ObjectId
+  ConversationRecord ConversationRecord @relation(fields: [ConversationRecordId], references: [id])
+  ConversationRecordId String @db.ObjectId
 }
