@@ -23,7 +23,7 @@ export default function ChatSection() {
 
   const [prompt, setPrompt] = useState<string>("");
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
-  var conversationRecordIds : String[] = [];
+  const [conversationRecordIds, setConversationRecordIds] = useState([]);
 
   useEffect(() => {
     const initiateChat = async () => {
@@ -43,7 +43,7 @@ export default function ChatSection() {
       }
 
       const data = await response.json();
-      conversationRecordIds = data.conversationRecordId;
+      setConversationRecordIds(data.conversationRecordId);
     }
     initiateChat();
   }

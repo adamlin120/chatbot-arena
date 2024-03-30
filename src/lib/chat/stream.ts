@@ -1,5 +1,4 @@
 import { Message } from "@/lib/types/db";
-import { MessageParam } from "@anthropic-ai/sdk/resources/messages.mjs";
 import {
     OpenAIStream, 
     MistralStream,  
@@ -9,10 +8,9 @@ import OpenAI from "openai";
 import MistralClient  from '@mistralai/mistralai';
 import Anthropic from '@anthropic-ai/sdk';
 import { privateEnv } from "@/lib/env/private";
-
+import { ModelResponse } from "@/lib/types/db";
 export const MAX_TOKENS = 1024;
 
-//Randomly choose between OpenAI, Anthropic, and Mistral
 
 const openai = new OpenAI({apiKey: privateEnv.OPENAI_KEY});
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
@@ -29,7 +27,12 @@ export default async function getStream(messages: Message[], callback: Function,
         });
         const stream = OpenAIStream(response, {
             onCompletion: async (response) => {
-                callback(response);
+                const ModelResponse: ModelResponse = {
+                    prompt: messages[messages.length - 1].content,
+                    completion: response,
+                    model_name: model,
+                };
+                callback(ModelResponse);
             },
         });
         return stream;
@@ -41,7 +44,12 @@ export default async function getStream(messages: Message[], callback: Function,
         });
         const stream = MistralStream(response, {
             onCompletion: async (response) => {
-                callback(response);
+                const ModelResponse: ModelResponse = {
+                    prompt: messages[messages.length - 1].content,
+                    completion: response,
+                    model_name: model,
+                };
+                callback(ModelResponse);
             },
         });
         return stream;
@@ -55,7 +63,12 @@ export default async function getStream(messages: Message[], callback: Function,
         
         const stream = AnthropicStream(response, {
             onCompletion: async (response) => {
-                callback(response);
+                const ModelResponse: ModelResponse = {
+                    prompt: messages[messages.length - 1].content,
+                    completion: response,
+                    model_name: model,
+                };
+                callback(ModelResponse);
             },
         });
         return stream;

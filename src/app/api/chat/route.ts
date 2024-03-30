@@ -1,4 +1,4 @@
-import { Message } from "@/lib/types/db";
+import { Message, ModelResponse } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { StreamingTextResponse } from "ai";
@@ -88,14 +88,21 @@ export async function POST(request: NextRequest) {
     //ConversationId might be null, if it is, create a new conversation
     const conversationRecordId = requestBody.conversationRecordId as string;
 
-    const stream = await getStream(messages, async (response) => {
+    if (!messages || !conversationRecordId) {
+      return NextResponse.json(
+        { error: "Invalid Request" },
+        { status: 400 }
+      );
+    }
+
+    const stream = await getStream(messages, async (response : ModelResponse) => {
       // Append the prompt and the response to the conversationRecord with the conversationRecordId
       
-      // Current prompt that needs to be appended to the conversationRecord is the last message in the messages array
-      const currentPrompt = messages[messages.length - 1].content;
+      if (!response.completion)
+        return;
       await db.conversationRound.create({
         data: {
-          prompt: currentPrompt,
+          prompt: response.prompt,
           completion: response.completion,
           model_name: response.model_name,
           ConversationRecord: {
