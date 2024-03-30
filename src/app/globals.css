@@ -17,10 +17,17 @@
   }
 }
 
-:root {
+/* TODO: support light mode */
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+} */
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 50, 50, 50;
+  --background-end-rgb: 50, 50, 50;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,6 +46,23 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+/* for loading spinner */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #0279c9;
+  border-radius: 50%;
+  animation: spin 2s linear infinite;
 }
 
 @layer utilities {
