@@ -38,14 +38,14 @@ model Conversation {
   id             String   @id @map("_id") @default(auto()) @db.ObjectId
   contributor    User     @relation(fields: [contributorId], references: [id])
   contributorId  String   @db.ObjectId
-  details  ConversationDetail[]
+  rounds  ConversationRound[]
 }
 
-model ConversationDetail {
+model ConversationRound {
   id         String   @id @map("_id") @default(auto()) @db.ObjectId
   prompt     String
   completions Completion[]
-  feedback   String?
+  feedback?  String
   conversation Conversation @relation(fields: [conversationId], references: [id])
   conversationId String @db.ObjectId
 }
@@ -54,10 +54,27 @@ model Completion {
   id         String   @id @map("_id") @default(auto()) @db.ObjectId
   content    String
   model_name String
-  rating     Int
-  conversationDetail ConversationDetail @relation(fields: [conversationDetailId], references: [id])
-  conversationDetailId String @db.ObjectId
+  rating?    Int
+  ConversationRound ConversationRound @relation(fields: [ConversationRoundId], references: [id])
+  ConversationRoundId String @db.ObjectId
 }
+
+
+### Get Chat Streaming
+
+Endpoint: /api/chat/
+
+method: POST
+
+Request:
+
+```typescript
+{
+  "message": Messages[],
+  "conversationRecordId": String
+
+}
+```
 */
 
 
@@ -70,10 +87,10 @@ export async function POST(request: NextRequest) {
     // Please use a validator in production
     const messages = requestBody.messages as Message[];
     //ConversationId might be null, if it is, create a new conversation
-    const conversationId = requestBody.conversationId?.toString();
+    const conversationRecordId = requestBody.conversationRecordId as string;
 
     const stream = await getStream(messages, async (response) => {
-      // Save the response to the database
+      
     });
     
     db.$disconnect();
