@@ -13,9 +13,9 @@ model User {
   username      String
   provider      String
   hashedPassword String
-  coins         Int
-  avatarUrl     String
-  bio           String
+  coins         Int?
+  avatarUrl     String?
+  bio           String?
   verified      Boolean
   conversations Conversation[]
 }
@@ -45,7 +45,7 @@ model ConversationRound {
   prompt     String
   completion    String
   model_name String
-  rating     Int
+  rating     Int?
   ConversationRecord ConversationRecord @relation(fields: [ConversationRecordId], references: [id])
   ConversationRecordId String @db.ObjectId
 }

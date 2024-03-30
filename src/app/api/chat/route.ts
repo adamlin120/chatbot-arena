@@ -38,25 +38,24 @@ model Conversation {
   id             String   @id @map("_id") @default(auto()) @db.ObjectId
   contributor    User     @relation(fields: [contributorId], references: [id])
   contributorId  String   @db.ObjectId
-  rounds  ConversationRound[]
+  records        ConversationRecord[]
+}
+
+model ConversationRecord {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  rounds ConversationRound[]
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String @db.ObjectId
 }
 
 model ConversationRound {
   id         String   @id @map("_id") @default(auto()) @db.ObjectId
   prompt     String
-  completions Completion[]
-  feedback?  String
-  conversation Conversation @relation(fields: [conversationId], references: [id])
-  conversationId String @db.ObjectId
-}
-
-model Completion {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  content    String
+  completion    String
   model_name String
-  rating?    Int
-  ConversationRound ConversationRound @relation(fields: [ConversationRoundId], references: [id])
-  ConversationRoundId String @db.ObjectId
+  rating     Int
+  ConversationRecord ConversationRecord @relation(fields: [ConversationRecordId], references: [id])
+  ConversationRecordId String @db.ObjectId
 }
 
 
@@ -90,7 +89,22 @@ export async function POST(request: NextRequest) {
     const conversationRecordId = requestBody.conversationRecordId as string;
 
     const stream = await getStream(messages, async (response) => {
+      // Append the prompt and the response to the conversationRecord with the conversationRecordId
       
+      // Current prompt that needs to be appended to the conversationRecord is the last message in the messages array
+      const currentPrompt = messages[messages.length - 1].content;
+      await db.conversationRound.create({
+        data: {
+          prompt: currentPrompt,
+          completion: response.completion,
+          model_name: response.model_name,
+          ConversationRecord: {
+            connect: {
+              id: conversationRecordId,
+            },
+          },
+        },
+      });
     });
     
     db.$disconnect();
