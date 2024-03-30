@@ -111,10 +111,8 @@ Request:
 ```typescript
 {
   "message": Messages[],
-  "conversationRecordId": [
-    String,
-    String
-  ]
+  "conversationRecordId": String
+
 }
 ```
 
