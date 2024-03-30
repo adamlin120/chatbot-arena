@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 export async function POST (req: NextRequest, res: NextResponse) {
 
   const reqBody = await req.json();
-  const { email, username, provider, hashedPassword, coins } = reqBody
+  const { email, username, provider, hashedPassword, coins, verified } = reqBody
 
   try {
     const user = await prisma.user.create({
@@ -18,7 +18,8 @@ export async function POST (req: NextRequest, res: NextResponse) {
         username,
         provider,
         hashedPassword,
-        coins
+        coins,
+        verified
       }
     })
 
