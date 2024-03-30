@@ -97,7 +97,6 @@ Response:
     String,
     String
   ]
-  "message": Messages[]
 }
 ```
 
