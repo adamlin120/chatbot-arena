@@ -9,16 +9,20 @@ Go to [resend](https://resend.com/) and get an email API KEY (This is used for e
 Go to Slack Canva to get necessary API keys and DATABASE_URL, update it in the .env file. See the .env.example file for reference.
 
 Then, run the following command.
+
 ```bash
 yarn
 ```
+
 To install the packages. Database schema will also be created in this step.
 
 Last, run:
+
 ```bash
 yarn dev
 
 ```
+
 To start the app. Now you can open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Learn More

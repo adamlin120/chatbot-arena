@@ -54,40 +54,40 @@ Two conversation record ids are returned. These ids are used to identify the two
 */
 
 export async function POST(request: NextRequest) {
-    const db = new PrismaClient();
-    //Read user id from nextauth session
-    const session = await auth();
-    if (!session || !session.user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const user = await getUserByEmail(session.user.email);
+  const db = new PrismaClient();
+  //Read user id from nextauth session
+  const session = await auth();
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const user = await getUserByEmail(session.user.email);
 
-    if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    const conversation = await db.conversation.create({
-        data: {
-            contributorId: user.id,
-        },
-    });
+  const conversation = await db.conversation.create({
+    data: {
+      contributorId: user.id,
+    },
+  });
 
-    const conversationRecords = await Promise.all([
-        db.conversationRecord.create({
-            data: {
-                conversationId: conversation.id,
-            },
-        }),
-        db.conversationRecord.create({
-            data: {
-                conversationId: conversation.id,
-            },
-        }),
-    ]);
+  const conversationRecords = await Promise.all([
+    db.conversationRecord.create({
+      data: {
+        conversationId: conversation.id,
+      },
+    }),
+    db.conversationRecord.create({
+      data: {
+        conversationId: conversation.id,
+      },
+    }),
+  ]);
 
-    const conversationRecordId = conversationRecords.map((record) => record.id);
+  const conversationRecordId = conversationRecords.map((record) => record.id);
 
-    db.$disconnect();
+  db.$disconnect();
 
-    return NextResponse.json({ conversationRecordId });
+  return NextResponse.json({ conversationRecordId });
 }

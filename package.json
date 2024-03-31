@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.19.0",
@@ -40,7 +41,11 @@
     "autoprefixer": "^10.4.19",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.1.4",
+    "eslint-config-prettier": "^9.1.0",
     "postcss": "^8",
+    "prettier": "3.2.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },

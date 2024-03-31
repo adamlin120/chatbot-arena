@@ -9,28 +9,34 @@ type Props = {
   setRating: (rating: number) => void;
 };
 
-export default function Column({ isPrompt, original, edited, rating, setRating }: Props) {
+export default function Column({
+  isPrompt,
+  original,
+  edited,
+  rating,
+  setRating,
+}: Props) {
   const feedbackDescription = [
     {
       id: 1 + (isPrompt ? 0 : 5),
-      text: "Much worse than Original"
+      text: "Much worse than Original",
     },
     {
       id: 2 + (isPrompt ? 0 : 5),
-      text: "Worse than Original"
+      text: "Worse than Original",
     },
     {
       id: 3 + (isPrompt ? 0 : 5),
-      text: "No noticeable difference compared to the original"
+      text: "No noticeable difference compared to the original",
     },
     {
       id: 4 + (isPrompt ? 0 : 5),
-      text: "Better than Original"
+      text: "Better than Original",
     },
     {
       id: 5 + (isPrompt ? 0 : 5),
-      text: "Much better than Original"
-    }
+      text: "Much better than Original",
+    },
   ];
 
   const [toggle, setToggle] = useState(false);
@@ -43,10 +49,8 @@ export default function Column({ isPrompt, original, edited, rating, setRating }
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
-        <div className="font-semibold text-xl">
-          Read the Original {type}
-        </div>
-        <textarea 
+        <div className="font-semibold text-xl">Read the Original {type}</div>
+        <textarea
           className="p-3 rounded-lg text-black"
           value={original}
           readOnly
@@ -56,13 +60,12 @@ export default function Column({ isPrompt, original, edited, rating, setRating }
       <div className="text-left flex flex-col gap-2 px-4">
         <div className="font-semibold text-xl">
           Read the Edited {type}
-
           {/* TODO: Below is the "Show edits" button. The highlighting of differences has not been done. */}
           <label className="ml-3 inline-flex align-middle items-center cursor-pointer">
-            <input 
-              type="checkbox" 
-              value="" 
-              checked={toggle} 
+            <input
+              type="checkbox"
+              value=""
+              checked={toggle}
               onChange={() => setToggle(!toggle)}
               className="sr-only peer"
             />
@@ -70,34 +73,32 @@ export default function Column({ isPrompt, original, edited, rating, setRating }
             <span className="ms-3 text-lg dark:text-gray-300">Show Edits</span>
           </label>
         </div>
-        <textarea 
+        <textarea
           className="p-3 rounded-lg text-black"
           value={edited}
           readOnly
         />
 
-        <div>
-          Edit Distance [{type}]: [TODO]
-        </div>
+        <div>Edit Distance [{type}]: [TODO]</div>
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
         <div className="font-semibold text-xl">
-          <span className="text-red-400 font-normal">*Required </span> <br/>
-           Is the edited {type.toLowerCase().slice(0, -1)} an improvement over the original?
+          <span className="text-red-400 font-normal">*Required </span> <br />
+          Is the edited {type.toLowerCase().slice(0, -1)} an improvement over
+          the original?
         </div>
         <div className="flex flex-col gap-1">
           {feedbackDescription.map((feedback) => (
-            <div 
-              className="flex gap-2" 
-              key={feedback.id}
-            >
-              <input 
-                type="radio" 
-                id={feedback.id.toString()} 
+            <div className="flex gap-2" key={feedback.id}>
+              <input
+                type="radio"
+                id={feedback.id.toString()}
                 value={feedback.text}
                 checked={rating === feedback.id}
-                onChange={() => {setRating(feedback.id)}}
+                onChange={() => {
+                  setRating(feedback.id);
+                }}
               />
               <label htmlFor={feedback.id.toString()}>
                 {feedback.id - (isPrompt ? 0 : 5)} - {feedback.text}

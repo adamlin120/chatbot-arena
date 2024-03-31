@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ export default function Header() {
   const router = useRouter();
   const handleLogout = async () => {
     await signOut(); // Signing out the user
-    router.push('/login');
+    router.push("/login");
   };
   return (
     <>
@@ -19,7 +19,9 @@ export default function Header() {
         <div className="flex-grow">{/* any other things */}</div>
         <div className="text-2xl p-7">LeaderBoard</div>
         {session ? (
-          <button className="text-2xl p-7" onClick={handleLogout}>Logout</button>
+          <button className="text-2xl p-7" onClick={handleLogout}>
+            Logout
+          </button>
         ) : null}
       </header>
     </>
