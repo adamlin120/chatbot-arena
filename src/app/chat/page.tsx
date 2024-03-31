@@ -1,6 +1,12 @@
+import { auth } from "@/lib/auth";
 import ChatSection from "./_components/ChatSection";
+import { redirect } from "next/navigation";
 
-export default function ChatPage() {
+export default async function ChatPage() {
+  const session = await auth();
+  if(!session || !session.user) {
+    redirect("/login");
+  }
   return (
     <main className="py-6 px-12">
       <h1 className="mb-5">⚔️ 繁中 LLM 聊天機器人競技場⚔️ : 野生的大模型測試</h1>

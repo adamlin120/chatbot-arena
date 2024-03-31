@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import MessageContainer from "./MessageContainer";
 import type { Message } from "@/lib/types/db";
 import { toast, ToastContainer } from "react-toastify";
+import Loading from "@/app/_components/Loading";
 
 const MAX_TOKENS = 1024;
 
@@ -171,7 +172,7 @@ export default function ChatSection() {
       <div className="flex gap-3 flex-grow items-center border border-t-0 rounded-b-xl p-5">
         <div className="flex-grow">
           <textarea 
-            className="w-full border rounded-xl p-5 bg-transparent text-black overflow-hidden" 
+            className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden" 
             placeholder="輸入訊息..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
