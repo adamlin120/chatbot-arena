@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import bcrypt from "bcryptjs";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 import { authSchema } from "@/validators/auth";
 import { generateVerificationToken } from "../token/tokens";
 import { sendVerificationEmail } from "../mail/mail";
@@ -14,7 +14,7 @@ export default CredentialsProvider({
     username: { label: "Userame", type: "text", optional: true },
     password: { label: "Password", type: "password" },
   },
-  async authorize(credentials,req) {
+  async authorize(credentials, req) {
     let validatedCredentials: {
       email: string;
       username?: string;
@@ -57,8 +57,11 @@ export default CredentialsProvider({
         },
       });
       const verificationToken = await generateVerificationToken(email);
-      
-      await sendVerificationEmail(verificationToken.email,verificationToken.token);
+
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token,
+      );
 
       return {
         email: email.toLowerCase(),
@@ -68,7 +71,7 @@ export default CredentialsProvider({
     }
 
     // Sign in
-    if (isSignUp=='true'){
+    if (isSignUp == "true") {
       return null;
     }
     const isValid = await bcrypt.compare(password, existedUser.hashedPassword);
@@ -77,8 +80,13 @@ export default CredentialsProvider({
       return null;
     }
     if (!existedUser.verified) {
-      const verificationToken = await generateVerificationToken(existedUser.email);
-      await sendVerificationEmail(verificationToken.email,verificationToken.token);
+      const verificationToken = await generateVerificationToken(
+        existedUser.email,
+      );
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token,
+      );
     }
     db.$disconnect();
     return {

@@ -14,13 +14,13 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       animation: {
-        'slide-up': 'slideUp 1s ease-out'
+        "slide-up": "slideUp 1s ease-out",
       },
       keyframes: {
         slideUp: {
-          '0%': { transform: 'translateY(100%)' },
-          '100%': { transform: 'translateY(0)' }
-        }
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
     },
   },

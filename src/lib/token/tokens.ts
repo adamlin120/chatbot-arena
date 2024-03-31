@@ -1,30 +1,29 @@
 import { getVerificationTokenByEmail } from "@/data/verification-token";
-import { PrismaClient } from '@prisma/client'
-import {v4 as uuidv4} from "uuid";
+import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
 export const generateVerificationToken = async (email: string) => {
+  const db = new PrismaClient();
 
-    const db = new PrismaClient();
+  const token = uuidv4();
+  const expires = new Date(new Date().getTime() + 3600 * 1000);
 
-    const token = uuidv4();
-    const expires = new Date(new Date().getTime() + 3600*1000);
-
-    const existingToken = await getVerificationTokenByEmail(email);
-    if (existingToken) {
-        await db.verification.delete({
-            where: {
-                email: email
-            }
-        });
-    }
-    const newToken = await db.verification.create({
-        data: {
-            email: email,
-            token: token,
-            expires: expires
-        }
+  const existingToken = await getVerificationTokenByEmail(email);
+  if (existingToken) {
+    await db.verification.delete({
+      where: {
+        email: email,
+      },
     });
+  }
+  const newToken = await db.verification.create({
+    data: {
+      email: email,
+      token: token,
+      expires: expires,
+    },
+  });
 
-    db.$disconnect();
-    return newToken;
-}
+  db.$disconnect();
+  return newToken;
+};

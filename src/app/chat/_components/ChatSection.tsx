@@ -7,17 +7,28 @@ import Loading from "@/app/_components/Loading";
 
 const MAX_TOKENS = 1024;
 
-export default function ChatSection() { 
+export default function ChatSection() {
   const [messageA, setMessageA] = useState<Message[]>([
-    { role: "user", content: "You are a helpful chatbot that aims to assist human." },
-    { role: "assistant", content: "No problem, I can do my best to assist you" }
+    {
+      role: "user",
+      content: "You are a helpful chatbot that aims to assist human.",
+    },
+    {
+      role: "assistant",
+      content: "No problem, I can do my best to assist you",
+    },
   ]);
 
   const [messageB, setMessageB] = useState<Message[]>([
-    { role: "user", content: "You are a helpful chatbot that aims to assist human." },
-    { role: "assistant", content: "No problem, I can do my best to assist you" }
+    {
+      role: "user",
+      content: "You are a helpful chatbot that aims to assist human.",
+    },
+    {
+      role: "assistant",
+      content: "No problem, I can do my best to assist you",
+    },
   ]);
-
 
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
   const messageBEndRef = useRef<HTMLDivElement | null>(null);
@@ -34,10 +45,10 @@ export default function ChatSection() {
 
       if (!response.body) {
         return;
-      } else if(response.status !== 200) {
+      } else if (response.status !== 200) {
         toast.error("Error in response", {
-        type: "error",
-        position: "top-center",
+          type: "error",
+          position: "top-center",
         });
         console.error("Error in response", response);
         return;
@@ -45,10 +56,9 @@ export default function ChatSection() {
 
       const data = await response.json();
       setConversationRecordIds(data.conversationRecordId);
-    }
+    };
     initiateChat();
-  }
-  , []);
+  }, []);
 
   useEffect(() => {
     if (promptInputRef.current) {
@@ -62,14 +72,19 @@ export default function ChatSection() {
       messageAEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messageA]);
-  
+
   useEffect(() => {
     if (messageBEndRef.current) {
       messageBEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messageB]);
 
-  const processMessages = async (currPrompt: string, messages: Message[], conversationRecordId : String, setMessages: React.Dispatch<React.SetStateAction<Message[]>>) => {
+  const processMessages = async (
+    currPrompt: string,
+    messages: Message[],
+    conversationRecordId: String,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+  ) => {
     const newMessages: Message[] = [
       ...messages,
       {
@@ -83,19 +98,21 @@ export default function ChatSection() {
       method: "POST",
       body: JSON.stringify({
         messages: newMessages,
-        conversationRecordId: conversationRecordId
+        conversationRecordId: conversationRecordId,
       }),
     });
 
     if (!response.body) {
       return;
-    } else if(response.status !== 200) {
+    } else if (response.status !== 200) {
       // toast.error("Error in response", {
       //   type: "error",
       //   position: "top-center",
       // });
       // TODO: Add toast notification (現在他長得超怪)
-      alert("There was something wrong with the response. Please try again later.");
+      alert(
+        "There was something wrong with the response. Please try again later.",
+      );
       console.error("Error in response", response);
       return;
     }
@@ -130,7 +147,7 @@ export default function ChatSection() {
       }
       count++;
     }
-  }
+  };
 
   const sendMessage = async () => {
     processMessages(prompt, messageA, conversationRecordIds[0], setMessageA);
@@ -140,7 +157,7 @@ export default function ChatSection() {
 
   return (
     <div className="flex flex-col">
-      <ToastContainer 
+      <ToastContainer
         position="top-center"
         autoClose={5000}
         hideProgressBar={false}
@@ -157,37 +174,43 @@ export default function ChatSection() {
         <div className="flex-1 border-r p-5 overflow-y-scroll">
           <h3 className="mb-5">🤖 模型 A</h3>
           {messageA.map((message, index) => (
-            <MessageContainer key={index} message={message.content} isUser={message.role === "user"} />
+            <MessageContainer
+              key={index}
+              message={message.content}
+              isUser={message.role === "user"}
+            />
           ))}
           <div ref={messageAEndRef} />
         </div>
         <div className="flex-1 p-5 overflow-y-scroll">
-          <h4 className="mb-5">🤖 模型 B</h4>  
+          <h4 className="mb-5">🤖 模型 B</h4>
           {messageB.map((message, index) => (
-            <MessageContainer key={index} message={message.content} isUser={message.role === "user"} />
-          ))}       
+            <MessageContainer
+              key={index}
+              message={message.content}
+              isUser={message.role === "user"}
+            />
+          ))}
           <div ref={messageBEndRef} />
         </div>
       </div>
       <div className="flex gap-3 flex-grow items-center border border-t-0 rounded-b-xl p-5">
         <div className="flex-grow">
-          <textarea 
-            className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden" 
+          <textarea
+            className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden"
             placeholder="輸入訊息..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             ref={promptInputRef}
-            onKeyDown={
-              (e) => {
-                if (e.key === "Enter" && e.shiftKey === false) {
-                  sendMessage();
-                }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.shiftKey === false) {
+                sendMessage();
               }
-            }
+            }}
           ></textarea>
         </div>
         <div>
-          <button 
+          <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={sendMessage}
           >

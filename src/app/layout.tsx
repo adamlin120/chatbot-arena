@@ -20,13 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SessionProvider>
-      <body className={inter.className}>
-        
-        <Header /> 
-        <div className="h-screen pt-20 overflow-y-scroll">
-          {children}
-        </div>
-      </body>
+        <body className={inter.className}>
+          <Header />
+          <div className="h-screen pt-20 overflow-y-scroll">{children}</div>
+        </body>
       </SessionProvider>
     </html>
   );
