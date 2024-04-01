@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
-  if (session?.user?.name) {
-    redirect("/rating");
-  }
+  // if (session?.user?.email) {
+  //   redirect("/rating");
+  // }
   return (
     <>
       <div className="flex flex-col p-5 gap-0 text-xl z-10 animate-slide-up">
