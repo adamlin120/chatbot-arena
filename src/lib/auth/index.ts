@@ -60,7 +60,7 @@ export const {
         // Sign up
           await db.user.create({
             data: {
-              email: email? email.toLowerCase() : "",
+              email: email.toLowerCase(),
               username: name,
               hashedPassword: "jwt",
               provider: provider,
@@ -84,7 +84,7 @@ export const {
           // Sign up
           await db.user.create({
             data: {
-              email: sub.toLowerCase(), //temporately use sub in email field since twitter don't support email.
+              email: sub, //temporately use sub in email field since twitter don't support email.
               username: name,
               hashedPassword: "jwt",
               provider: provider,
