@@ -6,10 +6,10 @@ import {
   MessageCircleMore,
   ThumbsUp,
   LogIn,
-  User,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils/shadcn";
 
@@ -22,8 +22,7 @@ export default function SideBar() {
   const session = useSession();
   const username = session.data?.user?.username || "不知名使用者"; // TODO: 我拿不到 username
   const avatarUrl = session.data?.user?.avatarUrl;
-  const [isOpen, setIsOpen] = useState(false);
-  
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <div className="flex mt-5">
@@ -35,9 +34,12 @@ export default function SideBar() {
         Taiwan LLM
       </Link>
       <aside
-        className={cn(`flex flex-col transform top-0 left-0 w-16 bg-gray-800 fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 overflow-x-hidden ${
-          isOpen ? "translate-x-0 w-64" : "-translate-x-full** "
-        }`)}
+        className={cn(
+          `flex flex-col transform top-0 left-0 w-16 bg-gray-800 fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 overflow-x-hidden ${
+            // isOpen ? "translate-x-0 w-64" : "-translate-x-full** "
+            isOpen && "w-64"
+          }`,
+        )}
       >
         <div className="flex items-center ml-2 mt-5 gap-3">
           <button
@@ -56,47 +58,60 @@ export default function SideBar() {
             </Link>
           )}
         </div>
-        <SideBarContext.Provider value={{ isOpen, setIsOpen }} >
+        <SideBarContext.Provider value={{ isOpen, setIsOpen }}>
           <div className="flex flex-col w-full mt-5 flex-grow">
             <LinkComponent
               href="/chat"
               text="語言模型競技場 ⚔️"
-              icon={<MessageCircleMore size={24} />}
+              icon={<MessageCircleMore size={28} />}
             />
             <LinkComponent
               href="/rating"
               text="對模型評分 👍👎"
-              icon={<ThumbsUp size={24} />}
+              icon={<ThumbsUp size={28} />}
             />
             <LinkComponent
               href="/dataset"
               text="對話資料集 📚"
-              icon={<Database size={24} />}
+              icon={<Database size={28} />}
             />
           </div>
           {session.status === "authenticated" ? (
-            <LinkComponent
-              href="/profile"
-              text={username}
-              icon={
-                avatarUrl ? (
+            <div className="flex">
+              <Link
+                href="/profile"
+                className="p-4 hover:bg-gray-700 text-lg flex gap-3 truncate flex-grow"
+                onClick={() => setIsOpen(false)}
+              >
+                <div
+                  className="transition-none"
+                  title={!isOpen ? "個人頁面" : ""}
+                >
                   <Image
-                    src={avatarUrl}
-                    width={24}
-                    height={24}
+                    src={avatarUrl || ""}
+                    width={28}
+                    height={28}
                     className="rounded-full"
-                    alt="pic"
+                    alt="profile-pic"
                   />
-                ) : (
-                  <User size={24} />
-                )
-              }
-            />
+                </div>
+                {isOpen && username}
+              </Link>
+              {isOpen && (
+                <button
+                  className="hover:bg-gray-700 px-3"
+                  title="登出"
+                  onClick={() => signOut()}
+                >
+                  <LogOut size={28} />
+                </button>
+              )}
+            </div>
           ) : (
             <LinkComponent
               href="/login"
               text="登入 / 註冊"
-              icon={<LogIn size={24} />}
+              icon={<LogIn size={28} />}
             />
           )}
         </SideBarContext.Provider>
@@ -121,18 +136,20 @@ function LinkComponent({
   icon?: React.ReactNode;
 }) {
   const context = useContext(SideBarContext);
-  if(!context) {
+  if (!context) {
     console.log("context is null");
     return <></>;
   }
-  const { isOpen, setIsOpen } = context;  
-  return (  
+  const { isOpen, setIsOpen } = context;
+  return (
     <Link
       href={href}
-      className="p-4 hover:bg-gray-700 text-lg flex gap-3 truncate"
+      className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate"
       onClick={() => setIsOpen(false)}
     >
-      {icon}
+      <div className="transition-none" title={!isOpen ? text : ""}>
+        {icon}
+      </div>
       {isOpen && text}
     </Link>
   );
