@@ -13,24 +13,26 @@ export default function LoginPage(props: Props) {
     const router = useRouter();
     useEffect(() => {
         getSession().then(session => {
-            if (session?.user?.verified==false) {
+            /*if (session?.user?.verified == false) {
                 router.push('?error=NotVerified');
             }
-            else if (session) {
+            else */if (session) {
                 router.push('/rating')
             }
         });
     }, []);
     return (
-        <div className="flex h-screen">
-            <div className="w-1/2 flex justify-center items-center bg-gray-100">
-                <img src="/map-and-location.png" alt="Food Image" className="max-w-xs" />
+        <div className="flex h-screen overflow-y-scroll">
+            <div className="w-1/2 flex justify-center items-center bg-gray-100 flyInFromTop">
+                <img src="/arena.png" alt="Arena Image" className="w-full h-full" />
             </div>
-            <div className="w-1/2 flex justify-center items-center">
+            <div className="w-1/2 flex justify-center items-center overflow-hidden flyInFromBottom">
                 <div className="w-full max-w-xs">
-                    <AuthForm error={props.searchParams?.error}/>
+                    <AuthForm error={props.searchParams?.error} />
                 </div>
             </div>
         </div>
+
+
     );
 }

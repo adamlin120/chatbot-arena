@@ -5,7 +5,6 @@ import { PrismaClient } from '@prisma/client'
 import { authSchema } from "@/validators/auth";
 import { generateVerificationToken } from "../token/tokens";
 import { sendVerificationEmail } from "../mail/mail";
-import { validate } from "uuid";
 
 export default CredentialsProvider({
   name: "credentials",
@@ -59,7 +58,6 @@ export default CredentialsProvider({
       const verificationToken = await generateVerificationToken(email);
       
       await sendVerificationEmail(verificationToken.email,verificationToken.token);
-
       return {
         email: email.toLowerCase(),
         username: username,
@@ -81,6 +79,7 @@ export default CredentialsProvider({
       await sendVerificationEmail(verificationToken.email,verificationToken.token);
     }
     db.$disconnect();
+    console.log(existedUser);
     return {
       email: existedUser.email,
       name: existedUser.username,

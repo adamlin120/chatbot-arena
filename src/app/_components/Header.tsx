@@ -18,6 +18,8 @@ export default function Header() {
         </Link>
         <div className="flex-grow">{/* any other things */}</div>
         <div className="text-2xl p-7">LeaderBoard</div>
+        {session?.user?.image && <img src={session.user.image} alt="Profile" style={{ width: '60px', height: '60px' }} />}
+        {session?.user?.name}
         {session ? (
           <button className="text-2xl p-7" onClick={handleLogout}>Logout</button>
         ) : null}

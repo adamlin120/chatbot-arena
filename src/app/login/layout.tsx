@@ -4,7 +4,7 @@ export default function LoginLayout({
     children: React.ReactNode
   }) {
     return (
-      <main>
+      <main className="overflow-y-scroll">
         <div>
           {children}
         </div> 

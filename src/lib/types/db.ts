@@ -1,10 +1,10 @@
 export type User = {
   id: string;
-  username: string;
+  name: string;
   email: string;
-  avatarUrl: string;
+  image: string;
   coins: number;
-  provider: "credentials";
+  provider: "credentials" | "jwt";
   bio: string;
   verified: boolean;
 };

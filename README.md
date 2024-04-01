@@ -2,15 +2,17 @@
 
 ## Getting Started
 
-First, go to [neon](https://neon.tech/) and get your own postgreSQL connection string.
+First, go to [mongodb](https://mongodb.com/) and get your own mongo connection string.
 
-- It may look like this: postgresql://chatbot-arena_owner:???????@ep-square-block-??????.ap-southeast-1.aws.neon.tech/chatbot-arena?sslmode=require'
+- It may look like this: mongodb+srv://...
 
-- Fill that string in POSTGRES_URL= field in .env file. (there is an .env.example which tells you how .env looks like)
+- Fill that string in DATABASE_URL= field in .env file. (there is an .env.example which tells you how .env looks like)
 
-Then go to [resend](https://resend.com/) and get an email API KEY (This is used for email verification)
+~~Then go to [resend](https://resend.com/) and get an email API KEY (This is used for email verification)~~
 
-- Fill the key in RESEND_API_KEY= field in .env file, too.
+~~- Fill the key in RESEND_API_KEY= field in .env file, too.~~
+
+- Fill in all other api keys
 
 Second, run the following command.
 ```bash

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import AuthInput from "./AuthInput";
+import { FaGoogle, FaGithub, FaTwitter } from "react-icons/fa";
+//import AuthInput from "./AuthInput";
 import 'react-toastify/dist/ReactToastify.css';
-import { toast } from "react-toastify";
+//import { toast } from "react-toastify";
 type Props = {
     error?: string;
 }
@@ -15,7 +16,7 @@ function AuthForm(props: Props) {
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
-
+    /*
     const isPasswordValid = password.length >= 8 && password.length <= 20 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password);
     const isPasswordConfirm = (password === confirmPassword);
     const isUsernameValid = username.length <= 20 && username.length > 0;
@@ -29,6 +30,17 @@ function AuthForm(props: Props) {
             password,
             callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating`,
         },{mode: isSignUp})
+    };*/
+    const handleGoogleSignIn = () => {
+        signIn("google", { callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating` });
+    };
+
+    const handleTwitterSignIn = () => {
+        signIn("twitter", { callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating` });
+    };
+
+    const handleGithubSignIn = () => {
+        signIn("github", { callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating` });
     };
 
     return (
@@ -38,7 +50,7 @@ function AuthForm(props: Props) {
             <div className="mb-4 text-2xl font-semibold text-center text-black">
                 {isSignUp ? "註冊" : "登入"}
             </div>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {/*<form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <AuthInput label="Email" type="email" value={email} setValue={setEmail} />
                 {isSignUp && (
                     <AuthInput label="使用者名稱" type="text" value={username} setValue={setUsername} />
@@ -110,10 +122,40 @@ function AuthForm(props: Props) {
                 )}
                  {props.error=="CredentialsSignin"&&!isSignUp&&<p className="bg-red-100 text-red-600 text-center p-2">帳密錯誤或已被註冊，請重試！</p>}
                  {props.error=="NotVerified"&&!isSignUp&&<p className="bg-green-100 text-green-600 text-center p-2">Email驗證信已寄出！</p>}
-            </form>
-            <div className="flex items-center justify-center mt-4">
-                {/* Additional content */}
+            </form>*/}
+            <div className="mt-6">
+                <button
+                    type="button"
+                    className="w-full flex items-center justify-center bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
+                    onClick={handleGoogleSignIn}
+                >
+                    <FaGoogle className="h-10 w-10" />
+                    &nbsp; 使用 Google 帳號登入
+                </button>
             </div>
+
+            <div className="mt-6">
+                <button
+                    type="button"
+                    className="w-full flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
+                    onClick={handleTwitterSignIn}
+                >
+                    <FaTwitter className="h-10 w-10" />
+                    &nbsp; 使用 Twitter 帳號登入
+                </button>
+            </div>
+
+            <div className="mt-6">
+                <button
+                    type="button"
+                    className="w-full flex items-center justify-center bg-gray-700 hover:bg-gray-800 text-white py-2 rounded-md"
+                    onClick={handleGithubSignIn}
+                >
+                    <FaGithub className="h-10 w-10" />
+                    &nbsp; 使用 Github 帳號登入
+                </button>
+            </div>
+
         </div>
     );
 }
