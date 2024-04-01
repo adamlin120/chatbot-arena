@@ -4,6 +4,7 @@ import "./globals.css";
 
 import Header from "./_components/Header";
 import { SessionProvider } from "next-auth/react";
+import SideBar from "./_components/SideBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +22,11 @@ export default function RootLayout({
     <html lang="en">
       <SessionProvider>
         <body className={inter.className}>
-          <Header />
-          <div className="h-screen pt-20 overflow-y-scroll">{children}</div>
+          {/* <Header /> */}
+          <div className="h-screen pt-20* overflow-y-scroll">
+            <SideBar />
+            {children}
+          </div>
         </body>
       </SessionProvider>
     </html>
