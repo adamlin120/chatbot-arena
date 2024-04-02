@@ -16,7 +16,10 @@ export default async function Home() {
         </div>
         <div className="w-1/2">
           <div className="self-start flex items-end gap-3 mt-32 md:text-6xl sm:text-5xl xs:text-4xl p-5">
-            Taiwan LLM Chatbot Arena <br/> 台灣語言模型競技場
+            Taiwan LLM Chatbot Arena
+          </div>
+          <div className="self-start flex items-end gap-3 md:text-6xl sm:text-5xl xs:text-4xl px-5 pb-5">
+            台灣語言模型競技場
           </div>
           <div className="self-start text-lg p-5 pt-1 w-4/6">
             [chatbot arena 說明文字]
