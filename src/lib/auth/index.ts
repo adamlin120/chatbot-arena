@@ -55,10 +55,13 @@ export const {
             provider: provider
           },
         });
-        if (existedUser) return token;
+        if (existedUser){
+          const _id = existedUser.id;
+          return {...token,_id};
+        }
         //if (provider !== "jwt") return token;
         // Sign up
-          await db.user.create({
+          const newUser = await db.user.create({
             data: {
               email: email.toLowerCase(),
               username: name,
@@ -70,6 +73,8 @@ export const {
               verified: true,
             },
           });
+          const _id = newUser.id
+          return {...token, _id}
         }
         else if (provider=='twitter'){
           const { name, picture, sub} = token;
@@ -80,9 +85,12 @@ export const {
               provider: provider
             },
           });
-          if (existedUser) return token;
+          if (existedUser){
+            const _id = existedUser.id;
+            return {...token,_id};
+          }
           // Sign up
-          await db.user.create({
+          const newUser = await db.user.create({
             data: {
               email: sub, //temporately use sub in email field since twitter don't support email.
               username: name,
@@ -94,6 +102,8 @@ export const {
               verified: true,
             },
           });
+          const _id = newUser.id
+          return {...token, _id}
         }
         else if (provider=='github'){
           const { name, picture, email} = token;
@@ -104,9 +114,13 @@ export const {
               provider: provider
             },
           });
-          if (existedUser) return token;
+          if (existedUser){
+            const _id = existedUser.id;
+            //console.log(token)
+            return {...token,_id};
+          }
           // Sign up
-          await db.user.create({
+          const newUser = await db.user.create({
             data: {
               email: email.toLowerCase(),
               username: name,
@@ -118,7 +132,10 @@ export const {
               verified: true,
             },
           });
+          const _id = newUser.id
+          return {...token, _id}
         }
+        
         
         return token;
       } catch (error) {

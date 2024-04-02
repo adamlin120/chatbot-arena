@@ -4,7 +4,7 @@ export type User = {
   email: string;
   image: string;
   coins: number;
-  provider: "credentials" | "jwt";
+  provider: "credentials" | "google" | "twitter" | "github";
   bio: string;
   verified: boolean;
 };

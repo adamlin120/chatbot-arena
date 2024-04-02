@@ -12,3 +12,4 @@ declare module "next-auth" {
     user?: User;
   }
 }
+
