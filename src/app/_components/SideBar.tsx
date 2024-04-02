@@ -7,7 +7,7 @@ import {
   ThumbsUp,
   LogIn,
   LogOut,
-  Trophy
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
@@ -101,9 +101,7 @@ export default function SideBar() {
                     alt="profile-pic"
                   />
                 </div>
-                {isOpen && <div className="truncate">
-                  {username}
-                </div>}
+                {isOpen && <div className="truncate">{username}</div>}
               </Link>
               {isOpen && (
                 <button

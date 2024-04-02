@@ -17,14 +17,11 @@ export async function POST(req: NextRequest) {
         username: true,
         avatarUrl: true,
         coins: true,
-        bio: true
+        bio: true,
       },
     });
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found!" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "User not found!" }, { status: 404 });
     }
 
     return NextResponse.json({ user }, { status: 200 });

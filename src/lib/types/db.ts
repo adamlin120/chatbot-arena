@@ -13,7 +13,7 @@ export type Message = {
   role: "user" | "system" | "assistant";
   content: string;
 };
-  
+
 export type ModelResponse = {
   prompt: string;
   completion: string;

@@ -7,7 +7,7 @@ import {
   Stars,
   Float,
   Sparkles,
-  useMatcapTexture
+  useMatcapTexture,
 } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Physics } from "@react-three/cannon";
