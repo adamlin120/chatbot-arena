@@ -1,10 +1,10 @@
 export type User = {
   id: string;
-  username: string;
+  name: string;
   email: string;
-  avatarUrl: string;
+  image: string;
   coins: number;
-  provider: "credentials";
+  provider: "credentials" | "google" | "twitter" | "github";
   bio: string;
   verified: boolean;
 };
@@ -13,7 +13,7 @@ export type Message = {
   role: "user" | "system" | "assistant";
   content: string;
 };
-
+  
 export type ModelResponse = {
   prompt: string;
   completion: string;

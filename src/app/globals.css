@@ -70,3 +70,34 @@ body {
     text-wrap: balance;
   }
 }
+
+@keyframes flyInFromTop {
+  0% {
+    transform: translateY(-25vh); /* Start above the screen */
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes flyInFromBottom {
+  0% {
+    transform: translateY(25vh); /* Start below the screen */
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.flyInFromTop {
+  animation: flyInFromTop 0.5s ease-out forwards;
+}
+
+.flyInFromBottom {
+  animation: flyInFromBottom 0.5s ease-out forwards;
+}
+
