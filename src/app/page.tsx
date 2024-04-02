@@ -11,7 +11,7 @@ export default async function Home() {
   return (
     <>
       <div className="flex p-5 gap-0 text-xl z-10 animate-slide-up">  
-        <div className="w-1/2 h-4">
+        <div className="w-1/2 h-4 hidden lg:block">
           <ThreeDText />
         </div>
         <div className="w-1/2">

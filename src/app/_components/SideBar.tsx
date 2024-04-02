@@ -7,6 +7,7 @@ import {
   ThumbsUp,
   LogIn,
   LogOut,
+  Trophy
 } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
@@ -20,8 +21,8 @@ const SideBarContext = createContext<{
 
 export default function SideBar() {
   const session = useSession();
-  const username = session.data?.user?.username || "不知名使用者"; // TODO: 我拿不到 username
-  const avatarUrl = session.data?.user?.avatarUrl;
+  const username = session.data?.user?.name; // TODO: 我拿不到 username
+  const avatarUrl = session.data?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -75,27 +76,34 @@ export default function SideBar() {
               text="對話資料集 📚"
               icon={<Database size={28} />}
             />
+            <LinkComponent
+              href="/leaderboard"
+              text="模型排行榜 🏆"
+              icon={<Trophy size={28} />}
+            />
           </div>
           {session.status === "authenticated" ? (
             <div className="flex">
               <Link
                 href="/profile"
-                className="p-4 hover:bg-gray-700 text-lg flex gap-3 truncate flex-grow"
+                className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate flex-grow"
                 onClick={() => setIsOpen(false)}
               >
                 <div
-                  className="transition-none"
+                  className={`transition-none min-w-fit`}
                   title={!isOpen ? "個人頁面" : ""}
                 >
                   <Image
                     src={avatarUrl || ""}
-                    width={28}
-                    height={28}
+                    width={24}
+                    height={24}
                     className="rounded-full"
                     alt="profile-pic"
                   />
                 </div>
-                {isOpen && username}
+                {isOpen && <div className="truncate">
+                  {username}
+                </div>}
               </Link>
               {isOpen && (
                 <button
