@@ -4,7 +4,7 @@ export type User = {
   email: string;
   image: string;
   coins: number;
-  provider: "credentials" | "google" | "twitter" | "github";
+  provider: "credentials" | "google" | "github";
   bio: string;
   verified: boolean;
 };

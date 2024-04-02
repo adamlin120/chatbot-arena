@@ -38,10 +38,10 @@ export default function Header() {
         </Link>
         <div className="flex-grow">{/* any other things */}</div>
         <div className="text-2xl p-7">LeaderBoard</div>
-        {session?.user?.image && <Link href={`/profile/${userId}`}>
+        {session?.user?.image && userId && <Link href={`/profile/${userId}`}>
               <img src={session.user.image} alt="Profile" style={{ width: '60px', height: '60px' }} />
           </Link>}
-        {session?.user?.name && <Link href={`/profile/${userId}`}><p>{session.user.name}</p></Link>}
+        {session?.user?.name && userId && <Link href={`/profile/${userId}`}><p>{session.user.name}</p></Link>}
         {session ? (
           <button className="text-2xl p-7" onClick={handleLogout}>
             Logout
