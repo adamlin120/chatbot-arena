@@ -13,9 +13,9 @@ export default function Header() {
       if (session && session.user && session.user.email) {
         const email = session.user.email;
         const response = await fetch(`/api/profile/redirect`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ email }),
         });
@@ -38,10 +38,20 @@ export default function Header() {
         </Link>
         <div className="flex-grow">{/* any other things */}</div>
         <div className="text-2xl p-7">LeaderBoard</div>
-        {session?.user?.image && userId && <Link href={`/profile/${userId}`}>
-              <img src={session.user.image} alt="Profile" style={{ width: '60px', height: '60px' }} />
-          </Link>}
-        {session?.user?.name && userId && <Link href={`/profile/${userId}`}><p>{session.user.name}</p></Link>}
+        {session?.user?.image && userId && (
+          <Link href={`/profile/${userId}`}>
+            <img
+              src={session.user.image}
+              alt="Profile"
+              style={{ width: "60px", height: "60px" }}
+            />
+          </Link>
+        )}
+        {session?.user?.name && userId && (
+          <Link href={`/profile/${userId}`}>
+            <p>{session.user.name}</p>
+          </Link>
+        )}
         {session ? (
           <button className="text-2xl p-7" onClick={handleLogout}>
             Logout

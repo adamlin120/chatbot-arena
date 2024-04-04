@@ -15,9 +15,8 @@ export const {
     }),
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
-
   ],
   callbacks: {
     async session({ session }) {
@@ -41,21 +40,21 @@ export const {
       //if (!name || !email || !provider) return token;
       try {
         // Check if the email has been registered
-        if (provider=='google'){
+        if (provider == "google") {
           const { name, picture, email } = token;
           if (!email || !name) return token;
-        const existedUser = await db.user.findFirst({
-          where: {
-            email: email.toLowerCase(),
-            provider: provider
-          },
-        });
-        if (existedUser){
-          const _id = existedUser.id;
-          return {...token,_id};
-        }
-        //if (provider !== "jwt") return token;
-        // Sign up
+          const existedUser = await db.user.findFirst({
+            where: {
+              email: email.toLowerCase(),
+              provider: provider,
+            },
+          });
+          if (existedUser) {
+            const _id = existedUser.id;
+            return { ...token, _id };
+          }
+          //if (provider !== "jwt") return token;
+          // Sign up
           const newUser = await db.user.create({
             data: {
               email: email.toLowerCase(),
@@ -68,22 +67,21 @@ export const {
               verified: true,
             },
           });
-          const _id = newUser.id
-          return {...token, _id}
-        }
-        else if (provider=='github'){
-          const { name, picture, email} = token;
+          const _id = newUser.id;
+          return { ...token, _id };
+        } else if (provider == "github") {
+          const { name, picture, email } = token;
           if (!name || !picture || !email) return token;
           const existedUser = await db.user.findFirst({
             where: {
               email: email,
-              provider: provider
+              provider: provider,
             },
           });
-          if (existedUser){
+          if (existedUser) {
             const _id = existedUser.id;
             //console.log(token)
-            return {...token,_id};
+            return { ...token, _id };
           }
           // Sign up
           const newUser = await db.user.create({
@@ -98,11 +96,10 @@ export const {
               verified: true,
             },
           });
-          const _id = newUser.id
-          return {...token, _id}
+          const _id = newUser.id;
+          return { ...token, _id };
         }
-        
-        
+
         return token;
       } catch (error) {
         console.error("Error in jwt function:", error);
@@ -110,10 +107,9 @@ export const {
       } finally {
         await db.$disconnect(); // Disconnect from the database after operation
       }
-    }
-    
+    },
   },
   pages: {
-    signIn: "../../../login"
-  }
+    signIn: "../../../login",
+  },
 });
