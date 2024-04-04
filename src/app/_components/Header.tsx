@@ -39,7 +39,7 @@ export default function Header() {
         <div className="flex-grow">{/* any other things */}</div>
         <div className="text-2xl p-7">LeaderBoard</div>
         {session?.user?.image && userId && (
-          <Link href={`/profile/${userId}`}>
+<Link href={`/profile/${userId}`}>
             <img
               src={session.user.image}
               alt="Profile"

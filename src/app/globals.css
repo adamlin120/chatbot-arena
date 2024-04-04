@@ -26,15 +26,15 @@
 
 :root {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 50, 50, 50;
-  --background-end-rgb: 50, 50, 50;
+  --background-start-rgb: 31, 41, 55; /*50, 50, 50;*/
+  --background-end-rgb: 31, 41, 55; /*50, 50, 50;*/
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 50, 50, 50;
-    --background-end-rgb: 50, 50, 50;
+    --background-start-rgb: 31, 41, 55; /*50, 50, 50;*/
+    --background-end-rgb: 31, 41, 55; /*50, 50, 50;*/
   }
 }
 
