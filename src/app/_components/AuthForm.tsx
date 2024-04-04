@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { FaGoogle, FaGithub, FaTwitter } from "react-icons/fa";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 //import AuthInput from "./AuthInput";
 import "react-toastify/dist/ReactToastify.css";
 //import { toast } from "react-toastify";
@@ -136,17 +136,6 @@ function AuthForm(props: Props) {
         >
           <FaGoogle className="h-10 w-10" />
           &nbsp; 使用 Google 帳號登入
-        </button>
-      </div>
-
-      <div className="mt-6">
-        <button
-          type="button"
-          className="w-full flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
-          onClick={handleTwitterSignIn}
-        >
-          <FaTwitter className="h-10 w-10" />
-          &nbsp; 使用 Twitter 帳號登入
         </button>
       </div>
 

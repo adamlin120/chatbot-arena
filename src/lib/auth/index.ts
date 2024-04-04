@@ -3,7 +3,6 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaClient } from "@prisma/client";
-import TwitterProvider from "next-auth/providers/twitter";
 
 export const {
   handlers: { GET, POST },
@@ -13,10 +12,6 @@ export const {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET,
     }),
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
@@ -63,34 +58,6 @@ export const {
           const newUser = await db.user.create({
             data: {
               email: email.toLowerCase(),
-              username: name,
-              hashedPassword: "jwt",
-              provider: provider,
-              coins: 0,
-              avatarUrl: picture,
-              bio: "",
-              verified: true,
-            },
-          });
-          const _id = newUser.id;
-          return { ...token, _id };
-        } else if (provider == "twitter") {
-          const { name, picture, sub } = token;
-          if (!name || !picture || !sub) return token;
-          const existedUser = await db.user.findFirst({
-            where: {
-              email: sub,
-              provider: provider,
-            },
-          });
-          if (existedUser) {
-            const _id = existedUser.id;
-            return { ...token, _id };
-          }
-          // Sign up
-          const newUser = await db.user.create({
-            data: {
-              email: sub, //temporately use sub in email field since twitter don't support email.
               username: name,
               hashedPassword: "jwt",
               provider: provider,
