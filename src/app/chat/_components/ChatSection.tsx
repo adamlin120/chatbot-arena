@@ -155,6 +155,43 @@ export default function ChatSection() {
     setPrompt("");
   };
 
+  const sendRating = async (conversationRecordId: string, rating: number) => {
+    if (!conversationRecordId) {
+      toast.error("Conversation Record ID is empty", {
+        type: "error",
+        position: "top-center",
+      });
+      console.error("Conversation Record ID is empty");
+      return;
+    }
+    const response = await fetch("/api/chat/rating", {
+      method: "POST",
+      body: JSON.stringify({
+        conversationRecordId: conversationRecordId,
+        rating: rating,
+      }),
+    });
+
+    if (response.status === 200) {
+      toast.success("Rating submitted", {
+        type: "success",
+        position: "top-center",
+      });
+      var buttons = document.getElementsByClassName("ratingButton")[0].getElementsByTagName("button");
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+      }
+      return;
+    } else if (response.status !== 200) {
+      toast.error("Error in response", {
+        type: "error",
+        position: "top-center",
+      });
+      console.error("Error in response", response);
+      return;
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <ToastContainer
@@ -208,13 +245,41 @@ export default function ChatSection() {
               }
             }}
           ></textarea>
-        </div>
-        <div>
+        </div>  
+        <div>       
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={sendMessage}
           >
-            送出
+            Send Message
+          </button>
+        </div>
+      </div>
+      <div className="flex justify-center items-center border border-gray-300 rounded-lg p-4">
+        <div className="flex ratingButton">
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[0], 1)}
+          >
+            A is better
+          </button>
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[1], 1)}
+          >
+            B is better
+          </button>
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[0], 2)}
+          >
+            Both are good
+          </button>
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[0], 0)}
+          >
+            Both are bad
           </button>
         </div>
       </div>
