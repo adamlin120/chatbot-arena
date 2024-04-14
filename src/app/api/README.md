@@ -33,7 +33,7 @@ type ConversationRound {
 
 Conversation is the main entity, which contains a list of conversation records in a session. For Chatbot Arena, there are two conversation records in a session since there are two conversations going on at the same time. Each conversation record contains a list of conversation rounds, which are the conversation history of the user and the chatbot. Each conversation round contains the prompt, completion, model name, and rating.
 
-For the rating part, the rating is an integer. 1 means the completion is better than the other completion, 0 means equal, -1 means the completion is worse than the other completion.
+For the rating part, the rating is an integer. 1 means the completion is better than the other completion, 0 means equally good, -1 means the completion is worse than the other completion, -2 means equally bad. 
 
 ## User API
 

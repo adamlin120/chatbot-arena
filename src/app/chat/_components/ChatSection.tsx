@@ -3,11 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import MessageContainer from "./MessageContainer";
 import type { Message } from "@/lib/types/db";
 import { toast, ToastContainer } from "react-toastify";
-import Loading from "@/app/_components/Loading";
+import { set } from "zod";
 
 const MAX_TOKENS = 1024;
 
 export default function ChatSection() {
+
+  const setRatingButtonDisabled = (disabled: boolean) => {
+    var buttons = document.getElementsByClassName("ratingButton")[0].getElementsByTagName("button");
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].disabled = disabled;
+    }
+  }
+
   const [messageA, setMessageA] = useState<Message[]>([
     {
       role: "user",
@@ -121,6 +129,7 @@ export default function ChatSection() {
     const decoder = new TextDecoder();
     let count = 0;
     let buffer = "";
+    setRatingButtonDisabled(true);
     while (count < MAX_TOKENS) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -147,6 +156,7 @@ export default function ChatSection() {
       }
       count++;
     }
+    setRatingButtonDisabled(false);
   };
 
   const sendMessage = async () => {
@@ -173,20 +183,13 @@ export default function ChatSection() {
     });
 
     if (response.status === 200) {
-      toast.success("Rating submitted", {
-        type: "success",
-        position: "top-center",
-      });
-      var buttons = document.getElementsByClassName("ratingButton")[0].getElementsByTagName("button");
-      for (var i = 0; i < buttons.length; i++) {
-        buttons[i].disabled = true;
-      }
+      // Use a pop up to show the message that the rating has been submitted, do not use toast
+      alert("Rating has been submitted");
+      setRatingButtonDisabled(true);
       return;
     } else if (response.status !== 200) {
-      toast.error("Error in response", {
-        type: "error",
-        position: "top-center",
-      });
+      alert("There was something wrong with the response. Please try again later.");
+      setRatingButtonDisabled(true);
       console.error("Error in response", response);
       return;
     }
