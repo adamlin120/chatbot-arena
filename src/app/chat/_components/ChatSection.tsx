@@ -174,6 +174,7 @@ export default function ChatSection() {
         <div className="flex-1 border-r p-5 overflow-y-scroll">
           <h3 className="mb-5">🤖 模型 A</h3>
           {messageA.map((message, index) => (
+            index >= 2 &&
             <MessageContainer
               key={index}
               message={message.content}
@@ -185,6 +186,7 @@ export default function ChatSection() {
         <div className="flex-1 p-5 overflow-y-scroll">
           <h4 className="mb-5">🤖 模型 B</h4>
           {messageB.map((message, index) => (
+            index >= 2 &&
             <MessageContainer
               key={index}
               message={message.content}

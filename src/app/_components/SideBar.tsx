@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   AlignJustify,
   Database,
@@ -20,11 +20,29 @@ const SideBarContext = createContext<{
 } | null>(null);
 
 export default function SideBar() {
-  const session = useSession();
-  const username = session.data?.user?.name; // TODO: 我拿不到 username
-  const avatarUrl = session.data?.user?.image;
+  const [userId, setUserId] = useState(null);
+  const { data: session } = useSession();
+  const username = session?.user?.name;
+  const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  useEffect(() => {
+    const fetchUserId = async () => {
+      if (session && session.user && session.user.email) {
+        const email = session.user.email;
+        const response = await fetch(`/api/profile/redirect`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+        const data = await response.json();
+        setUserId(data.user.id);
+      }
+    };
 
+    fetchUserId();
+  }, [session]);
   return (
     <div className="flex mt-5">
       <Link
@@ -82,10 +100,10 @@ export default function SideBar() {
               icon={<Trophy size={28} />}
             />
           </div>
-          {session.status === "authenticated" ? (
+          {useSession().status === "authenticated" ? (
             <div className="flex">
-              <Link
-                href="/profile"
+              {session?.user?.image && userId && (<Link
+                href={`/profile/${userId}`}
                 className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate flex-grow"
                 onClick={() => setIsOpen(false)}
               >
@@ -102,7 +120,7 @@ export default function SideBar() {
                   />
                 </div>
                 {isOpen && <div className="truncate">{username}</div>}
-              </Link>
+              </Link>)}
               {isOpen && (
                 <button
                   className="hover:bg-gray-700 px-3"
