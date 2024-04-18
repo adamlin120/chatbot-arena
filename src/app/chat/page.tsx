@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import ChatSection from "./_components/ChatSection";
 import { redirect } from "next/navigation";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default async function ChatPage() {
   const session = await auth();
@@ -8,7 +10,7 @@ export default async function ChatPage() {
     redirect("/login");
   }
   return (
-    <main className="py-6 px-12">
+    <main className="py-6 px-12 max-h-[105dvh]">
       <h1 className="mb-5">
         ⚔️ 繁中 LLM 聊天機器人競技場⚔️ : 野生的大模型測試
       </h1>
@@ -23,6 +25,18 @@ export default async function ChatPage() {
           <li>如果在對話過程中透露了模型身份，則不計入投票。</li>
         </ul>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <ChatSection />
     </main>
   );

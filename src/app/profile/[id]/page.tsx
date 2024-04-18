@@ -56,7 +56,7 @@ const ProfilePage = () => {
   }, [session]);
 
   if (!session || !profile.username) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   const handleEditBio = () => {
@@ -91,9 +91,7 @@ const ProfilePage = () => {
   };
   return (
     <div className="bg-[rgb(31,41,55,0.3)] rounded-lg p-6">
-      <h1 className="text-3xl font-bold mb-6 text-white">
-        個人檔案/Profile
-      </h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">個人檔案/Profile</h1>
       <div className="max-w-md mx-auto">
         <div className="flex items-center mb-6">
           <h2 className="text-xl font-semibold text-white mr-4">

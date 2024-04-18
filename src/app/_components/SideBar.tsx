@@ -50,7 +50,7 @@ export default function SideBar() {
         className="text-2xl ml-[4rem] mt-1 font-semibold text-nowrap"
         onClick={() => setIsOpen(false)}
       >
-        Taiwan LLM
+        LLM Arena
       </Link>
       <aside
         className={cn(
@@ -73,7 +73,7 @@ export default function SideBar() {
               className="text-2xl font-semibold text-nowrap"
               onClick={() => setIsOpen(false)}
             >
-              Taiwan LLM
+              LLM Arena
             </Link>
           )}
         </div>
@@ -102,25 +102,27 @@ export default function SideBar() {
           </div>
           {useSession().status === "authenticated" ? (
             <div className="flex">
-              {session?.user?.image && userId && (<Link
-                href={`/profile/${userId}`}
-                className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate flex-grow"
-                onClick={() => setIsOpen(false)}
-              >
-                <div
-                  className={`transition-none min-w-fit`}
-                  title={!isOpen ? "個人頁面" : ""}
+              {session?.user?.image && userId && (
+                <Link
+                  href={`/profile/${userId}`}
+                  className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate flex-grow"
+                  onClick={() => setIsOpen(false)}
                 >
-                  <Image
-                    src={avatarUrl || ""}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                    alt="profile-pic"
-                  />
-                </div>
-                {isOpen && <div className="truncate">{username}</div>}
-              </Link>)}
+                  <div
+                    className={`transition-none min-w-fit`}
+                    title={!isOpen ? "個人頁面" : ""}
+                  >
+                    <Image
+                      src={avatarUrl || ""}
+                      width={24}
+                      height={24}
+                      className="rounded-full transition-none"
+                      alt="profile-pic"
+                    />
+                  </div>
+                  {isOpen && <div className="truncate">{username}</div>}
+                </Link>
+              )}
               {isOpen && (
                 <button
                   className="hover:bg-gray-700 px-3"

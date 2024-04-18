@@ -25,7 +25,7 @@ export default async function Home() {
             [chatbot arena 說明文字]
           </div>
           <Link href="/login">
-            <button className="rounded-3xl bg-gray-500 text-white text-xl hover:bg-gray-600 active:bg-gray-500 w-fit ml-4 px-7 py-3">
+            <button className="rounded-3xl bg-gray-500 text-white text-xl hover:bg-gray-600 hover:scale-105 active:scale-100 active:opacity-75 transform transition duration-500 w-fit ml-4 px-7 py-3">
               註冊 / 登入
             </button>
           </Link>
