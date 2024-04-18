@@ -3,11 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import MessageContainer from "./MessageContainer";
 import type { Message } from "@/lib/types/db";
 import { toast, ToastContainer } from "react-toastify";
-import Loading from "@/app/_components/Loading";
+import { set } from "zod";
 
 const MAX_TOKENS = 1024;
 
 export default function ChatSection() {
+
+  const setRatingButtonDisabled = (disabled: boolean) => {
+    var buttons = document.getElementsByClassName("ratingButton")[0].getElementsByTagName("button");
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].disabled = disabled;
+    }
+  }
+
   const [messageA, setMessageA] = useState<Message[]>([
     {
       role: "user",
@@ -121,6 +129,7 @@ export default function ChatSection() {
     const decoder = new TextDecoder();
     let count = 0;
     let buffer = "";
+    setRatingButtonDisabled(true);
     while (count < MAX_TOKENS) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -147,6 +156,7 @@ export default function ChatSection() {
       }
       count++;
     }
+    setRatingButtonDisabled(false);
   };
 
   const sendMessage = async () => {
@@ -154,6 +164,36 @@ export default function ChatSection() {
     processMessages(prompt, messageB, conversationRecordIds[1], setMessageB);
     setPrompt("");
   };
+
+  const sendRating = async (conversationRecordId: string, rating: number) => {
+    if (!conversationRecordId) {
+      toast.error("Conversation Record ID is empty", {
+        type: "error",
+        position: "top-center",
+      });
+      console.error("Conversation Record ID is empty");
+      return;
+    }
+    const response = await fetch("/api/chat/rating", {
+      method: "POST",
+      body: JSON.stringify({
+        conversationRecordId: conversationRecordId,
+        rating: rating,
+      }),
+    });
+
+    if (response.status === 200) {
+      // Use a pop up to show the message that the rating has been submitted, do not use toast
+      alert("Rating has been submitted");
+      setRatingButtonDisabled(true);
+      return;
+    } else if (response.status !== 200) {
+      alert("There was something wrong with the response. Please try again later.");
+      setRatingButtonDisabled(true);
+      console.error("Error in response", response);
+      return;
+    }
+  }
 
   return (
     <div className="flex flex-col">
@@ -210,13 +250,41 @@ export default function ChatSection() {
               }
             }}
           ></textarea>
-        </div>
-        <div>
+        </div>  
+        <div>       
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={sendMessage}
           >
-            送出
+            Send Message
+          </button>
+        </div>
+      </div>
+      <div className="flex justify-center items-center border border-gray-300 rounded-lg p-4">
+        <div className="flex ratingButton">
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[0], 1)}
+          >
+            A is better
+          </button>
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[1], 1)}
+          >
+            B is better
+          </button>
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[0], 2)}
+          >
+            Both are good
+          </button>
+          <button
+            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            onClick={() => sendRating(conversationRecordIds[0], 0)}
+          >
+            Both are bad
           </button>
         </div>
       </div>
