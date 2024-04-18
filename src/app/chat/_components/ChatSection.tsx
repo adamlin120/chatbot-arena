@@ -114,13 +114,17 @@ export default function ChatSection() {
         role: "user",
         content: currPrompt,
       },
+      {
+        role: "assistant",
+        content: "思考中...",
+      },
     ];
     setMessages(newMessages);
 
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify({
-        messages: newMessages,
+        messages: newMessages.slice(0, newMessages.length - 1),
         conversationRecordId: conversationRecordId,
       }),
     });
@@ -145,22 +149,15 @@ export default function ChatSection() {
       // Check last the role of the last message
       // If it is user, then we have to create a new message
       // If it is assistant, then we have to append to the last message
-      if (count === 0) {
-        setMessages((messages) => [
-          ...messages,
-          { role: "assistant", content: buffer },
-        ]);
-      } else {
-        setMessages((messages) => {
-          return [
-            ...messages.slice(0, messages.length - 1),
-            {
-              ...messages[messages.length - 1],
-              content: buffer,
-            },
-          ];
-        });
-      }
+      setMessages((messages) => {
+        return [
+          ...messages.slice(0, messages.length - 1),
+          {
+            ...messages[messages.length - 1],
+            content: buffer,
+          },
+        ];
+      });
       count++;
     }
     setRatingButtonDisabled(false);

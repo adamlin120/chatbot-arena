@@ -44,6 +44,22 @@ export default function MessageContainer({
     console.log("New message: ", newMessage); // You can remove this line after implementing the save function
   };
 
+  // for the loading dots
+  const [dotCount, setDotCount] = useState<number>(1);
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (origMessage === "思考中...") {
+      intervalId = setInterval(() => {
+        setDotCount((prevCount) => (prevCount % 3) + 1);
+      }, 500); // Update every 500ms
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [origMessage]);
+
   return (
     <div
       className={`flex gap-2 group ${isUser ? "justify-end" : "justify-start"} items-end mb-2`}
@@ -72,7 +88,10 @@ export default function MessageContainer({
           }
         }}
       >
-        {origMessage}
+        {origMessage === "思考中..." && !isUser
+          ? `思考中${'.'.repeat(dotCount)}`
+          : origMessage
+        }
       </div>
       {!isUser && !isEditing && (
         <button
@@ -84,6 +103,7 @@ export default function MessageContainer({
             setIsEditing(!isEditing);
           }}
           title="點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
+          disabled={isEditing || isFocused}
         >
           <Pencil color="white" size={20} />
         </button>
