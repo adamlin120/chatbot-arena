@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import MessageContainer from "./MessageContainer";
+import Button from "@/app/_components/Button";
 import type { Message } from "@/lib/types/db";
+import { SendHorizonal } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -218,19 +220,19 @@ export default function ChatSection() {
 
   const ratingButtonAttributes = [
     {
-      text: "A is better",
+      text: "👈  A表現較佳",
       onClick: () => sendRating(conversationRecordIds[0], 1)
     }, 
     {
-      text: "B is better",
+      text: "👉  B表現較佳",
       onClick: () => sendRating(conversationRecordIds[1], 1)
     },
     {
-      text: "Both are good",
+      text: "🤝  平手",
       onClick: () => sendRating(conversationRecordIds[0], 2)
     },
     {
-      text: "Both are bad",
+      text: "👎  兩者皆差",
       onClick: () => sendRating(conversationRecordIds[0], 0)
     }
   ]
@@ -290,36 +292,18 @@ export default function ChatSection() {
             }}
           ></textarea>
         </div>  
-        <div>       
-          <button
-            className={`bg-blue-500 transform transition duration-500 hover:bg-blue-600 text-white py-4 rounded-xl ml-2 text-nowrap px-10 ${messageAWaiting || messageBWaiting ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={sendMessage}
-            disabled={messageAWaiting || messageBWaiting}
-          >
-            送出
-          </button>
+        <div>    
+          <Button text={<><SendHorizonal size={20} />送出</>} onClick={sendMessage} disableCond={messageAWaiting || messageBWaiting} />   
         </div>
       </div>
       <div className="flex w-full">
         <div className="flex w-full gap-2 justify-start items-center border border-gray-300 rounded-b-lg p-4">
           {ratingButtonAttributes.map((buttonAttribute, index) => (
-            <button
-              key={index}
-              className={`bg-blue-500 transform transition duration-500 hover:bg-blue-600 text-white py-4 rounded-xl ml-2 text-nowrap px-10 ${ratingButtonDisabled || messageAWaiting || messageBWaiting ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={buttonAttribute.onClick}
-              disabled={ratingButtonDisabled}
-            >
-              {buttonAttribute.text}
-            </button>
+            <Button key={index} text={buttonAttribute.text} onClick={buttonAttribute.onClick} disableCond={ratingButtonDisabled || messageAWaiting || messageBWaiting} />
           ))}
         </div>
         <div className="w-fit gap-2 justify-center items-center border border-gray-300 rounded-b-lg p-4">
-          <button 
-            className={`bg-blue-500 transform transition duration-500 hover:bg-blue-600 text-white py-4 rounded-xl ml-2 text-nowrap px-10 ${ratingButtonDisabled || messageAWaiting || messageBWaiting ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={restartChat}
-          >
-            重新開始對話
-          </button>
+          <Button text="🔁 重新開始對話" onClick={restartChat} disableCond={ratingButtonDisabled || messageAWaiting || messageBWaiting} />
         </div>
       </div>
       <ToastContainer
@@ -337,3 +321,4 @@ export default function ChatSection() {
     </div>
   );
 }
+

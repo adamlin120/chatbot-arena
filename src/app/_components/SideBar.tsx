@@ -115,7 +115,7 @@ export default function SideBar() {
                     src={avatarUrl || ""}
                     width={24}
                     height={24}
-                    className="rounded-full"
+                    className="rounded-full transition-none"
                     alt="profile-pic"
                   />
                 </div>
