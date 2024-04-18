@@ -74,14 +74,15 @@ export default function ChatSection() {
   }, [prompt]);
 
   // Scroll to the bottom of the chat
+  // Use block: "nearest" to get a better UX. (https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
   useEffect(() => {
     if (messageAEndRef.current && messageA.length > 2) {
-      messageAEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messageAEndRef.current.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
     }
   }, [messageA]);
   useEffect(() => {
     if (messageBEndRef.current && messageB.length > 2) {
-      messageBEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messageBEndRef.current.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
     }
   }, [messageB]);
 
