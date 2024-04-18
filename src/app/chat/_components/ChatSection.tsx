@@ -11,6 +11,7 @@ const MAX_TOKENS = 1024;
 const MIN_RATING_MESSAGE_COUNT = 3;
 
 export default function ChatSection() {
+  // Todo: get model names after rating
   const [modelAName, setModelAName] = useState<string>("???");
   const [modelBName, setModelBName] = useState<string>("???");
 

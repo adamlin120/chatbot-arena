@@ -46,12 +46,12 @@ export default function MessageContainer({
 
   return (
     <div
-      className={`flex gap-2 group ${isUser ? "justify-end" : "justify-start"} mb-2`}
+      className={`flex gap-2 group ${isUser ? "justify-end" : "justify-start"} items-end mb-2`}
     >
       <div
         className={`${
           isUser ? "bg-blue-700 text-white" : "bg-gray-200 text-gray-800"
-        } p-2 rounded-lg max-w-xs whitespace-pre-wrap text-pretty break-words ${isEditing && !isFocused && "border-4 border-solid animate-pulse"}`}
+        } p-2 rounded-lg max-w-lg whitespace-pre-wrap text-pretty break-words ${isEditing && !isFocused && "border-4 border-solid animate-pulse"}`}
         ref={messageContainerRef}
         contentEditable={isEditing}
         role="textbox"
