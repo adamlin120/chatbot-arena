@@ -50,7 +50,7 @@ export default function SideBar() {
         className="text-2xl ml-[4rem] mt-1 font-semibold text-nowrap"
         onClick={() => setIsOpen(false)}
       >
-        Taiwan LLM
+        LLM Arena
       </Link>
       <aside
         className={cn(
@@ -73,7 +73,7 @@ export default function SideBar() {
               className="text-2xl font-semibold text-nowrap"
               onClick={() => setIsOpen(false)}
             >
-              Taiwan LLM
+              LLM Arena
             </Link>
           )}
         </div>

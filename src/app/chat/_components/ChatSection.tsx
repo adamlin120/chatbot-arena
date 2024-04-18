@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import MessageContainer from "./MessageContainer";
 import type { Message } from "@/lib/types/db";
 import { toast, ToastContainer } from "react-toastify";
-import { set } from "zod";
+import 'react-toastify/dist/ReactToastify.css'
 
 const MAX_TOKENS = 1024;
+const MIN_RATING_MESSAGE_COUNT = 3;
 
 export default function ChatSection() {
-  const [ratingButtonDisabled, setRatingButtonDisabled] = useState<boolean>(false);
-  const [sendMessageButtonDisabled, setSendMessageButtonDisabled] = useState<boolean>(false);
+  const [modelAName, setModelAName] = useState<string>("???");
+  const [modelBName, setModelBName] = useState<string>("???");
 
+  const [conversationRecordIds, setConversationRecordIds] = useState([]);
   const [messageA, setMessageA] = useState<Message[]>([
     {
       role: "user",
@@ -21,7 +23,6 @@ export default function ChatSection() {
       content: "No problem, I can do my best to assist you",
     },
   ]);
-
   const [messageB, setMessageB] = useState<Message[]>([
     {
       role: "user",
@@ -32,13 +33,18 @@ export default function ChatSection() {
       content: "No problem, I can do my best to assist you",
     },
   ]);
-
+  
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
   const messageBEndRef = useRef<HTMLDivElement | null>(null);
+  const promptInputRef = useRef<HTMLTextAreaElement>(null);
+
+  const [ratingButtonDisabled, setRatingButtonDisabled] = useState<boolean>(false);
+  const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
+  const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
 
   const [prompt, setPrompt] = useState<string>("");
-  const promptInputRef = useRef<HTMLTextAreaElement>(null);
-  const [conversationRecordIds, setConversationRecordIds] = useState([]);
+  
+  const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
   useEffect(() => {
     const initiateChat = async () => {
@@ -49,10 +55,7 @@ export default function ChatSection() {
       if (!response.body) {
         return;
       } else if (response.status !== 200) {
-        toast.error("Error in response", {
-          type: "error",
-          position: "top-center",
-        });
+        toast.error(serverErrorMessage);
         console.error("Error in response", response);
         return;
       }
@@ -63,21 +66,21 @@ export default function ChatSection() {
     initiateChat();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // Auto resize the textarea
     if (promptInputRef.current) {
       promptInputRef.current.style.height = "auto";
       promptInputRef.current.style.height = `${promptInputRef.current.scrollHeight}px`;
     }
   }, [prompt]);
 
+  // Scroll to the bottom of the chat
   useEffect(() => {
-    if (messageAEndRef.current) {
+    if (messageAEndRef.current && messageA.length > 2) {
       messageAEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messageA]);
-
   useEffect(() => {
-    if (messageBEndRef.current) {
+    if (messageBEndRef.current && messageB.length > 2) {
       messageBEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messageB]);
@@ -87,7 +90,9 @@ export default function ChatSection() {
     messages: Message[],
     conversationRecordId: String,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setMessageWaiting: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
+    setMessageWaiting(true);
     const newMessages: Message[] = [
       ...messages,
       {
@@ -108,15 +113,7 @@ export default function ChatSection() {
     if (!response.body) {
       return;
     } else if (response.status !== 200) {
-      // toast.error("Error in response", {
-      //   type: "error",
-      //   position: "top-center",
-      // });
-      // TODO: Add toast notification (現在他長得超怪)
-      alert(
-        "There was something wrong with the response. Please try again later.",
-      );
-      console.error("Error in response", response);
+      toast.error(serverErrorMessage);
       return;
     }
 
@@ -152,22 +149,25 @@ export default function ChatSection() {
       count++;
     }
     setRatingButtonDisabled(false);
+    setMessageWaiting(false);
   };
 
   const sendMessage = async () => {
-    setSendMessageButtonDisabled(true);
-    processMessages(prompt, messageA, conversationRecordIds[0], setMessageA);
-    processMessages(prompt, messageB, conversationRecordIds[1], setMessageB);
+    processMessages(prompt, messageA, conversationRecordIds[0], setMessageA, setMessageAWaiting);
+    processMessages(prompt, messageB, conversationRecordIds[1], setMessageB, setMessageBWaiting);
     setPrompt("");
-    setSendMessageButtonDisabled(false);
   };
 
   const sendRating = async (conversationRecordId: string, rating: number) => {
+    setRatingButtonDisabled(true);
+    if(messageA.length < MIN_RATING_MESSAGE_COUNT || messageB.length < MIN_RATING_MESSAGE_COUNT) {
+      toast.warn("您與模型的對話還不夠多，請再繼續對話方可送出回饋。");
+      setRatingButtonDisabled(false);
+      return;
+    }
+    
     if (!conversationRecordId) {
-      toast.error("Conversation Record ID is empty", {
-        type: "error",
-        position: "top-center",
-      });
+      toast.error(serverErrorMessage);
       console.error("Conversation Record ID is empty");
       return;
     }
@@ -181,36 +181,48 @@ export default function ChatSection() {
 
     if (response.status === 200) {
       // Use a pop up to show the message that the rating has been submitted, do not use toast
-      alert("Rating has been submitted");
-      setRatingButtonDisabled(true);
+      toast.success("您的回饋已經送出，謝謝！");
       return;
     } else if (response.status !== 200) {
-      alert("There was something wrong with the response. Please try again later.");
-      setRatingButtonDisabled(true);
+      toast.error(serverErrorMessage);
       console.error("Error in response", response);
       return;
     }
   }
 
+  const ratingButtonAttributes = [
+    {
+      text: "A is better",
+      onClick: () => sendRating(conversationRecordIds[0], 1)
+    }, 
+    {
+      text: "B is better",
+      onClick: () => sendRating(conversationRecordIds[1], 1)
+    },
+    {
+      text: "Both are good",
+      onClick: () => sendRating(conversationRecordIds[0], 2)
+    },
+    {
+      text: "Both are bad",
+      onClick: () => sendRating(conversationRecordIds[0], 0)
+    }
+  ]
+
   return (
     <div className="flex flex-col">
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
       <h2 className="mb-5">👇 現在就來測試吧！</h2>
 
-      <div className="flex flex-row justify-between border rounded-t-xl max-h-[50vh] min-h-[25vh] px-0.5">
-        <div className="flex-1 border-r p-5 overflow-y-scroll">
-          <h3 className="mb-5">🤖 模型 A</h3>
+      <div className="flex flex-row justify-between border border-b-0 rounded-t-xl">
+        <div className="flex-1 border-r p-4">
+          <h3>🤖 模型 A: {modelAName}</h3>
+        </div>
+        <div className="flex-1 p-4">
+          <h3>🤖 模型 B: {modelBName}</h3>
+        </div>
+      </div>
+      <div className="flex flex-row justify-between border max-h-[50vh] min-h-[25vh] px-0.5">
+        <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
           {messageA.map((message, index) => (
             index >= 2 &&
             <MessageContainer
@@ -221,8 +233,7 @@ export default function ChatSection() {
           ))}
           <div ref={messageAEndRef} />
         </div>
-        <div className="flex-1 p-5 overflow-y-scroll">
-          <h4 className="mb-5">🤖 模型 B</h4>
+        <div className="flex-1 p-5 my-4 overflow-y-scroll">
           {messageB.map((message, index) => (
             index >= 2 &&
             <MessageContainer
@@ -235,7 +246,7 @@ export default function ChatSection() {
         </div>
       </div>
 
-      <div className="flex gap-3 flex-grow items-center border border-t-0 rounded-b-xl p-5">
+      <div className="flex gap-3 flex-grow items-center border border-t-0 p-5">
         <div className="flex-grow">
           <textarea
             className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden"
@@ -246,53 +257,47 @@ export default function ChatSection() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                sendMessage();
+                if(prompt.length > 0) {
+                  sendMessage();
+                }
               }
             }}
           ></textarea>
         </div>  
         <div>       
           <button
-            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
+            className={`bg-blue-500 transform transition duration-500 hover:bg-blue-600 text-white py-4 rounded-xl ml-2 text-nowrap px-10 ${messageAWaiting || messageBWaiting ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={sendMessage}
-            disabled={sendMessageButtonDisabled}
+            disabled={messageAWaiting || messageBWaiting}
           >
             Send Message
           </button>
         </div>
       </div>
-      <div className="flex justify-center items-center border border-gray-300 rounded-lg p-4">
-        <div className="flex ratingButton">
+      <div className="flex gap-2 justify-center items-center border border-gray-300 rounded-b-lg p-4">
+        {ratingButtonAttributes.map((buttonAttribute, index) => (
           <button
-            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
-            onClick={() => sendRating(conversationRecordIds[0], 1)}
+            key={index}
+            className={`bg-blue-500 transform transition duration-500 hover:bg-blue-600 text-white py-4 rounded-xl ml-2 text-nowrap px-10 ${ratingButtonDisabled || messageAWaiting || messageBWaiting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={buttonAttribute.onClick}
             disabled={ratingButtonDisabled}
           >
-            A is better
+            {buttonAttribute.text}
           </button>
-          <button
-            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
-            onClick={() => sendRating(conversationRecordIds[1], 1)}
-            disabled={ratingButtonDisabled}
-          >
-            B is better
-          </button>
-          <button
-            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
-            onClick={() => sendRating(conversationRecordIds[0], 2)}
-            disabled={ratingButtonDisabled}
-          >
-            Both are good
-          </button>
-          <button
-            className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
-            onClick={() => sendRating(conversationRecordIds[0], 0)}
-            disabled={ratingButtonDisabled}
-          >
-            Both are bad
-          </button>
-        </div>
+        ))}
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
