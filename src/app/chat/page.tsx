@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import ChatSection from "./_components/ChatSection";
 import { redirect } from "next/navigation";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export default async function ChatPage() {
   const session = await auth();

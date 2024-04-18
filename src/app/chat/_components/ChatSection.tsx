@@ -5,7 +5,7 @@ import Button from "@/app/_components/Button";
 import type { Message } from "@/lib/types/db";
 import { SendHorizonal } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'
+import "react-toastify/dist/ReactToastify.css";
 
 const MAX_TOKENS = 1024;
 const MIN_RATING_MESSAGE_COUNT = 3;
@@ -35,17 +35,18 @@ export default function ChatSection() {
       content: "No problem, I can do my best to assist you",
     },
   ]);
-  
+
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
   const messageBEndRef = useRef<HTMLDivElement | null>(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
-  const [ratingButtonDisabled, setRatingButtonDisabled] = useState<boolean>(false);
+  const [ratingButtonDisabled, setRatingButtonDisabled] =
+    useState<boolean>(false);
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
   const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
 
   const [prompt, setPrompt] = useState<string>("");
-  
+
   const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
   const initiateChat = async () => {
@@ -64,12 +65,13 @@ export default function ChatSection() {
     const data = await response.json();
     setConversationRecordIds(data.conversationRecordId);
   };
-  
+
   useEffect(() => {
     initiateChat();
   }, []);
 
-  useEffect(() => { // Auto resize the textarea
+  useEffect(() => {
+    // Auto resize the textarea
     if (promptInputRef.current) {
       promptInputRef.current.style.height = "auto";
       promptInputRef.current.style.height = `${promptInputRef.current.scrollHeight}px`;
@@ -80,12 +82,20 @@ export default function ChatSection() {
   // Use block: "nearest" to get a better UX. (https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
   useEffect(() => {
     if (messageAEndRef.current && messageA.length > 2) {
-      messageAEndRef.current.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
+      messageAEndRef.current.scrollIntoView({
+        behavior: "auto",
+        block: "nearest",
+        inline: "nearest",
+      });
     }
   }, [messageA]);
   useEffect(() => {
     if (messageBEndRef.current && messageB.length > 2) {
-      messageBEndRef.current.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
+      messageBEndRef.current.scrollIntoView({
+        behavior: "auto",
+        block: "nearest",
+        inline: "nearest",
+      });
     }
   }, [messageB]);
 
@@ -157,19 +167,34 @@ export default function ChatSection() {
   };
 
   const sendMessage = async () => {
-    processMessages(prompt, messageA, conversationRecordIds[0], setMessageA, setMessageAWaiting);
-    processMessages(prompt, messageB, conversationRecordIds[1], setMessageB, setMessageBWaiting);
+    processMessages(
+      prompt,
+      messageA,
+      conversationRecordIds[0],
+      setMessageA,
+      setMessageAWaiting,
+    );
+    processMessages(
+      prompt,
+      messageB,
+      conversationRecordIds[1],
+      setMessageB,
+      setMessageBWaiting,
+    );
     setPrompt("");
   };
 
   const sendRating = async (conversationRecordId: string, rating: number) => {
     setRatingButtonDisabled(true);
-    if(messageA.length < MIN_RATING_MESSAGE_COUNT || messageB.length < MIN_RATING_MESSAGE_COUNT) {
+    if (
+      messageA.length < MIN_RATING_MESSAGE_COUNT ||
+      messageB.length < MIN_RATING_MESSAGE_COUNT
+    ) {
       toast.warn("您與模型的對話還不夠多，請再繼續對話方可送出回饋。");
       setRatingButtonDisabled(false);
       return;
     }
-    
+
     if (!conversationRecordId) {
       toast.error(serverErrorMessage);
       console.error("Conversation Record ID is empty");
@@ -192,50 +217,50 @@ export default function ChatSection() {
       console.error("Error in response", response);
       return;
     }
-  }
+  };
 
   const restartChat = () => {
-    setMessageA(
-      [{
+    setMessageA([
+      {
         role: "user",
         content: "You are a helpful chatbot that aims to assist human.",
       },
       {
         role: "assistant",
         content: "No problem, I can do my best to assist you",
-      }]
-    );
-    setMessageB(
-      [{
+      },
+    ]);
+    setMessageB([
+      {
         role: "user",
         content: "You are a helpful chatbot that aims to assist human.",
       },
       {
         role: "assistant",
         content: "No problem, I can do my best to assist you",
-      }]
-    );
+      },
+    ]);
     initiateChat();
-  }
+  };
 
   const ratingButtonAttributes = [
     {
       text: "👈  A表現較佳",
-      onClick: () => sendRating(conversationRecordIds[0], 1)
-    }, 
+      onClick: () => sendRating(conversationRecordIds[0], 1),
+    },
     {
       text: "👉  B表現較佳",
-      onClick: () => sendRating(conversationRecordIds[1], 1)
+      onClick: () => sendRating(conversationRecordIds[1], 1),
     },
     {
       text: "🤝  平手",
-      onClick: () => sendRating(conversationRecordIds[0], 2)
+      onClick: () => sendRating(conversationRecordIds[0], 2),
     },
     {
       text: "👎  兩者皆差",
-      onClick: () => sendRating(conversationRecordIds[0], 0)
-    }
-  ]
+      onClick: () => sendRating(conversationRecordIds[0], 0),
+    },
+  ];
 
   return (
     <div className="flex flex-col">
@@ -251,25 +276,29 @@ export default function ChatSection() {
       </div>
       <div className="flex flex-row justify-between border max-h-[50vh] min-h-[25vh] px-0.5">
         <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
-          {messageA.map((message, index) => (
-            index >= 2 &&
-            <MessageContainer
-              key={index}
-              origMessage={message.content}
-              isUser={message.role === "user"}
-            />
-          ))}
+          {messageA.map(
+            (message, index) =>
+              index >= 2 && (
+                <MessageContainer
+                  key={index}
+                  origMessage={message.content}
+                  isUser={message.role === "user"}
+                />
+              ),
+          )}
           <div ref={messageAEndRef} />
         </div>
         <div className="flex-1 p-5 my-4 overflow-y-scroll">
-          {messageB.map((message, index) => (
-            index >= 2 &&
-            <MessageContainer
-              key={index}
-              origMessage={message.content}
-              isUser={message.role === "user"}
-            />
-          ))}
+          {messageB.map(
+            (message, index) =>
+              index >= 2 && (
+                <MessageContainer
+                  key={index}
+                  origMessage={message.content}
+                  isUser={message.role === "user"}
+                />
+              ),
+          )}
           <div ref={messageBEndRef} />
         </div>
       </div>
@@ -285,25 +314,47 @@ export default function ChatSection() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                if(prompt.length > 0) {
+                if (prompt.length > 0) {
                   sendMessage();
                 }
               }
             }}
           ></textarea>
-        </div>  
-        <div>    
-          <Button text={<><SendHorizonal size={20} />送出</>} onClick={sendMessage} disableCond={messageAWaiting || messageBWaiting} />   
+        </div>
+        <div>
+          <Button
+            text={
+              <>
+                <SendHorizonal size={20} />
+                送出
+              </>
+            }
+            onClick={sendMessage}
+            disableCond={messageAWaiting || messageBWaiting}
+          />
         </div>
       </div>
       <div className="flex w-full">
         <div className="flex w-full gap-2 justify-start items-center border border-gray-300 rounded-b-lg p-4">
           {ratingButtonAttributes.map((buttonAttribute, index) => (
-            <Button key={index} text={buttonAttribute.text} onClick={buttonAttribute.onClick} disableCond={ratingButtonDisabled || messageAWaiting || messageBWaiting} />
+            <Button
+              key={index}
+              text={buttonAttribute.text}
+              onClick={buttonAttribute.onClick}
+              disableCond={
+                ratingButtonDisabled || messageAWaiting || messageBWaiting
+              }
+            />
           ))}
         </div>
         <div className="w-fit gap-2 justify-center items-center border border-gray-300 rounded-b-lg p-4">
-          <Button text="🔁 重新開始對話" onClick={restartChat} disableCond={ratingButtonDisabled || messageAWaiting || messageBWaiting} />
+          <Button
+            text="🔁 重新開始對話"
+            onClick={restartChat}
+            disableCond={
+              ratingButtonDisabled || messageAWaiting || messageBWaiting
+            }
+          />
         </div>
       </div>
       <ToastContainer
@@ -321,4 +372,3 @@ export default function ChatSection() {
     </div>
   );
 }
-
