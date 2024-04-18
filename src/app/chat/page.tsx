@@ -10,7 +10,7 @@ export default async function ChatPage() {
     redirect("/login");
   }
   return (
-    <main className="py-6 px-12 max-h-[100dvh]">
+    <main className="py-6 px-12 max-h-[105dvh]">
       <h1 className="mb-5">
         ⚔️ 繁中 LLM 聊天機器人競技場⚔️ : 野生的大模型測試
       </h1>
