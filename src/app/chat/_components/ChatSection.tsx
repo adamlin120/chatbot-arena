@@ -165,15 +165,18 @@ export default function ChatSection() {
   };
 
   const sendMessage = async () => {
+    if(prompt.length === 0 || prompt.trim().length === 0) return;
+    setPrompt(prompt.trim());
+
     processMessages(
-      prompt,
+      prompt.trim(),
       messageA,
       conversationRecordIds[0],
       setMessageA,
       setMessageAWaiting,
     );
     processMessages(
-      prompt,
+      prompt.trim(),
       messageB,
       conversationRecordIds[1],
       setMessageB,
@@ -312,9 +315,7 @@ export default function ChatSection() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                if (prompt.length > 0) {
-                  sendMessage();
-                }
+                sendMessage();
               }
             }}
           ></textarea>
