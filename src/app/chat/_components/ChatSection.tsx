@@ -255,7 +255,7 @@ export default function ChatSection() {
             index >= 2 &&
             <MessageContainer
               key={index}
-              message={message.content}
+              origMessage={message.content}
               isUser={message.role === "user"}
             />
           ))}
@@ -266,7 +266,7 @@ export default function ChatSection() {
             index >= 2 &&
             <MessageContainer
               key={index}
-              message={message.content}
+              origMessage={message.content}
               isUser={message.role === "user"}
             />
           ))}
