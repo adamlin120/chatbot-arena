@@ -48,6 +48,24 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* for scroll bar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
 /* for loading spinner */
 @keyframes spin {
   0% {

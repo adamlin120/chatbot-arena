@@ -8,13 +8,8 @@ import { set } from "zod";
 const MAX_TOKENS = 1024;
 
 export default function ChatSection() {
-
-  const setRatingButtonDisabled = (disabled: boolean) => {
-    var buttons = document.getElementsByClassName("ratingButton")[0].getElementsByTagName("button");
-    for (var i = 0; i < buttons.length; i++) {
-      buttons[i].disabled = disabled;
-    }
-  }
+  const [ratingButtonDisabled, setRatingButtonDisabled] = useState<boolean>(false);
+  const [sendMessageButtonDisabled, setSendMessageButtonDisabled] = useState<boolean>(false);
 
   const [messageA, setMessageA] = useState<Message[]>([
     {
@@ -160,9 +155,11 @@ export default function ChatSection() {
   };
 
   const sendMessage = async () => {
+    setSendMessageButtonDisabled(true);
     processMessages(prompt, messageA, conversationRecordIds[0], setMessageA);
     processMessages(prompt, messageB, conversationRecordIds[1], setMessageB);
     setPrompt("");
+    setSendMessageButtonDisabled(false);
   };
 
   const sendRating = async (conversationRecordId: string, rating: number) => {
@@ -210,7 +207,8 @@ export default function ChatSection() {
         theme="light"
       />
       <h2 className="mb-5">👇 現在就來測試吧！</h2>
-      <div className="flex flex-row justify-between border rounded-t-xl max-h-lvh">
+
+      <div className="flex flex-row justify-between border rounded-t-xl max-h-[50vh] min-h-[25vh] px-0.5">
         <div className="flex-1 border-r p-5 overflow-y-scroll">
           <h3 className="mb-5">🤖 模型 A</h3>
           {messageA.map((message, index) => (
@@ -236,6 +234,7 @@ export default function ChatSection() {
           <div ref={messageBEndRef} />
         </div>
       </div>
+
       <div className="flex gap-3 flex-grow items-center border border-t-0 rounded-b-xl p-5">
         <div className="flex-grow">
           <textarea
@@ -246,6 +245,7 @@ export default function ChatSection() {
             ref={promptInputRef}
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
+                e.preventDefault();
                 sendMessage();
               }
             }}
@@ -255,6 +255,7 @@ export default function ChatSection() {
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={sendMessage}
+            disabled={sendMessageButtonDisabled}
           >
             Send Message
           </button>
@@ -265,24 +266,28 @@ export default function ChatSection() {
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={() => sendRating(conversationRecordIds[0], 1)}
+            disabled={ratingButtonDisabled}
           >
             A is better
           </button>
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={() => sendRating(conversationRecordIds[1], 1)}
+            disabled={ratingButtonDisabled}
           >
             B is better
           </button>
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={() => sendRating(conversationRecordIds[0], 2)}
+            disabled={ratingButtonDisabled}
           >
             Both are good
           </button>
           <button
             className="bg-blue-500 text-white py-4 rounded-xl ml-2 text-nowrap px-10"
             onClick={() => sendRating(conversationRecordIds[0], 0)}
+            disabled={ratingButtonDisabled}
           >
             Both are bad
           </button>
