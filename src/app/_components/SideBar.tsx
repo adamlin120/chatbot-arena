@@ -55,8 +55,8 @@ export default function SideBar() {
       <aside
         className={cn(
           `flex flex-col transform top-0 left-0 w-16 bg-gray-800 fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 overflow-x-hidden ${
-            // isOpen ? "translate-x-0 w-64" : "-translate-x-full** "
-            isOpen && "w-64"
+          // isOpen ? "translate-x-0 w-64" : "-translate-x-full** "
+          isOpen && "w-64"
           }`,
         )}
       >
@@ -111,12 +111,10 @@ export default function SideBar() {
                   className={`transition-none min-w-fit`}
                   title={!isOpen ? "個人頁面" : ""}
                 >
-                  <Image
-                    src={avatarUrl || ""}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                    alt="profile-pic"
+                  <img
+                    src={session.user.image}
+                    alt="Profile"
+                    style={{ width: "32px", height: "32px",borderRadius: "50%" }}
                   />
                 </div>
                 {isOpen && <div className="truncate">{username}</div>}
