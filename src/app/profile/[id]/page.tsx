@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/_components/Loading";
+import Image from "next/image";
 
 const ProfilePage = () => {
   const { data: session, status } = useSession();
@@ -98,10 +99,12 @@ const ProfilePage = () => {
           <h2 className="text-xl font-semibold text-white mr-4">
             使用者名稱/Username
           </h2>
-          <img
+          <Image
             src={profile.image}
             alt="Profile Image"
-            className="w-12 h-12 rounded-full"
+            width={48}
+            height={48}
+            className="rounded-full"
           />
         </div>
         <p className="text-lg text-white mb-6">{profile.username}</p>
