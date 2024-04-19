@@ -64,6 +64,7 @@ export default function ChatSection() {
     }
 
     const data = await response.json();
+    console.log("conversation id data: ", data);
     setConversationRecordIds(data.conversationRecordId);
   };
 
