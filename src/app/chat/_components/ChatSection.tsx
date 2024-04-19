@@ -316,7 +316,9 @@ export default function ChatSection() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                sendMessage();
+                if(!messageAWaiting && !messageBWaiting) {
+                  sendMessage();
+                }
               }
             }}
           ></textarea>
