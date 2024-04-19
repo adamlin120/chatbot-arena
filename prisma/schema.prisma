@@ -28,7 +28,7 @@ model Verification {
 
 model Conversation {
   id             String   @id @map("_id") @default(auto()) @db.ObjectId
-  contributor    User     @relation(fields: [contributorId], references: [id])
+  contributor    User?     @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   contributorId  String   @db.ObjectId
   records        ConversationRecord[]
 }
@@ -36,13 +36,17 @@ model Conversation {
 model ConversationRecord {
   id         String   @id @map("_id") @default(auto()) @db.ObjectId
   rounds ConversationRound[]
-  conversation Conversation @relation(fields: [conversationId], references: [id])
-  conversationId String @db.ObjectId
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  conversationId String? @db.ObjectId
+  prevConversationRecordId String? @db.ObjectId
+  prevConversationRecord ConversationRecord? @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  nextConversationRecords ConversationRecord[] @relation("conversationTree")
+  modelName String
+  rating     Int?
 }
 
 type ConversationRound {
   prompt     String
-  completion    String
-  model_name String
-  rating     Int?
+  completion String
+  nextConversationRecordIds String[] @db.ObjectId
 }
