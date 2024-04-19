@@ -7,6 +7,8 @@ import {
   checkIfRoundExists,
 } from "@/data/conversation";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   const db = new PrismaClient();
   const session = await auth();

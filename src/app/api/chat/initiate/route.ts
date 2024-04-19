@@ -53,6 +53,8 @@ Response:
 Two conversation record ids are returned. These ids are used to identify the two conversation records that are created for the conversation. The conversation records are created for the two users who are having the conversation. The conversation records are used to store the conversation rounds between
 */
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   const db = new PrismaClient();
   //Read user id from nextauth session

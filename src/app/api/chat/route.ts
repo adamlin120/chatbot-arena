@@ -73,6 +73,8 @@ Request:
 ```
 */
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const db = new PrismaClient();
