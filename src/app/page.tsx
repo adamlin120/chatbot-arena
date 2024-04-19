@@ -8,6 +8,7 @@ export default async function Home() {
   // if (session?.user?.email) {
   //   redirect("/rating");
   // }
+  redirect("/chat");
   return (
     <>
       <div className="flex p-5 gap-0 text-xl z-10 animate-slide-up">
