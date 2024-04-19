@@ -58,22 +58,33 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   const db = new PrismaClient();
   //Read user id from nextauth session
+  let conversation;
   const session = await auth();
   if (!session || !session.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    //return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    conversation = await db.conversation.create({
+      data: {
+        contributorId: "6622924f82b05d4bf154d3e9",
+      },
+    });
+
   }
-  const user = await getUserByEmail(session.user.email);
+  else {
+    const user = await getUserByEmail(session.user.email);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const conversation = await db.conversation.create({
+      data: {
+        contributorId: user.id,
+      },
+    });
   }
-
-  const conversation = await db.conversation.create({
-    data: {
-      contributorId: user.id,
-    },
-  });
-
+  if (!conversation){
+    return NextResponse.json({ error: "Not Found" }, { status: 404 });
+  }
   const conversationRecords = await Promise.all([
     db.conversationRecord.create({
       data: {

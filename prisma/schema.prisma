@@ -46,3 +46,9 @@ type ConversationRound {
   model_name String
   rating     Int?
 }
+
+model Trail {
+  id          String   @id @map("_id") @default(auto()) @db.ObjectId
+  ip          String @unique
+  quota       Int
+}
