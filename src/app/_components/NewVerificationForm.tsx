@@ -27,7 +27,7 @@ export const NewVerificationForm = () => {
       }),
     });
     if (res.status == 200) {
-      router.push("/rating");
+      router.push("/chat");
     }
   }, [token, success, error]);
   const handleButtonClick = () => {

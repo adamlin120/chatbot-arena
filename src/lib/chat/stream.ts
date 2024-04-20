@@ -20,8 +20,8 @@ export default async function getStream(
     "mistral-large-latest",
     "mistral-medium-latest",
     "mistral-small-latest",
-    "gpt-4",
-    "gpt-3.5-turbo",
+    //"gpt-4",
+    //"gpt-3.5-turbo",
   ],
 ) {
   const model = model_list[Math.floor(Math.random() * model_list.length)];
