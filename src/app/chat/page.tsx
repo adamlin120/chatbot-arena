@@ -44,7 +44,9 @@ export default function ChatPage() {
       }
     };
     checkAuth();
-  }, [router, session]); // Suggested by ESLint
+  }, []); 
+  // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
+  // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
 
   // Todo: get model names after rating
   const [modelAName, setModelAName] = useState<string>("???");
