@@ -44,6 +44,7 @@ export default function FunctionalButtons() {
   ];
 
   const [showRule, setShowRule] = useState<boolean>(false);
+  const [sendingRating, setSendingRating] = useState<boolean>(false);
 
   const restartChat = () => {
     setMessageA([
@@ -71,12 +72,14 @@ export default function FunctionalButtons() {
 
   const sendRating = async (conversationRecordId: string, rating: number) => {
     setRatingButtonDisabled(true);
+    setSendingRating(true);
     if (
       messageA.length < MIN_RATING_MESSAGE_COUNT ||
       messageB.length < MIN_RATING_MESSAGE_COUNT
     ) {
       toast.warn("您與模型的對話還不夠多，請再繼續對話方可送出回饋。");
       setRatingButtonDisabled(false);
+      setSendingRating(false);
       return;
     }
 
@@ -93,6 +96,7 @@ export default function FunctionalButtons() {
       }),
     });
 
+    setSendingRating(false);
     if (response.status === 200) {
       // Use a pop up to show the message that the rating has been submitted, do not use toast
       toast.success("您的回饋已經送出，謝謝！");
@@ -100,6 +104,7 @@ export default function FunctionalButtons() {
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
+      setRatingButtonDisabled(false);
       console.error("Error in response", response);
       return;
     }
@@ -131,7 +136,7 @@ export default function FunctionalButtons() {
         <Button
           text="🔁 重新開始對話"
           onClick={restartChat}
-          disableCond={messageAWaiting || messageBWaiting}
+          disableCond={sendingRating || messageAWaiting || messageBWaiting}
         />
       </div>
     </div>
