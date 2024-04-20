@@ -1,14 +1,44 @@
-import { auth } from "@/lib/auth";
+"use client"
+import { useSession } from "next-auth/react";
 import ChatSection from "./_components/ChatSection";
-import { redirect } from "next/navigation";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import { useRouter } from 'next/navigation'
 
-export default async function ChatPage() {
-  const session = await auth();
-  if (!session || !session.user) {
-    redirect("/login");
-  }
+export default function ChatPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (!session || !session.user) {
+        const response = await fetch("https://api.ipify.org?format=json");
+        
+        const data = await response.json();
+        const { ip } = data;
+        try {
+          const response = await fetch("/api/chat/trail", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ip: ip }),
+          });
+          if (!response.ok) {
+            throw new Error("Failed to store IP address");
+          }
+          const responseData = await response.json();
+          const { quota } = responseData;
+          if (quota >= 3) {
+            router.push("/login");
+          }
+        } catch (error) {
+          console.error("Error storing IP address:", error);
+        }
+      }
+    }
+    checkAuth();
+  }, []);
   return (
     <main className="py-6 px-12 max-h-[105dvh]">
       <h1 className="mb-5">

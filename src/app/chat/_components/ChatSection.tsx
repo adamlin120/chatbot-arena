@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import MessageContainer from "./MessageContainer";
 import Button from "@/app/_components/Button";
 import type { Message } from "@/lib/types/db";
 import { SendHorizonal } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { redirect } from "next/navigation";
+import { useRouter } from 'next/navigation'
 
 const MAX_TOKENS = 1024;
 const MIN_RATING_MESSAGE_COUNT = 3;
@@ -14,7 +17,7 @@ export default function ChatSection() {
   // Todo: get model names after rating
   const [modelAName, setModelAName] = useState<string>("???");
   const [modelBName, setModelBName] = useState<string>("???");
-
+  const router = useRouter();
   const [conversationRecordIds, setConversationRecordIds] = useState([]);
   const [messageA, setMessageA] = useState<Message[]>([
     {
@@ -49,7 +52,7 @@ export default function ChatSection() {
   const [prompt, setPrompt] = useState<string>("");
 
   const serverErrorMessage = "伺服器端錯誤，請稍後再試";
-
+  const { data: session } = useSession();
   const initiateChat = async () => {
     const response = await fetch("/api/chat/initiate", {
       method: "POST",
@@ -166,7 +169,7 @@ export default function ChatSection() {
   };
 
   const sendMessage = async () => {
-    if(prompt.length === 0 || prompt.trim().length === 0) return;
+    if (prompt.length === 0 || prompt.trim().length === 0) return;
     setPrompt(prompt.trim());
 
     processMessages(
@@ -184,6 +187,34 @@ export default function ChatSection() {
       setMessageBWaiting,
     );
     setPrompt("");
+    if (!session || !session.user) {
+      const response = await fetch("https://api.ipify.org?format=json");
+      const data = await response.json();
+      const { ip } = data;
+      try {
+        const response = await fetch("/api/chat/trail/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ip: ip }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to store IP address");
+        }
+        const responseData = await response.json();
+        const { quota } = responseData;
+        if (quota >= 3) {
+          toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+          setTimeout(() => {
+            router.push("/login");
+          }, 3000);
+          return;
+        }
+      } catch (error) {
+        console.error("Error storing IP address:", error);
+      }
+    }
   };
 
   const sendRating = async (conversationRecordId: string, rating: number) => {
@@ -316,7 +347,7 @@ export default function ChatSection() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                if(!messageAWaiting && !messageBWaiting) {
+                if (!messageAWaiting && !messageBWaiting) {
                   sendMessage();
                 }
               }
