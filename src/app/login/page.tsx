@@ -16,7 +16,7 @@ export default function LoginPage(props: Props) {
                 router.push('?error=NotVerified');
             }
             else */ if (session) {
-        router.push("/rating");
+        router.push("/chat");
       }
     });
   }, []);

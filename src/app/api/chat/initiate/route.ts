@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const conversation = await db.conversation.create({
+    conversation = await db.conversation.create({
       data: {
         contributorId: user.id,
       },
