@@ -89,9 +89,8 @@ export default function MessageContainer({
         }}
       >
         {origMessage === "思考中..." && !isUser
-          ? `思考中${'.'.repeat(dotCount)}`
-          : origMessage
-        }
+          ? `思考中${".".repeat(dotCount)}`
+          : origMessage}
       </div>
       {!isUser && !isEditing && (
         <button
