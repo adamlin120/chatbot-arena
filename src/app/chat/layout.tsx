@@ -1,7 +1,12 @@
+import { MessageProvider } from "@/context/message";
 export default function ChatLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main>{children}</main>;
+  return (
+    <main>
+      <MessageProvider>{children}</MessageProvider>
+    </main>
+  );
 }

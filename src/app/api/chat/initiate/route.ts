@@ -53,7 +53,7 @@ Response:
 Two conversation record ids are returned. These ids are used to identify the two conversation records that are created for the conversation. The conversation records are created for the two users who are having the conversation. The conversation records are used to store the conversation rounds between
 */
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const db = new PrismaClient();
@@ -67,9 +67,7 @@ export async function POST(request: NextRequest) {
         contributorId: "6622924f82b05d4bf154d3e9",
       },
     });
-
-  }
-  else {
+  } else {
     const user = await getUserByEmail(session.user.email);
 
     if (!user) {
@@ -82,7 +80,7 @@ export async function POST(request: NextRequest) {
       },
     });
   }
-  if (!conversation){
+  if (!conversation) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
   }
   const conversationRecords = await Promise.all([

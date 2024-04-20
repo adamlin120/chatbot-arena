@@ -23,7 +23,7 @@ export default function RootLayout({
         <body className={inter.className + " flex flex-col min-h-screen"}>
           {/* <Header /> */}
           <SideBar />
-          <div className="h-full mt-5 ml-16 mb-10">{children}</div>
+          <div className="h-full mt-5 ml-16">{children}</div>
           {/* <Footer /> */}
         </body>
       </SessionProvider>

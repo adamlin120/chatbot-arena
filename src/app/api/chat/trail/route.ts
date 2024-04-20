@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
     where: { ip: ip },
   });
   if (existingTrail) {
-    return NextResponse.json({ message: "IP already exists" ,quota: existingTrail.quota}, { status: 200 });
+    return NextResponse.json(
+      { message: "IP already exists", quota: existingTrail.quota },
+      { status: 200 },
+    );
   }
   try {
     // Store the IP address and set quota to 0
@@ -19,7 +22,10 @@ export async function POST(req: NextRequest) {
         ip: ip,
       },
     });
-    return NextResponse.json({ message: "IP and quota stored successfully", quota: 0}, { status: 200 });
+    return NextResponse.json(
+      { message: "IP and quota stored successfully", quota: 0 },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

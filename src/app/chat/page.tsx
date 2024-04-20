@@ -1,19 +1,23 @@
-"use client"
+"use client";
 import { useSession } from "next-auth/react";
-import ChatSection from "./_components/ChatSection";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect } from "react";
-import { useRouter } from 'next/navigation'
+import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import MessageSection from "./_components/MessageSection";
+import PromptInput from "./_components/PromptInput";
+import FunctionalButtons from "./_components/FunctionalButtons";
+import { MessageContext } from "@/context/message";
 
 export default function ChatPage() {
   const router = useRouter();
   const { data: session } = useSession();
+
   useEffect(() => {
     const checkAuth = async () => {
       if (!session || !session.user) {
         const response = await fetch("https://api.ipify.org?format=json");
-        
+
         const data = await response.json();
         const { ip } = data;
         try {
@@ -36,38 +40,56 @@ export default function ChatPage() {
           console.error("Error storing IP address:", error);
         }
       }
-    }
+    };
     checkAuth();
   }, []);
+  // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
+  // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
+
+  // Todo: get model names after rating
+  const [modelAName, setModelAName] = useState<string>("???");
+  const [modelBName, setModelBName] = useState<string>("???");
+
+  const context = useContext(MessageContext);
+  if (!context) {
+    throw new Error("MessageContext is not provided");
+  }
+  const { initiateChat } = context;
+
+  useEffect(() => {
+    initiateChat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <main className="py-6 px-12 max-h-[105dvh]">
-      <h1 className="mb-5">
-        ⚔️ 繁中 LLM 聊天機器人競技場⚔️ : 野生的大模型測試
-      </h1>
-      <div className="flex flex-col gap-5 mb-5">
-        <h2>📜 規則</h2>
-        <ul className="list-disc list-inside pl-4">
-          <li>
-            向兩個匿名模型（例如
-            GPT-4、ChatGPT、Claude、Gemini-Pro、Mistral-Medium、Taiwan-LLM、Breeze）提問，並為較佳者投票！
-          </li>
-          <li>您可以持續對話，直到確定贏家。</li>
-          <li>如果在對話過程中透露了模型身份，則不計入投票。</li>
-        </ul>
-      </div>
+    // Todo: think a better way to handle the height of the main container
+    // If min-h-[100dvh] is used, it will be too high
+    <main className="pt-3 px-10 min-h-[90dvh] max-h-[90dvh] flex flex-col">
       <ToastContainer
         position="top-center"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
         rtl={false}
-        pauseOnFocusLoss
+        pauseOnFocusLoss={false}
         draggable
         pauseOnHover
         theme="light"
       />
-      <ChatSection />
+      <div className="flex flex-row justify-between border border-b-0 rounded-t-xl">
+        <div className="flex-1 border-r p-4">
+          <h3>🤖 模型 A: {modelAName}</h3>
+        </div>
+        <div className="flex-1 p-4">
+          <h3>🤖 模型 B: {modelBName}</h3>
+        </div>
+      </div>
+      <div className="flex flex-col flex-grow h-full">
+        <MessageSection />
+        <PromptInput />
+        <FunctionalButtons />
+      </div>
     </main>
   );
 }
