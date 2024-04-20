@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { usePathname, useRouter } from 'next/navigation'
 import Image from "next/image";
 import { cn } from "@/lib/utils/shadcn";
 
@@ -22,9 +23,11 @@ const SideBarContext = createContext<{
 export default function SideBar() {
   const [userId, setUserId] = useState(null);
   const { data: session } = useSession();
+  const router = useRouter();
   const username = session?.user?.name;
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  
   useEffect(() => {
     const fetchUserId = async () => {
       if (session && session.user && session.user.email) {
@@ -43,6 +46,18 @@ export default function SideBar() {
 
     fetchUserId();
   }, [session]);
+
+  
+  const pathNames = usePathname().split("/");
+  const currentPath = pathNames[1];
+  const subtitle: {[key: string]: string} = {
+    "chat": "語言模型競技場 ⚔️",
+    "rating": "模型評分區 👍👎",
+    "dataset": "對話資料集 📚",
+    "leaderboard": "模型排行榜 🏆",
+    "profile": "個人頁面",
+  };
+  
   return (
     <div className="flex mt-5">
       <Link
@@ -50,7 +65,8 @@ export default function SideBar() {
         className="text-2xl ml-[4rem] mt-1 font-semibold text-nowrap"
         onClick={() => setIsOpen(false)}
       >
-        LLM Arena
+        LLM Arena 
+        <span className="text-xl">{currentPath && subtitle[currentPath] ? ` - ${subtitle[currentPath]}` : ""}</span>
       </Link>
       <aside
         className={cn(
