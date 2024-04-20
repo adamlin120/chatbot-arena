@@ -126,11 +126,11 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     },
     {
       role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
+      content: "You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human.",
     },
     {
       role: "assistant",
-      content: "No problem, I can do my best to assist you",
+      content: "No problem, I can do my best to assist you No problem, I can do my best to assist you No problem, I can do my best to assist you No problem, I can do my best to assist you No problem, I can do my best to assist you",
     },
     
   ]);

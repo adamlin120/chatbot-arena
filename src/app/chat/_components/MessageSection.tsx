@@ -1,6 +1,8 @@
 import { useContext, useEffect, useRef } from "react";
 import MessageContainer from "./MessageContainer";
 import { MessageContext } from "@/context/message";
+import { Message } from "@/lib/types/db";
+import { Bot } from "lucide-react";
 
 export default function MessageSection() {
   const context = useContext(MessageContext);
@@ -36,8 +38,23 @@ export default function MessageSection() {
   return (
     // Todo: think a better way to handle the height of the container
     <div className="flex flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
-      <div className="flex-1 border-r p-5 my-4 overflow-y-auto">
-        {messageA.map(
+      <MessageDisplay messages={messageA} messagesEndRef={messageAEndRef} />
+      <MessageDisplay messages={messageB} messagesEndRef={messageBEndRef} />
+    </div>
+  );
+}
+
+function MessageDisplay({
+  messages,
+  messagesEndRef,
+}: {
+  messages: Message[];
+  messagesEndRef: React.RefObject<HTMLDivElement>;
+}) {
+  return (
+    <div className="flex-1 flex flex-col gap-8 border-r p-5 py-4 overflow-y-auto">
+      {messages.length > 2 ? 
+        messages.map(
           (message, index) =>
             index >= 2 && (
               <MessageContainer
@@ -46,22 +63,12 @@ export default function MessageSection() {
                 isUser={message.role === "user"}
               />
             ),
-        )}
-        <div ref={messageAEndRef} />
-      </div>
-      <div className="flex-1 flex flex-col gap-5 p-5 my-4 overflow-y-auto">
-        {messageB.map(
-          (message, index) =>
-            index >= 2 && (
-              <MessageContainer
-                key={index}
-                origMessage={message.content}
-                isUser={message.role === "user"}
-              />
-            ),
-        )}
-        <div ref={messageBEndRef} />
-      </div>
+        ) :
+        <div className="flex flex-col items-center justify-center h-screen gap-5 text-2xl">
+          <Bot size={45} /> 我今天要怎麼幫你呢？
+        </div>
+      }
+      <div ref={messagesEndRef} />
     </div>
   );
 }
