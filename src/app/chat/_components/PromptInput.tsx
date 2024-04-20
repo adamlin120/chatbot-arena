@@ -156,7 +156,7 @@ export default function PromptInput() {
   };
 
   return (
-    <div className="flex gap-3 flex-grow items-center border border-t-0 p-5">
+    <div className="flex gap-3 items-center border border-t-0 p-5">
       <div className="flex-grow">
         <textarea
           className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden"

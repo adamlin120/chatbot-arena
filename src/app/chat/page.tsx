@@ -64,7 +64,21 @@ export default function ChatPage() {
   }, []);
 
   return (
-    <main className="pb-6 pt-3 px-10 max-h-[105dvh] flex flex-col">
+    // Todo: think a better way to handle the height of the main container
+    // If min-h-[100dvh] is used, it will be too high
+    <main className="pt-3 px-10 min-h-[90dvh] flex flex-col">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <div className="flex flex-row justify-between border border-b-0 rounded-t-xl">
         <div className="flex-1 border-r p-4">
           <h3>🤖 模型 A: {modelAName}</h3>
@@ -73,22 +87,10 @@ export default function ChatPage() {
           <h3>🤖 模型 B: {modelBName}</h3>
         </div>
       </div>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col flex-grow h-full">
         <MessageSection />
         <PromptInput />
         <FunctionalButtons />
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable
-          pauseOnHover
-          theme="light"
-        />
       </div>
     </main>
   );

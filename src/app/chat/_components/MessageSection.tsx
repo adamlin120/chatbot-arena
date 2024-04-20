@@ -34,7 +34,7 @@ export default function MessageSection() {
   }, [messageB]);
 
   return (
-    <div className="flex flex-row flex-grow justify-between border max-h-[50vh] min-h-[25vh] px-0.5">
+    <div className="flex flex-row flex-grow justify-between border  px-0.5">
       <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
         {messageA.map(
           (message, index) =>
