@@ -1,6 +1,5 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import MessageContainer from "./MessageContainer";
-import type { Message } from "@/lib/types/db";
 import { MessageContext } from "@/context/message";
 
 export default function MessageSection() {
@@ -36,32 +35,32 @@ export default function MessageSection() {
   
   return (
     <div className="flex flex-row flex-grow justify-between border max-h-[50vh] min-h-[25vh] px-0.5">
-        <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
-          {messageA.map(
-            (message, index) =>
-              index >= 2 && (
-                <MessageContainer
-                  key={index}
-                  origMessage={message.content}
-                  isUser={message.role === "user"}
-                />
-              ),
-          )}
-          <div ref={messageAEndRef} />
-        </div>
-        <div className="flex-1 p-5 my-4 overflow-y-scroll">
-          {messageB.map(
-            (message, index) =>
-              index >= 2 && (
-                <MessageContainer
-                  key={index}
-                  origMessage={message.content}
-                  isUser={message.role === "user"}
-                />
-              ),
-          )}
-          <div ref={messageBEndRef} />
-        </div>
+      <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
+        {messageA.map(
+          (message, index) =>
+            index >= 2 && (
+              <MessageContainer
+                key={index}
+                origMessage={message.content}
+                isUser={message.role === "user"}
+              />
+            ),
+        )}
+        <div ref={messageAEndRef} />
       </div>
+      <div className="flex-1 p-5 my-4 overflow-y-scroll">
+        {messageB.map(
+          (message, index) =>
+            index >= 2 && (
+              <MessageContainer
+                key={index}
+                origMessage={message.content}
+                isUser={message.role === "user"}
+              />
+            ),
+        )}
+        <div ref={messageBEndRef} />
+      </div>
+    </div>
   )
 }

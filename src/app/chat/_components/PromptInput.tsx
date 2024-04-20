@@ -6,22 +6,21 @@ import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { Message } from "@/lib/types/db";
+import { serverErrorMessage } from "../page";
 
 export default function PromptInput() {
-  const serverErrorMessage = "伺服器端錯誤，請稍後再試";
-  const MAX_TOKENS = 1024;
-  
   const context = useContext(MessageContext);
   if (!context) {
     throw new Error("MessageContext is not provided");
   }
-  const { messageA, messageB, conversationRecordIds, setMessageA, setMessageB, messageAWaiting, setMessageAWaiting, messageBWaiting, setMessageBWaiting, setRatingButtonDisabled } = context;
-  
+  const { messageA, messageB, conversationRecordIds, setMessageA, setMessageB, messageAWaiting, setMessageAWaiting, messageBWaiting, setMessageBWaiting, ratingButtonDisabled, setRatingButtonDisabled } = context;
+
+  const MAX_TOKENS = 1024;
+  const { data: session } = useSession();
   const router = useRouter();
+
   const [prompt, setPrompt] = useState<string>("");
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
-
-  const { data: session } = useSession();
 
   const processMessages = async (
     currPrompt: string,
@@ -87,8 +86,8 @@ export default function PromptInput() {
     setMessageWaiting(false);
   };
 
-  useEffect(() => {
-    // Auto resize the textarea
+  // Auto resize the textarea
+  useEffect(() => { 
     if (promptInputRef.current) {
       promptInputRef.current.style.height = "auto";
       promptInputRef.current.style.height = `${promptInputRef.current.scrollHeight}px`;
@@ -146,36 +145,36 @@ export default function PromptInput() {
   
   return (
     <div className="flex gap-3 flex-grow items-center border border-t-0 p-5">
-        <div className="flex-grow">
-          <textarea
-            className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden"
-            placeholder="輸入訊息..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            ref={promptInputRef}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && e.shiftKey === false) {
-                e.preventDefault();
-                if (!messageAWaiting && !messageBWaiting) {
-                  sendMessage();
-                }
+      <div className="flex-grow">
+        <textarea
+          className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden"
+          placeholder="輸入訊息..."
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          ref={promptInputRef}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && e.shiftKey === false) {
+              e.preventDefault();
+              if (!messageAWaiting && !messageBWaiting) {
+                sendMessage();
               }
-            }}
-          ></textarea>
-        </div>
-        <div>
-          <Button
-            text={
-              <>
-                <SendHorizonal size={20} />
-                送出
-              </>
             }
-            onClick={sendMessage}
-            disableCond={messageAWaiting || messageBWaiting}
-            className="py-5"
-          />
-        </div>
+          }}
+        ></textarea>
       </div>
+      <div>
+        <Button
+          text={
+            <>
+              <SendHorizonal size={20} />
+              送出
+            </>
+          }
+          onClick={sendMessage}
+          disableCond={messageAWaiting || messageBWaiting || ratingButtonDisabled}
+          className="py-5"
+        />
+      </div>
+    </div>
   );
 }

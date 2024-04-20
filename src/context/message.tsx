@@ -2,6 +2,7 @@
 import { Message } from "@/lib/types/db";
 import { createContext, useState } from "react";
 import { toast } from "react-toastify";
+import { serverErrorMessage } from "@/app/chat/page";
 
 export const MessageContext = createContext<{
   messageA: Message[];
@@ -46,8 +47,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
   const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
   const [ratingButtonDisabled, setRatingButtonDisabled] = useState<boolean>(false);
-
-  const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
   const initiateChat = async () => {
     const response = await fetch("/api/chat/initiate", {

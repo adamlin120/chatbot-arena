@@ -1,6 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,8 @@ import MessageSection from "./_components/MessageSection";
 import PromptInput from "./_components/PromptInput";
 import FunctionalButtons from "./_components/FunctionalButtons";
 import { MessageContext } from "@/context/message";
+
+export const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -54,10 +56,10 @@ export default function ChatPage() {
   }
   const { initiateChat } = context;
 
-
   useEffect(() => {
     initiateChat();
-  }, [initiateChat]); // Suggested by ESLint
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className="pb-6 pt-3 px-10 max-h-[105dvh] flex flex-col">

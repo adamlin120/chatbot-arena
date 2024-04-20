@@ -3,18 +3,16 @@ import Button from "@/app/_components/Button";
 import { useContext, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
+import { serverErrorMessage } from "../page";
 
 export default function FunctionalButtons() {
-  const MIN_RATING_MESSAGE_COUNT = 3;
-  const serverErrorMessage = "伺服器端錯誤，請稍後再試";
-  
   const context = useContext(MessageContext);
   if(!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
   const { messageA, messageB, setMessageA, setMessageB, messageAWaiting, messageBWaiting, conversationRecordIds, ratingButtonDisabled, setRatingButtonDisabled, initiateChat } = context;
   
-  const [showRule, setShowRule] = useState<boolean>(false);
+  const MIN_RATING_MESSAGE_COUNT = 3;
   const ratingButtonAttributes = [
     {
       text: "👈  A表現較佳",
@@ -33,6 +31,9 @@ export default function FunctionalButtons() {
       onClick: () => sendRating(conversationRecordIds[0], 0),
     },
   ];
+
+  const [showRule, setShowRule] = useState<boolean>(false);
+
   const restartChat = () => {
     setMessageA([
       {
@@ -84,6 +85,7 @@ export default function FunctionalButtons() {
     if (response.status === 200) {
       // Use a pop up to show the message that the rating has been submitted, do not use toast
       toast.success("您的回饋已經送出，謝謝！");
+      console.log("Rating submitted successfully");
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
@@ -95,7 +97,6 @@ export default function FunctionalButtons() {
   return (
     <div className="flex w-full">
       <div className="flex w-full gap-2 justify-start items-center border-b border-l rounded-bl-lg border-gray-300 p-4">
-        
         {ratingButtonAttributes.map((buttonAttribute, index) => (
           <Button
             key={index}
@@ -108,14 +109,14 @@ export default function FunctionalButtons() {
         ))}
         <div className="flex-grow"></div>
         <h4 className="underline cursor-pointer" onClick={() => setShowRule(true)}>ⓘ&nbsp;規則</h4>
-        <RuleDialog showRule={showRule} setShowRule={setShowRule} />
+        {showRule && <RuleDialog setShowRule={setShowRule} />}
       </div>
       <div className="w-fit gap-2 justify-center items-center border-r border-b border-l border-gray-300 rounded-br-lg p-4">
         <Button
           text="🔁 重新開始對話"
           onClick={restartChat}
           disableCond={
-            ratingButtonDisabled || messageAWaiting || messageBWaiting
+            messageAWaiting || messageBWaiting
           }
         />
       </div>
@@ -124,17 +125,13 @@ export default function FunctionalButtons() {
 }
 
 function RuleDialog({
-  showRule,
   setShowRule,
 }: {
-  showRule: boolean;
   setShowRule: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 ${
-        showRule ? "" : "hidden"
-      }`}
+      className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={() => setShowRule(false)} 
     >
       <div className="p-5 rounded-lg w-[80%] max-w-lg bg-[rgb(31,41,55)]" onClick={(e) => e.stopPropagation()}>
