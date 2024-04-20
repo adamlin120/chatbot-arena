@@ -2,7 +2,8 @@
 import { Message } from "@/lib/types/db";
 import { createContext, useState } from "react";
 import { toast } from "react-toastify";
-import { serverErrorMessage } from "@/app/chat/page";
+
+const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
 export const MessageContext = createContext<{
   messageA: Message[];
@@ -44,95 +45,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       role: "assistant",
       content: "No problem, I can do my best to assist you",
     },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human. You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you No problem, I can do my best to assist you No problem, I can do my best to assist you No problem, I can do my best to assist you No problem, I can do my best to assist you",
-    },
-    
   ]);
 
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);

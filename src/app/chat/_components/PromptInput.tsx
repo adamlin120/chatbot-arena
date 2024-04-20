@@ -6,7 +6,8 @@ import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { Message } from "@/lib/types/db";
-import { serverErrorMessage } from "../page";
+
+const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
 export default function PromptInput() {
   const context = useContext(MessageContext);

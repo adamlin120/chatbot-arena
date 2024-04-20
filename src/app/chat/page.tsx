@@ -9,8 +9,6 @@ import PromptInput from "./_components/PromptInput";
 import FunctionalButtons from "./_components/FunctionalButtons";
 import { MessageContext } from "@/context/message";
 
-export const serverErrorMessage = "伺服器端錯誤，請稍後再試";
-
 export default function ChatPage() {
   const router = useRouter();
   const { data: session } = useSession();

@@ -3,7 +3,8 @@ import Button from "@/app/_components/Button";
 import { useContext, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
-import { serverErrorMessage } from "../page";
+
+const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
 export default function FunctionalButtons() {
   const context = useContext(MessageContext);
@@ -165,6 +166,7 @@ function RuleDialog({
           </li>
           <li>您可以持續對話，直到確定贏家。</li>
           <li>如果在對話過程中透露了模型身份，則不計入投票。</li>
+          <li>您可以編輯模型出輸出，讓我們的模型有機會做得更好！</li>
         </ul>
         <div className="flex justify-end mt-5">
           <Button
