@@ -7,11 +7,22 @@ import { serverErrorMessage } from "../page";
 
 export default function FunctionalButtons() {
   const context = useContext(MessageContext);
-  if(!context) {
+  if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { messageA, messageB, setMessageA, setMessageB, messageAWaiting, messageBWaiting, conversationRecordIds, ratingButtonDisabled, setRatingButtonDisabled, initiateChat } = context;
-  
+  const {
+    messageA,
+    messageB,
+    setMessageA,
+    setMessageB,
+    messageAWaiting,
+    messageBWaiting,
+    conversationRecordIds,
+    ratingButtonDisabled,
+    setRatingButtonDisabled,
+    initiateChat,
+  } = context;
+
   const MIN_RATING_MESSAGE_COUNT = 3;
   const ratingButtonAttributes = [
     {
@@ -108,20 +119,23 @@ export default function FunctionalButtons() {
           />
         ))}
         <div className="flex-grow"></div>
-        <h4 className="underline cursor-pointer" onClick={() => setShowRule(true)}>ⓘ&nbsp;規則</h4>
+        <h4
+          className="underline cursor-pointer"
+          onClick={() => setShowRule(true)}
+        >
+          ⓘ&nbsp;規則
+        </h4>
         {showRule && <RuleDialog setShowRule={setShowRule} />}
       </div>
       <div className="w-fit gap-2 justify-center items-center border-r border-b border-l border-gray-300 rounded-br-lg p-4">
         <Button
           text="🔁 重新開始對話"
           onClick={restartChat}
-          disableCond={
-            messageAWaiting || messageBWaiting
-          }
+          disableCond={messageAWaiting || messageBWaiting}
         />
       </div>
     </div>
-  )
+  );
 }
 
 function RuleDialog({
@@ -132,9 +146,12 @@ function RuleDialog({
   return (
     <div
       className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={() => setShowRule(false)} 
+      onClick={() => setShowRule(false)}
     >
-      <div className="p-5 rounded-lg w-[80%] max-w-lg bg-[rgb(31,41,55)]" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="p-5 rounded-lg w-[80%] max-w-lg bg-[rgb(31,41,55)]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h3 className="text-lg font-bold">📜 規則</h3>
         <ul className="list-disc list-outside px-6 pt-2 text-indent">
           <li>
@@ -154,5 +171,5 @@ function RuleDialog({
         </div>
       </div>
     </div>
-  )
+  );
 }

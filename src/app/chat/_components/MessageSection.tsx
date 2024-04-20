@@ -4,7 +4,7 @@ import { MessageContext } from "@/context/message";
 
 export default function MessageSection() {
   const context = useContext(MessageContext);
-  if(!context) {
+  if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
   const { messageA, messageB } = context;
@@ -32,7 +32,7 @@ export default function MessageSection() {
       });
     }
   }, [messageB]);
-  
+
   return (
     <div className="flex flex-row flex-grow justify-between border max-h-[50vh] min-h-[25vh] px-0.5">
       <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
@@ -62,5 +62,5 @@ export default function MessageSection() {
         <div ref={messageBEndRef} />
       </div>
     </div>
-  )
+  );
 }

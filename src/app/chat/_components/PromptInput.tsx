@@ -13,7 +13,19 @@ export default function PromptInput() {
   if (!context) {
     throw new Error("MessageContext is not provided");
   }
-  const { messageA, messageB, conversationRecordIds, setMessageA, setMessageB, messageAWaiting, setMessageAWaiting, messageBWaiting, setMessageBWaiting, ratingButtonDisabled, setRatingButtonDisabled } = context;
+  const {
+    messageA,
+    messageB,
+    conversationRecordIds,
+    setMessageA,
+    setMessageB,
+    messageAWaiting,
+    setMessageAWaiting,
+    messageBWaiting,
+    setMessageBWaiting,
+    ratingButtonDisabled,
+    setRatingButtonDisabled,
+  } = context;
 
   const MAX_TOKENS = 1024;
   const { data: session } = useSession();
@@ -87,7 +99,7 @@ export default function PromptInput() {
   };
 
   // Auto resize the textarea
-  useEffect(() => { 
+  useEffect(() => {
     if (promptInputRef.current) {
       promptInputRef.current.style.height = "auto";
       promptInputRef.current.style.height = `${promptInputRef.current.scrollHeight}px`;
@@ -142,7 +154,7 @@ export default function PromptInput() {
       }
     }
   };
-  
+
   return (
     <div className="flex gap-3 flex-grow items-center border border-t-0 p-5">
       <div className="flex-grow">
@@ -171,7 +183,9 @@ export default function PromptInput() {
             </>
           }
           onClick={sendMessage}
-          disableCond={messageAWaiting || messageBWaiting || ratingButtonDisabled}
+          disableCond={
+            messageAWaiting || messageBWaiting || ratingButtonDisabled
+          }
           className="py-5"
         />
       </div>

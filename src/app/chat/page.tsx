@@ -44,7 +44,7 @@ export default function ChatPage() {
       }
     };
     checkAuth();
-  }, []); 
+  }, []);
   // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
   // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
 
@@ -53,7 +53,7 @@ export default function ChatPage() {
   const [modelBName, setModelBName] = useState<string>("???");
 
   const context = useContext(MessageContext);
-  if(!context) {
+  if (!context) {
     throw new Error("MessageContext is not provided");
   }
   const { initiateChat } = context;
@@ -74,22 +74,22 @@ export default function ChatPage() {
         </div>
       </div>
       <div className="flex flex-col h-full">
-      <MessageSection />
-      <PromptInput />
-      <FunctionalButtons />
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </div>
+        <MessageSection />
+        <PromptInput />
+        <FunctionalButtons />
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </div>
     </main>
   );
 }

@@ -21,7 +21,9 @@ export const MessageContext = createContext<{
 } | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const [conversationRecordIds, setConversationRecordIds] = useState<string[]>([]);
+  const [conversationRecordIds, setConversationRecordIds] = useState<string[]>(
+    [],
+  );
 
   const [messageA, setMessageA] = useState<Message[]>([
     {
@@ -46,7 +48,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
   const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
-  const [ratingButtonDisabled, setRatingButtonDisabled] = useState<boolean>(false);
+  const [ratingButtonDisabled, setRatingButtonDisabled] =
+    useState<boolean>(false);
 
   const initiateChat = async () => {
     const response = await fetch("/api/chat/initiate", {
