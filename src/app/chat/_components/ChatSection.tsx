@@ -169,6 +169,24 @@ export default function ChatSection() {
   };
 
   const sendMessage = async () => {
+    if (prompt.length === 0 || prompt.trim().length === 0) return;
+    setPrompt(prompt.trim());
+
+    processMessages(
+      prompt.trim(),
+      messageA,
+      conversationRecordIds[0],
+      setMessageA,
+      setMessageAWaiting,
+    );
+    processMessages(
+      prompt.trim(),
+      messageB,
+      conversationRecordIds[1],
+      setMessageB,
+      setMessageBWaiting,
+    );
+    setPrompt("");
     if (!session || !session.user) {
       const response = await fetch("https://api.ipify.org?format=json");
       const data = await response.json();
@@ -197,24 +215,6 @@ export default function ChatSection() {
         console.error("Error storing IP address:", error);
       }
     }
-    if (prompt.length === 0 || prompt.trim().length === 0) return;
-    setPrompt(prompt.trim());
-
-    processMessages(
-      prompt.trim(),
-      messageA,
-      conversationRecordIds[0],
-      setMessageA,
-      setMessageAWaiting,
-    );
-    processMessages(
-      prompt.trim(),
-      messageB,
-      conversationRecordIds[1],
-      setMessageB,
-      setMessageBWaiting,
-    );
-    setPrompt("");
   };
 
   const sendRating = async (conversationRecordId: string, rating: number) => {
