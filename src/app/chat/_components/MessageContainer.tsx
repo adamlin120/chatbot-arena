@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { Pencil } from "lucide-react";
+import { Bot, Pencil, User } from "lucide-react";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function MessageContainer({
   origMessage,
@@ -13,6 +15,10 @@ export default function MessageContainer({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const messageContainerRef = useRef<HTMLDivElement>(null);
+
+  const { data: session } = useSession();
+  const imageUrl = session?.user?.image;
+  const imageSize = 30;
 
   // Todo: is there a better way to handle this?
   useEffect(() => {
@@ -62,8 +68,17 @@ export default function MessageContainer({
 
   return (
     <div
-      className={`flex gap-2 group ${isUser ? "justify-end" : "justify-start"} items-end mb-2`}
+      className={`flex items-center gap-3 group justify-start mb-2`}
     >
+      {
+        isUser ? (
+          imageUrl ? 
+          <Image src={imageUrl} alt="User Image" width={imageSize} height={imageSize} className="rounded-full" /> :
+          <User size={imageSize} />
+        ) : (
+          <Bot size={imageSize} />
+        )
+      }
       <div
         className={`${
           isUser ? "bg-blue-700 text-white" : "bg-gray-200 text-gray-800"

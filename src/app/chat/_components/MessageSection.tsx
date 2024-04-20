@@ -36,7 +36,7 @@ export default function MessageSection() {
   return (
     // Todo: think a better way to handle the height of the container
     <div className="flex flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
-      <div className="flex-1 border-r p-5 my-4 overflow-y-scroll">
+      <div className="flex-1 border-r p-5 my-4 overflow-y-auto">
         {messageA.map(
           (message, index) =>
             index >= 2 && (
@@ -49,7 +49,7 @@ export default function MessageSection() {
         )}
         <div ref={messageAEndRef} />
       </div>
-      <div className="flex-1 p-5 my-4 overflow-y-scroll">
+      <div className="flex-1 flex flex-col gap-5 p-5 my-4 overflow-y-auto">
         {messageB.map(
           (message, index) =>
             index >= 2 && (

@@ -156,38 +156,36 @@ export default function PromptInput() {
   };
 
   return (
-    <div className="flex gap-3 items-center border border-t-0 p-5">
-      <div className="flex-grow">
-        <textarea
-          className="w-full border rounded-xl p-5 bg-transparent text-white overflow-hidden"
-          placeholder="輸入訊息..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          ref={promptInputRef}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && e.shiftKey === false) {
-              e.preventDefault();
-              if (!messageAWaiting && !messageBWaiting) {
-                sendMessage();
+    <div className="border border-t-0 p-5">
+      <div className="flex flex-grow gap-3 items-center border border-solid rounded-3xl has-[textarea:focus]:border-2">
+        <div className="flex-grow overflow-y-auto max-h-60 p-2 pr-5">
+          <textarea
+            className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
+            placeholder="輸入訊息..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            ref={promptInputRef}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.shiftKey === false) {
+                e.preventDefault();
+                if (!messageAWaiting && !messageBWaiting) {
+                  sendMessage();
+                }
               }
+            }}
+            rows={1}
+          ></textarea>
+        </div>
+        <div>
+          <Button
+            text={<SendHorizonal size={25} />}
+            onClick={sendMessage}
+            disableCond={
+              messageAWaiting || messageBWaiting || ratingButtonDisabled
             }
-          }}
-        ></textarea>
-      </div>
-      <div>
-        <Button
-          text={
-            <>
-              <SendHorizonal size={20} />
-              送出
-            </>
-          }
-          onClick={sendMessage}
-          disableCond={
-            messageAWaiting || messageBWaiting || ratingButtonDisabled
-          }
-          className="py-5"
-        />
+            className="p-2 rounded-lg mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          />
+        </div>
       </div>
     </div>
   );
