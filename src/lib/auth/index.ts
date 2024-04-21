@@ -4,6 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaClient } from "@prisma/client";
 
+export const ANONYMOUS_USER_ID = "6622924f82b05d4bf154d3e9";
+
 export const {
   handlers: { GET, POST },
   auth,

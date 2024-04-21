@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
-
+import { ANONYMOUS_USER_ID } from "@/lib/auth";
 /*
 Below is the schema for conversation:
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     //return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     conversation = await db.conversation.create({
       data: {
-        contributorId: "6622924f82b05d4bf154d3e9",
+        contributorId: ANONYMOUS_USER_ID,
       },
     });
   } else {
