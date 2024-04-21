@@ -68,7 +68,12 @@ Response:
 
 ```json
 {
-  "model_name": "Model Name"
+  [
+    {
+      "conversationRecordId": "Conversation Record ID",
+      "model" : "Model Name",
+    }
+  ]
 }
 ```
 
