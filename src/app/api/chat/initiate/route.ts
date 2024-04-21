@@ -1,3 +1,5 @@
+'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth } from "@/lib/auth";
@@ -80,6 +82,21 @@ export async function POST(request: NextRequest) {
       },
     });
   }
+
+  const model_list = [
+    //"claude-3-opus-20240229",
+    "claude-3-sonnet-20240229",
+    "claude-3-haiku-20240307",
+    //"mistral-large-latest",
+    "mistral-medium-latest",
+    "mistral-small-latest",
+    //"gpt-4",
+    //"gpt-3.5-turbo",
+  ];
+
+  const modelA = model_list[Math.floor(Math.random() * model_list.length)];
+  const modelB = model_list.filter((model) => model !== modelA)[Math.floor(Math.random() * model_list.length)];
+
   if (!conversation) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
   }
@@ -87,15 +104,17 @@ export async function POST(request: NextRequest) {
     db.conversationRecord.create({
       data: {
         conversationId: conversation.id,
+        modelName: modelA,
       },
     }),
     db.conversationRecord.create({
       data: {
         conversationId: conversation.id,
+        modelName: modelB,
       },
     }),
   ]);
-
+  
   const conversationRecordId = conversationRecords.map((record) => record.id);
 
   db.$disconnect();
