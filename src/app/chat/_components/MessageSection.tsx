@@ -37,9 +37,17 @@ export default function MessageSection() {
 
   return (
     // Todo: think a better way to handle the height of the container
-    <div className="flex flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
-      <MessageDisplay messages={messageA} messagesEndRef={messageAEndRef} isCompleted={!messageAWaiting} />
-      <MessageDisplay messages={messageB} messagesEndRef={messageBEndRef} isCompleted={!messageBWaiting} />
+    <div className="flex flex-col md:flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
+      <MessageDisplay
+        messages={messageA}
+        messagesEndRef={messageAEndRef}
+        isCompleted={!messageAWaiting}
+      />
+      <MessageDisplay
+        messages={messageB}
+        messagesEndRef={messageBEndRef}
+        isCompleted={!messageBWaiting}
+      />
     </div>
   );
 }
@@ -54,7 +62,7 @@ function MessageDisplay({
   isCompleted: boolean;
 }) {
   return (
-    <div className="flex-1 flex flex-col gap-8 border-r p-5 py-4 overflow-y-auto">
+    <div className="flex-1 flex flex-col gap-8 border-b md:border-r p-5 py-4 overflow-y-auto">
       {messages.length > 2 ? (
         messages.map(
           (message, index) =>

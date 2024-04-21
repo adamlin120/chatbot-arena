@@ -42,9 +42,7 @@ export default function MessageContainer({
     }
   };
 
-  const handleRegenerate = async () => {
-
-  };
+  const handleRegenerate = async () => {};
 
   const handleSubmit = async () => {
     setIsEditing(false);
@@ -58,7 +56,7 @@ export default function MessageContainer({
     } else {
       await saveEditedModelOutput();
     }
-  }
+  };
 
   // Todo: save new message to database
   const saveEditedModelOutput = async () => {

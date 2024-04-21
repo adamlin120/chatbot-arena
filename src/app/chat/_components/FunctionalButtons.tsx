@@ -107,14 +107,14 @@ export default function FunctionalButtons() {
       const responseData = await response.json();
       const modelA = responseData.find(
         (item: { conversationRecordId: string }) =>
-          item.conversationRecordId === conversationRecordIds[0]
+          item.conversationRecordId === conversationRecordIds[0],
       );
       if (modelA) {
         setModelAName(modelA.model);
       }
       const modelB = responseData.find(
         (item: { conversationRecordId: string }) =>
-          item.conversationRecordId === conversationRecordIds[1]
+          item.conversationRecordId === conversationRecordIds[1],
       );
       if (modelB) {
         setModelBName(modelB.model);
@@ -131,7 +131,7 @@ export default function FunctionalButtons() {
 
   return (
     <div className="flex w-full">
-      <div className="flex w-full gap-2 justify-start items-center border-b border-l rounded-bl-lg border-gray-300 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 w-full gap-2 justify-start items-center border-b border-l rounded-bl-lg border-gray-300 p-4">
         {ratingButtonAttributes.map((buttonAttribute, index) => (
           <Button
             key={index}
@@ -140,11 +140,12 @@ export default function FunctionalButtons() {
             disableCond={
               ratingButtonDisabled || messageAWaiting || messageBWaiting
             }
+            className="justify-center"
           />
         ))}
-        <div className="flex-grow"></div>
+        {/* <div className="flex-grow"></div> */}
         <h4
-          className="underline cursor-pointer"
+          className="underline cursor-pointer ml-5"
           onClick={() => setShowRule(true)}
         >
           ⓘ&nbsp;規則

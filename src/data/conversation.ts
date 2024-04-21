@@ -70,7 +70,9 @@ export const checkIfRoundExists = async (conversationRecordId: string) => {
   }
 };
 
-export const getModelByConversationRecordId = async (conversationRecordId: string) => {
+export const getModelByConversationRecordId = async (
+  conversationRecordId: string,
+) => {
   try {
     const db = new PrismaClient();
     const conversationRecord = await db.conversationRecord.findFirst({
@@ -81,7 +83,7 @@ export const getModelByConversationRecordId = async (conversationRecordId: strin
   } catch {
     return null;
   }
-}
+};
 
 export const editRatingByConversationRecordId = async (
   conversationRecordId: string,
@@ -97,4 +99,4 @@ export const editRatingByConversationRecordId = async (
   } catch {
     return null;
   }
-}
+};
