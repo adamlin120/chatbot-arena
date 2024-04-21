@@ -22,6 +22,8 @@ export default function FunctionalButtons() {
     ratingButtonDisabled,
     setRatingButtonDisabled,
     initiateChat,
+    setModelAName,
+    setModelBName,
   } = context;
 
   const MIN_RATING_MESSAGE_COUNT = 3;
@@ -101,6 +103,22 @@ export default function FunctionalButtons() {
     if (response.status === 200) {
       // Use a pop up to show the message that the rating has been submitted, do not use toast
       toast.success("您的回饋已經送出，謝謝！");
+      // read the model names from the response
+      const responseData = await response.json();
+      const modelA = responseData.find(
+        (item: { conversationRecordId: string }) =>
+          item.conversationRecordId === conversationRecordIds[0]
+      );
+      if (modelA) {
+        setModelAName(modelA.model);
+      }
+      const modelB = responseData.find(
+        (item: { conversationRecordId: string }) =>
+          item.conversationRecordId === conversationRecordIds[1]
+      );
+      if (modelB) {
+        setModelBName(modelB.model);
+      }
       console.log("Rating submitted successfully");
       return;
     } else if (response.status !== 200) {

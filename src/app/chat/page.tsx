@@ -47,8 +47,6 @@ export default function ChatPage() {
   // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
 
   // Todo: get model names after rating
-  const [modelAName, setModelAName] = useState<string>("???");
-  const [modelBName, setModelBName] = useState<string>("???");
 
   const context = useContext(MessageContext);
   if (!context) {
@@ -79,10 +77,10 @@ export default function ChatPage() {
       />
       <div className="flex flex-row justify-between border border-b-0 rounded-t-xl">
         <div className="flex-1 border-r p-4">
-          <h3>🤖 模型 A: {modelAName}</h3>
+          <h3>🤖 模型 A: {context.modelAName}</h3>
         </div>
         <div className="flex-1 p-4">
-          <h3>🤖 模型 B: {modelBName}</h3>
+          <h3>🤖 模型 B: {context.modelBName}</h3>
         </div>
       </div>
       <div className="flex flex-col flex-grow h-full">

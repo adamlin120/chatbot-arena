@@ -4,6 +4,7 @@ import { createContext, useState } from "react";
 import { toast } from "react-toastify";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
+const DEFAULT_MODEL_NAME = "評分後即可揭曉";
 
 export const MessageContext = createContext<{
   messageA: Message[];
@@ -18,6 +19,10 @@ export const MessageContext = createContext<{
   setMessageBWaiting: React.Dispatch<React.SetStateAction<boolean>>;
   ratingButtonDisabled: boolean;
   setRatingButtonDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+  modelAName: String;
+  setModelAName: React.Dispatch<React.SetStateAction<string>>;
+  modelBName: string;
+  setModelBName: React.Dispatch<React.SetStateAction<string>>;
   initiateChat: () => void;
 } | null>(null);
 
@@ -46,6 +51,9 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       content: "No problem, I can do my best to assist you",
     },
   ]);
+
+  const [modelAName, setModelAName] = useState<string>(DEFAULT_MODEL_NAME);
+  const [modelBName, setModelBName] = useState<string>(DEFAULT_MODEL_NAME);
 
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
   const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
@@ -86,6 +94,10 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         ratingButtonDisabled,
         setRatingButtonDisabled,
         initiateChat,
+        modelAName,
+        setModelAName,
+        modelBName,
+        setModelBName,
       }}
     >
       {children}
