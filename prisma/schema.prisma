@@ -47,6 +47,13 @@ model ConversationRecord {
 
 type ConversationRound {
   prompt     String
-  completion String
-  nextConversationRecordIds String[] @db.ObjectId
+  completion    String
+  model_name String
+  rating     Int?
+}
+
+model Trail {
+  id          String   @id @map("_id") @default(auto()) @db.ObjectId
+  ip          String @unique
+  quota       Int
 }

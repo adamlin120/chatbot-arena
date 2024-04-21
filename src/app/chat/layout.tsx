@@ -1,3 +1,4 @@
+import { MessageProvider } from "@/context/message";
 export default function ChatLayout({
   children,
 }: Readonly<{
@@ -5,7 +6,7 @@ export default function ChatLayout({
 }>) {
   return (
     <main>
-      {children}
+      <MessageProvider>{children}</MessageProvider>
     </main>
   );
 }

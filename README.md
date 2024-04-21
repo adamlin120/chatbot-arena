@@ -2,40 +2,28 @@
 
 ## Getting Started
 
-First, go to [neon](https://neon.tech/) and get your own postgreSQL connection string.
-
-- It may look like this: postgresql://chatbot-arena_owner:???????@ep-square-block-??????.ap-southeast-1.aws.neon.tech/chatbot-arena?sslmode=require'
-
-- Fill that string in POSTGRES_URL= field in .env file. (there is an .env.example which tells you how .env looks like)
-
-Then go to [resend](https://resend.com/) and get an email API KEY (This is used for email verification)
+Go to [resend](https://resend.com/) and get an email API KEY (This is used for email verification)
 
 - Fill the key in RESEND_API_KEY= field in .env file, too.
 
-Second, run the following command.
-```bash
+Go to Slack Canva to get necessary API keys and DATABASE_URL, update it in the .env file. See the .env.example file for reference.
 
+Then, run the following command.
+
+```bash
 yarn
-
 ```
-To install the packages.
 
-Third, run the following command:
-```bash
-
-yarn migrate
-
-```
-This gives your database an initial structure based on @/db/schema.ts
+To install the packages. Database schema will also be created in this step.
 
 Last, run:
-```bash
 
+```bash
 yarn dev
 
 ```
-To start the app. Now you can open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+To start the app. Now you can open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Learn More
 

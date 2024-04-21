@@ -17,17 +17,24 @@
   }
 }
 
-:root {
+/* Todo: support light mode */
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+} */
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 31, 41, 55; /*50, 50, 50;*/
+  --background-end-rgb: 31, 41, 55; /*50, 50, 50;*/
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 50, 50, 50;
-    --background-end-rgb: 50, 50, 50;
+    --background-start-rgb: 31, 41, 55; /*50, 50, 50;*/
+    --background-end-rgb: 31, 41, 55; /*50, 50, 50;*/
   }
 }
 
@@ -41,8 +48,73 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* for scroll bar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* for loading spinner */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #0279c9;
+  border-radius: 50%;
+  animation: spin 2s linear infinite;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+@keyframes flyInFromTop {
+  0% {
+    transform: translateY(-25vh); /* Start above the screen */
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes flyInFromBottom {
+  0% {
+    transform: translateY(25vh); /* Start below the screen */
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.flyInFromTop {
+  animation: flyInFromTop 0.5s ease-out forwards;
+}
+
+.flyInFromBottom {
+  animation: flyInFromBottom 0.5s ease-out forwards;
 }

@@ -53,41 +53,52 @@ Response:
 Two conversation record ids are returned. These ids are used to identify the two conversation records that are created for the conversation. The conversation records are created for the two users who are having the conversation. The conversation records are used to store the conversation rounds between
 */
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: NextRequest) {
-    const db = new PrismaClient();
-    //Read user id from nextauth session
-    const session = await auth();
-    if (!session || !session.user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const db = new PrismaClient();
+  //Read user id from nextauth session
+  let conversation;
+  const session = await auth();
+  if (!session || !session.user) {
+    //return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    conversation = await db.conversation.create({
+      data: {
+        contributorId: "6622924f82b05d4bf154d3e9",
+      },
+    });
+  } else {
     const user = await getUserByEmail(session.user.email);
 
     if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const conversation = await db.conversation.create({
-        data: {
-            contributorId: user.id,
-        },
+    conversation = await db.conversation.create({
+      data: {
+        contributorId: user.id,
+      },
     });
+  }
+  if (!conversation) {
+    return NextResponse.json({ error: "Not Found" }, { status: 404 });
+  }
+  const conversationRecords = await Promise.all([
+    db.conversationRecord.create({
+      data: {
+        conversationId: conversation.id,
+      },
+    }),
+    db.conversationRecord.create({
+      data: {
+        conversationId: conversation.id,
+      },
+    }),
+  ]);
 
-    const conversationRecords = await Promise.all([
-        db.conversationRecord.create({
-            data: {
-                conversationId: conversation.id,
-            },
-        }),
-        db.conversationRecord.create({
-            data: {
-                conversationId: conversation.id,
-            },
-        }),
-    ]);
+  const conversationRecordId = conversationRecords.map((record) => record.id);
 
-    const conversationRecordId = conversationRecords.map((record) => record.id);
+  db.$disconnect();
 
-    db.$disconnect();
-
-    return NextResponse.json({ conversationRecordId });
+  return NextResponse.json({ conversationRecordId });
 }

@@ -73,6 +73,7 @@ Request:
 ```
 */
 
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
@@ -86,35 +87,35 @@ export async function POST(request: NextRequest) {
     const conversationRecordId = requestBody.conversationRecordId as string;
 
     if (!messages || !conversationRecordId) {
-      return NextResponse.json(
-        { error: "Invalid Request" },
-        { status: 400 }
-      );
+      console.log("requestBody", requestBody);
+      return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
     }
 
-    const stream = await getStream(messages, async (response : ModelResponse) => {
-      // Append the prompt and the response to the conversationRecord with the conversationRecordId
-      
-      if (!response.completion)
-        return;
-      await db.conversationRecord.update({
-        where: {
-          id: conversationRecordId,
-        },
-        data: {
-          rounds: {
-            push: [
-              {
-                prompt: response.prompt,
-                completion: response.completion,
-                model_name: response.model_name,
-              },
-            ]
+    const stream = await getStream(
+      messages,
+      async (response: ModelResponse) => {
+        // Append the prompt and the response to the conversationRecord with the conversationRecordId
+
+        if (!response.completion) return;
+        await db.conversationRecord.update({
+          where: {
+            id: conversationRecordId,
           },
-        },
-      });
-    });
-    
+          data: {
+            rounds: {
+              push: [
+                {
+                  prompt: response.prompt,
+                  completion: response.completion,
+                  model_name: response.model_name,
+                },
+              ],
+            },
+          },
+        });
+      },
+    );
+
     db.$disconnect();
 
     return new StreamingTextResponse(stream || new ReadableStream(), {
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

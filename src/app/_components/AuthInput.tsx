@@ -10,7 +10,10 @@ type Props = {
 function AuthInput({ label, type, value, setValue }: Props) {
   return (
     <div className="mb-4 w-full">
-      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={label}>
+      <label
+        className="block text-gray-700 text-sm font-bold mb-2"
+        htmlFor={label}
+      >
         {label}
       </label>
       <input
