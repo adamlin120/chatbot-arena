@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
+import { getModelByConversationRecordId } from "@/data/conversation";
 /* Database Schema
 // schema.prisma
 
@@ -35,26 +36,28 @@ model Verification {
 }
 
 model Conversation {
-  id             String   @id @map("_id") @default(auto()) @db.ObjectId
-  contributor    User     @relation(fields: [contributorId], references: [id])
-  contributorId  String   @db.ObjectId
-  records        ConversationRecord[]
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  contributor   User?                @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  contributorId String               @db.ObjectId
+  records       ConversationRecord[]
 }
 
 model ConversationRecord {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  rounds ConversationRound[]
-  conversation Conversation @relation(fields: [conversationId], references: [id])
-  conversationId String @db.ObjectId
+  id                       String               @id @default(auto()) @map("_id") @db.ObjectId
+  rounds                   ConversationRound[]
+  conversation             Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  conversationId           String?              @db.ObjectId
+  prevConversationRecordId String?              @db.ObjectId
+  prevConversationRecord   ConversationRecord?  @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  nextConversationRecords  ConversationRecord[] @relation("conversationTree")
+  modelName                String
+  rating                   Int?
 }
 
 type ConversationRound {
   prompt     String
-  completion    String
-  model_name String
-  rating     Int?
+  completion String
 }
-
 
 ### Get Chat Streaming
 
@@ -91,8 +94,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
     }
 
+    const model = await getModelByConversationRecordId(conversationRecordId);
+
+    if (!model) {
+      return NextResponse.json({ error: "Invalid Model" }, { status: 400 });
+    }
+    
     const stream = await getStream(
       messages,
+      model,
       async (response: ModelResponse) => {
         // Append the prompt and the response to the conversationRecord with the conversationRecordId
 
@@ -107,7 +117,6 @@ export async function POST(request: NextRequest) {
                 {
                   prompt: response.prompt,
                   completion: response.completion,
-                  model_name: response.model_name,
                 },
               ],
             },

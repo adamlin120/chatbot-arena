@@ -1,5 +1,34 @@
 import { PrismaClient } from "@prisma/client";
 
+/*
+Schema
+
+model Conversation {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  contributor   User?                @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  contributorId String               @db.ObjectId
+  records       ConversationRecord[]
+}
+
+model ConversationRecord {
+  id                       String               @id @default(auto()) @map("_id") @db.ObjectId
+  rounds                   ConversationRound[]
+  conversation             Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  conversationId           String?              @db.ObjectId
+  prevConversationRecordId String?              @db.ObjectId
+  prevConversationRecord   ConversationRecord?  @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  nextConversationRecords  ConversationRecord[] @relation("conversationTree")
+  modelName                String
+  rating                   Int?
+}
+
+type ConversationRound {
+  prompt     String
+  completion String
+}
+
+*/
+
 export const getSiblingConversationRecord = async (
   conversationRecordId: string,
 ) => {
@@ -41,27 +70,31 @@ export const checkIfRoundExists = async (conversationRecordId: string) => {
   }
 };
 
-export const editLastRoundRating = async (
+export const getModelByConversationRecordId = async (conversationRecordId: string) => {
+  try {
+    const db = new PrismaClient();
+    const conversationRecord = await db.conversationRecord.findFirst({
+      where: { id: conversationRecordId },
+    });
+    db.$disconnect();
+    return conversationRecord?.modelName;
+  } catch {
+    return null;
+  }
+}
+
+export const editRatingByConversationRecordId = async (
   conversationRecordId: string,
   rating: number,
 ) => {
-  const db = new PrismaClient();
-  const conversationRecord = await db.conversationRecord.findFirst({
-    where: { id: conversationRecordId },
-  });
-  if (!conversationRecord) {
-    return;
-  }
-  const lastRound =
-    conversationRecord.rounds[conversationRecord.rounds.length - 1];
-  if (!lastRound.rating) {
-    lastRound.rating = rating;
+  try {
+    const db = new PrismaClient();
     await db.conversationRecord.update({
       where: { id: conversationRecordId },
-      data: { rounds: { set: conversationRecord.rounds } },
+      data: { rating },
     });
-
     db.$disconnect();
-    return;
+  } catch {
+    return null;
   }
-};
+}

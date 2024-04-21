@@ -3,8 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import {
   getSiblingConversationRecord,
-  editLastRoundRating,
   checkIfRoundExists,
+  editRatingByConversationRecordId,
+  getModelByConversationRecordId
 } from "@/data/conversation";
 
 export const dynamic = "force-dynamic";
@@ -57,8 +58,20 @@ export async function POST(request: NextRequest) {
       break;
   }
 
-  await editLastRoundRating(conversationRecordId, conversationRoundRating);
-  await editLastRoundRating(siblingRecordId, siblingConversationRoundRating);
+  await editRatingByConversationRecordId(conversationRecordId, conversationRoundRating);
+  await editRatingByConversationRecordId(siblingRecordId, siblingConversationRoundRating);
+
   db.$disconnect();
-  return NextResponse.json({ success: true });
+  return NextResponse.json(
+    [
+      {
+        conversationRecordId,
+        model: await getModelByConversationRecordId(conversationRecordId),
+      },
+      {
+        conversationRecordId: siblingRecordId,
+        model: await getModelByConversationRecordId(siblingRecordId),
+      }
+    ]
+  );
 }

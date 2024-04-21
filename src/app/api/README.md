@@ -1,40 +1,5 @@
 # API Reference
 
-All headers should contain Authorization header with JWT token
-
-## Schema
-
-See ./prisma/schema.prisma for the schema definition.
-The conversation related part needs extra explanation.
-Below is the schema for conversation:
-
-```
-model Conversation {
-  id             String   @id @map("_id") @default(auto()) @db.ObjectId
-  contributor    User     @relation(fields: [contributorId], references: [id])
-  contributorId  String   @db.ObjectId
-  records        ConversationRecord[]
-}
-
-model ConversationRecord {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  rounds ConversationRound[]
-  conversation Conversation @relation(fields: [conversationId], references: [id])
-  conversationId String @db.ObjectId
-}
-
-type ConversationRound {
-  prompt     String
-  completion    String
-  model_name String
-  rating     Int?
-}
-```
-
-Conversation is the main entity, which contains a list of conversation records in a session. For Chatbot Arena, there are two conversation records in a session since there are two conversations going on at the same time. Each conversation record contains a list of conversation rounds, which are the conversation history of the user and the chatbot. Each conversation round contains the prompt, completion, model name, and rating.
-
-For the rating part, the rating is an integer. 1 means the completion is better than the other completion, 0 means equally good, -1 means the completion is worse than the other completion, -2 means equally bad.
-
 ## User API
 
 Currently we use NextAuth.js for authentication. The user API is used to get the user information.
@@ -72,7 +37,6 @@ Request:
 {
   "message": Messages[],
   "conversationRecordId": String
-
 }
 ```
 
@@ -104,79 +68,18 @@ Response:
 
 ```json
 {
-  "success": true
+  [
+    {
+      "conversationRecordId": "Conversation Record ID",
+      "model" : "Model Name",
+    }
+  ]
 }
 ```
 
 If the request rating is 1, it means the completion is better than the other completion. If the request rating is 0, it means both completions are bad. If the request rating is 2, it means both completions are good. You just need to submit the rating for one conversation record, and the other conversation record will be calculated automatically.
 
-### Get All Ratings as JSON file
-
-Endpoint: /api/rating/export
-Method: GET
-
-Response: JSON file
-
-Format of JSON file:
-
-```json
-{
-  "ratings": [
-    {
-      "prompt": "Prompt Content",
-      "completions": [
-        {
-          "content": "Completion A Content",
-          "model_name": "Model A Name"
-        },
-        {
-          "content": "Completion B Content",
-          "model_name": "Model B Name"
-        }
-      ],
-      "rating": 1,
-      "feedback": "Feedback"
-    }
-  ]
-}
-```
-
-### Get Ratings By Model
-
-Endpoint: /api/rating/model
-Method: GET
-
-Request:
-
-```json
-{
-  "model_name": "Model Name"
-}
-```
-
-Response:
-
-```json
-{
-  "ratings": [
-    {
-      "prompt": "Prompt Content",
-      "completions": [
-        {
-          "content": "Completion A Content",
-          "model_name": "Model A Name"
-        },
-        {
-          "content": "Completion B Content",
-          "model_name": "Model B Name"
-        }
-      ],
-      "rating": 1,
-      "feedback": "Feedback"
-    }
-  ]
-}
-```
+This API will also lead to the revelation of the model name that the user has rated, and after rating, the user will not be able to rate again in this session.
 
 ### Get Average Rating By Model
 
@@ -239,11 +142,11 @@ Format of JSON file:
 
 ```json
 {
+  "model_name": "Model Name",
   "conversations": [
     {
       "prompt": "Prompt Content",
-      "completions": "Completion Content",
-      "model_name": "Model Name"
+      "completions": "Completion Content"
     }
   ]
 }
