@@ -28,6 +28,7 @@ export default function SideBar() {
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+
   useEffect(() => {
     const fetchUserId = async () => {
       if (session && session.user && session.user.email) {
@@ -47,22 +48,22 @@ export default function SideBar() {
     fetchUserId();
   }, [session]);
 
-  const pathNames = usePathname().split("/");
-  const currentPath = pathNames[1];
-  const subtitle: { [key: string]: string } = {
-    chat: "語言模型競技場 ⚔️",
-    rating: "模型評分區 👍👎",
-    dataset: "對話資料集 📚",
-    leaderboard: "模型排行榜 🏆",
-    profile: "個人頁面",
-  };
+  // const pathNames = usePathname().split("/");
+  // const currentPath = pathNames[1];
+  // const subtitle: { [key: string]: string } = {
+  //   chat: "語言模型競技場 ⚔️",
+  //   rating: "模型評分區 👍👎",
+  //   dataset: "對話資料集 📚",
+  //   leaderboard: "模型排行榜 🏆",
+  //   profile: "個人頁面",
+  // };
 
   return (
-    <div className="flex mt-5">
-      <Link
+    <>
+      {/* <Link
         href="/"
-        className="text-2xl ml-[4rem] mt-1 font-semibold text-nowrap"
-        onClick={() => setIsOpen(false)}
+        className="text-2xl ml-[4rem] mt-6 font-semibold text-nowrap"
+        // onClick={() => setIsOpen(false)}
       >
         LLM Arena
         <span className="text-xl">
@@ -70,16 +71,20 @@ export default function SideBar() {
             ? ` - ${subtitle[currentPath]}`
             : ""}
         </span>
-      </Link>
+      </Link> */}
+    {/* <div className="flex "> */}
+      
       <aside
         className={cn(
-          `flex flex-col transform top-0 left-0 w-16 bg-gray-800 fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 overflow-x-hidden ${
+          "flex",
+          `md:flex-col md:transform md:top-0 md:left-0 md:w-16 md:h-full md:bg-gray-800 md:fixed  md:overflow-auto md:ease-in-out md:transition-all md:duration-300 md:z-30 md:overflow-x-hidden ${
             // isOpen ? "translate-x-0 w-64" : "-translate-x-full** "
-            isOpen && "w-64"
+            isOpen && "md:w-64"
           }`,
+          `fixed z-30 bg-gray-800 bottom-0 left-0 right-0 w-screen h-16`
         )}
       >
-        <div className="flex items-center ml-2 mt-5 gap-3">
+        <div className="hidden md:flex items-center ml-2 mt-5 gap-3"> {/* temprarily hidden */}
           <button
             className="rounded-full p-2 transition duration-500 ease-in-out transform hover:scale-125 active:scale-90"
             onClick={() => setIsOpen(!isOpen)}
@@ -97,7 +102,12 @@ export default function SideBar() {
           )}
         </div>
         <SideBarContext.Provider value={{ isOpen, setIsOpen }}>
-          <div className="flex flex-col w-full mt-5 flex-grow">
+          <div className={
+            cn("flex", 
+              "md:flex-col md:w-full md:mt-5 md:flex-grow md:justify-start",
+              "flex-row w-screen justify-around"
+              )
+          }>
             <LinkComponent
               href="/chat"
               text="語言模型競技場 ⚔️"
@@ -118,47 +128,49 @@ export default function SideBar() {
               text="模型排行榜 🏆"
               icon={<Trophy size={28} />}
             />
-          </div>
-          {useSession().status === "authenticated" ? (
-            <div className="flex">
-              {session?.user?.image && userId && (
-                <Link
-                  href={`/profile/${userId}`}
-                  className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate flex-grow"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <div
-                    className={`transition-none min-w-fit`}
-                    title={!isOpen ? "個人頁面" : ""}
+            <div className="hidden md:block md:flex-grow"></div>
+            {useSession().status === "authenticated" ? (
+              <div className="flex w-full">
+                {session?.user?.image && userId && (
+                  <Link
+                    href={`/profile/${userId}`}
+                    className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center gap-3 truncate flex-grow "
+                    onClick={() => setIsOpen(false)}
                   >
-                    <Image
-                      src={avatarUrl || ""}
-                      width={24}
-                      height={24}
-                      className="rounded-full transition-none"
-                      alt="profile-pic"
-                    />
-                  </div>
-                  {isOpen && <div className="truncate">{username}</div>}
-                </Link>
-              )}
-              {isOpen && (
-                <button
-                  className="hover:bg-gray-700 px-3"
-                  title="登出"
-                  onClick={() => signOut()}
-                >
-                  <LogOut size={28} />
-                </button>
-              )}
-            </div>
-          ) : (
-            <LinkComponent
-              href="/login"
-              text="登入 / 註冊"
-              icon={<LogIn size={28} />}
-            />
-          )}
+                    <div
+                      className={`transition-none min-w-fit`}
+                      title={!isOpen ? "個人頁面" : ""}
+                    >
+                      <Image
+                        src={avatarUrl || ""}
+                        width={28}
+                        height={28}
+                        className="rounded-full transition-none"
+                        alt="profile-pic"
+                      />
+                    </div>
+                    {isOpen && <div className="truncate">{username}</div>}
+                  </Link>
+                )}
+                {isOpen && (
+                  <button
+                    className="hover:bg-gray-700 px-3"
+                    title="登出"
+                    onClick={() => signOut()}
+                  >
+                    <LogOut size={28} />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <LinkComponent
+                href="/login"
+                text="登入 / 註冊"
+                icon={<LogIn size={28} />}
+              />
+            )}
+          </div>
+          
         </SideBarContext.Provider>
       </aside>
       {isOpen && (
@@ -167,7 +179,8 @@ export default function SideBar() {
           onClick={() => setIsOpen(false)}
         ></div>
       )}
-    </div>
+    {/* </div> */}
+    </>
   );
 }
 
@@ -189,7 +202,7 @@ function LinkComponent({
   return (
     <Link
       href={href}
-      className="p-4 hover:bg-gray-700 text-lg flex items-center gap-3 truncate"
+      className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center gap-3 truncate w-full"
       onClick={() => setIsOpen(false)}
     >
       <div className="transition-none" title={!isOpen ? text : ""}>
