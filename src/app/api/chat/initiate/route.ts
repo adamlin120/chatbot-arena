@@ -1,4 +1,4 @@
-'force-dynamic';
+"force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
@@ -96,7 +96,10 @@ export async function POST(request: NextRequest) {
 
   const modelA = model_list[Math.floor(Math.random() * model_list.length)];
   const model_list_without_A = model_list.filter((model) => model !== modelA);
-  const modelB = model_list_without_A[Math.floor(Math.random() * model_list_without_A.length)];
+  const modelB =
+    model_list_without_A[
+      Math.floor(Math.random() * model_list_without_A.length)
+    ];
 
   if (!conversation) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
@@ -115,7 +118,7 @@ export async function POST(request: NextRequest) {
       },
     }),
   ]);
-  
+
   const conversationRecordId = conversationRecords.map((record) => record.id);
 
   db.$disconnect();

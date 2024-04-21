@@ -29,19 +29,18 @@ export default function RootLayout({
   //   leaderboard: "模型排行榜 🏆",
   //   profile: "個人頁面",
   // };
-  
+
   return (
     <html lang="en">
       <SessionProvider>
         <body className={inter.className + "flex flex-col"}>
           {/* <Header /> */}
-          
-          
+
           <div className="flex flex-col md:min-h-screen flex-grow">
             <Link
               href="/"
               className="text-2xl ml-[4rem] mt-6 font-semibold text-nowrap"
-            >            
+            >
               LLM Arena
               {/* <span className="text-xl">
                 {currentPath && subtitle[currentPath]
@@ -49,7 +48,9 @@ export default function RootLayout({
                   : ""}
               </span> */}
             </Link>
-            <div className="md:h-full mt-5 mb-16 md:mb-0 md:ml-16">{children}</div>
+            <div className="md:h-full mt-5 mb-16 md:mb-0 md:ml-16">
+              {children}
+            </div>
           </div>
           <SideBar />
           {/* <Footer /> */}

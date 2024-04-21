@@ -7,7 +7,7 @@ import {
   getSiblingConversationRecord,
   checkIfRoundExists,
   editRatingByConversationRecordId,
-  getModelByConversationRecordId
+  getModelByConversationRecordId,
 } from "@/data/conversation";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +18,7 @@ export async function POST(request: NextRequest) {
   var userId;
   if (!session || !session.user) {
     userId = ANONYMOUS_USER_ID;
-  }
-  else {
+  } else {
     const user = await getUserByEmail(session.user.email);
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -83,20 +82,24 @@ export async function POST(request: NextRequest) {
       break;
   }
 
-  await editRatingByConversationRecordId(conversationRecordId, conversationRoundRating);
-  await editRatingByConversationRecordId(siblingRecordId, siblingConversationRoundRating);
+  await editRatingByConversationRecordId(
+    conversationRecordId,
+    conversationRoundRating,
+  );
+  await editRatingByConversationRecordId(
+    siblingRecordId,
+    siblingConversationRoundRating,
+  );
 
   db.$disconnect();
-  return NextResponse.json(
-    [
-      {
-        conversationRecordId,
-        model: await getModelByConversationRecordId(conversationRecordId),
-      },
-      {
-        conversationRecordId: siblingRecordId,
-        model: await getModelByConversationRecordId(siblingRecordId),
-      }
-    ]
-  );
+  return NextResponse.json([
+    {
+      conversationRecordId,
+      model: await getModelByConversationRecordId(conversationRecordId),
+    },
+    {
+      conversationRecordId: siblingRecordId,
+      model: await getModelByConversationRecordId(siblingRecordId),
+    },
+  ]);
 }

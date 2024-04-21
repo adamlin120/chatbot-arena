@@ -28,7 +28,6 @@ export default function SideBar() {
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-
   useEffect(() => {
     const fetchUserId = async () => {
       if (session && session.user && session.user.email) {
@@ -72,8 +71,8 @@ export default function SideBar() {
             : ""}
         </span>
       </Link> */}
-    {/* <div className="flex "> */}
-      
+      {/* <div className="flex "> */}
+
       <aside
         className={cn(
           "flex",
@@ -81,10 +80,12 @@ export default function SideBar() {
             // isOpen ? "translate-x-0 w-64" : "-translate-x-full** "
             isOpen && "md:w-64"
           }`,
-          `fixed z-30 bg-gray-800 bottom-0 left-0 right-0 w-screen h-16`
+          `fixed z-30 bg-gray-800 bottom-0 left-0 right-0 w-screen h-16`,
         )}
       >
-        <div className="hidden md:flex items-center ml-2 mt-5 gap-3"> {/* temprarily hidden */}
+        <div className="hidden md:flex items-center ml-2 mt-5 gap-3">
+          {" "}
+          {/* temprarily hidden */}
           <button
             className="rounded-full p-2 transition duration-500 ease-in-out transform hover:scale-125 active:scale-90"
             onClick={() => setIsOpen(!isOpen)}
@@ -102,12 +103,13 @@ export default function SideBar() {
           )}
         </div>
         <SideBarContext.Provider value={{ isOpen, setIsOpen }}>
-          <div className={
-            cn("flex", 
+          <div
+            className={cn(
+              "flex",
               "md:flex-col md:w-full md:mt-5 md:flex-grow md:justify-start",
-              "flex-row w-screen justify-around"
-              )
-          }>
+              "flex-row w-screen justify-around",
+            )}
+          >
             <LinkComponent
               href="/chat"
               text="語言模型競技場 ⚔️"
@@ -170,7 +172,6 @@ export default function SideBar() {
               />
             )}
           </div>
-          
         </SideBarContext.Provider>
       </aside>
       {isOpen && (
@@ -179,7 +180,7 @@ export default function SideBar() {
           onClick={() => setIsOpen(false)}
         ></div>
       )}
-    {/* </div> */}
+      {/* </div> */}
     </>
   );
 }

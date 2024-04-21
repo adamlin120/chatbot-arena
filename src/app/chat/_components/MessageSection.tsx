@@ -38,8 +38,16 @@ export default function MessageSection() {
   return (
     // Todo: think a better way to handle the height of the container
     <div className="flex flex-col md:flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
-      <MessageDisplay messages={messageA} messagesEndRef={messageAEndRef} isCompleted={!messageAWaiting} />
-      <MessageDisplay messages={messageB} messagesEndRef={messageBEndRef} isCompleted={!messageBWaiting} />
+      <MessageDisplay
+        messages={messageA}
+        messagesEndRef={messageAEndRef}
+        isCompleted={!messageAWaiting}
+      />
+      <MessageDisplay
+        messages={messageB}
+        messagesEndRef={messageBEndRef}
+        isCompleted={!messageBWaiting}
+      />
     </div>
   );
 }

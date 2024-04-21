@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     if (!model) {
       return NextResponse.json({ error: "Invalid Model" }, { status: 400 });
     }
-    
+
     const stream = await getStream(
       messages,
       model,

@@ -15,7 +15,6 @@ export default async function getStream(
   model: string,
   callback: Function,
 ) {
-  
   if (model.includes("gpt")) {
     const response = await openai.chat.completions.create({
       messages: messages,

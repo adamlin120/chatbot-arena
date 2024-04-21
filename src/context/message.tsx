@@ -77,7 +77,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     console.log("conversation id data: ", data);
     setConversationRecordIds(data.conversationRecordId);
 
-    setModelAName(DEFAULT_MODEL_NAME)
+    setModelAName(DEFAULT_MODEL_NAME);
     setModelBName(DEFAULT_MODEL_NAME);
   };
 

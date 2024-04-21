@@ -107,14 +107,14 @@ export default function FunctionalButtons() {
       const responseData = await response.json();
       const modelA = responseData.find(
         (item: { conversationRecordId: string }) =>
-          item.conversationRecordId === conversationRecordIds[0]
+          item.conversationRecordId === conversationRecordIds[0],
       );
       if (modelA) {
         setModelAName(modelA.model);
       }
       const modelB = responseData.find(
         (item: { conversationRecordId: string }) =>
-          item.conversationRecordId === conversationRecordIds[1]
+          item.conversationRecordId === conversationRecordIds[1],
       );
       if (modelB) {
         setModelBName(modelB.model);
