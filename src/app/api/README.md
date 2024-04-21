@@ -37,7 +37,6 @@ Request:
 {
   "message": Messages[],
   "conversationRecordId": String
-
 }
 ```
 
@@ -69,79 +68,13 @@ Response:
 
 ```json
 {
-  "success": true
+  "model_name": "Model Name"
 }
 ```
 
 If the request rating is 1, it means the completion is better than the other completion. If the request rating is 0, it means both completions are bad. If the request rating is 2, it means both completions are good. You just need to submit the rating for one conversation record, and the other conversation record will be calculated automatically.
 
-### Get All Ratings as JSON file
-
-Endpoint: /api/rating/export
-Method: GET
-
-Response: JSON file
-
-Format of JSON file:
-
-```json
-{
-  "ratings": [
-    {
-      "prompt": "Prompt Content",
-      "completions": [
-        {
-          "content": "Completion A Content",
-          "model_name": "Model A Name"
-        },
-        {
-          "content": "Completion B Content",
-          "model_name": "Model B Name"
-        }
-      ],
-      "rating": 1,
-      "feedback": "Feedback"
-    }
-  ]
-}
-```
-
-### Get Ratings By Model
-
-Endpoint: /api/rating/model
-Method: GET
-
-Request:
-
-```json
-{
-  "model_name": "Model Name"
-}
-```
-
-Response:
-
-```json
-{
-  "ratings": [
-    {
-      "prompt": "Prompt Content",
-      "completions": [
-        {
-          "content": "Completion A Content",
-          "model_name": "Model A Name"
-        },
-        {
-          "content": "Completion B Content",
-          "model_name": "Model B Name"
-        }
-      ],
-      "rating": 1,
-      "feedback": "Feedback"
-    }
-  ]
-}
-```
+This API will also lead to the revelation of the model name that the user has rated, and after rating, the user will not be able to rate again in this session.
 
 ### Get Average Rating By Model
 
@@ -204,11 +137,11 @@ Format of JSON file:
 
 ```json
 {
+  "model_name": "Model Name",
   "conversations": [
     {
       "prompt": "Prompt Content",
-      "completions": "Completion Content",
-      "model_name": "Model Name"
+      "completions": "Completion Content"
     }
   ]
 }
