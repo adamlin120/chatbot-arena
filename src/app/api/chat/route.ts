@@ -1,6 +1,8 @@
+'force dynamic';
+
 import { Message, ModelResponse } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma/client";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
 import { getModelByConversationRecordId } from "@/data/conversation";

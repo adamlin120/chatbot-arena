@@ -1,5 +1,5 @@
 import { getVerificationTokenByEmail } from "@/data/verification-token";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
 export const generateVerificationToken = async (email: string) => {
