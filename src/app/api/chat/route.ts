@@ -118,12 +118,10 @@ export async function POST(request: NextRequest) {
             },
             data: {
               rounds: {
-                push: [
-                  {
-                    prompt: response.prompt,
-                    completion: response.completion,
-                  },
-                ],
+                push: {
+                  prompt: response.prompt,
+                  completion: response.completion,
+                },
               },
             },
           });
