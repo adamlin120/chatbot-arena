@@ -14,6 +14,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
   const db = new PrismaClient();
   const session = await auth();

@@ -80,6 +80,8 @@ Request:
 
 export const dynamic = "force-dynamic";
 
+export const maxDuration = 250;
+
 export async function POST(request: NextRequest) {
   try {
     const db = new PrismaClient();
