@@ -84,6 +84,9 @@ export async function POST(request: NextRequest) {
       break;
   }
 
+  // set a time counter and print the execution time
+  
+  const start = Date.now();
   await editRatingByConversationRecordId(
     conversationRecordId,
     conversationRoundRating,
@@ -92,6 +95,8 @@ export async function POST(request: NextRequest) {
     siblingRecordId,
     siblingConversationRoundRating,
   );
+  const end = Date.now();
+  console.log("Execution time: ", end - start);
 
   db.$disconnect();
   return NextResponse.json([
