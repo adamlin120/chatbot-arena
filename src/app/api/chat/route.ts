@@ -109,23 +109,28 @@ export async function POST(request: NextRequest) {
       model,
       async (response: ModelResponse) => {
         // Append the prompt and the response to the conversationRecord with the conversationRecordId
-
-        if (!response.completion) return;
-        await db.conversationRecord.update({
-          where: {
-            id: conversationRecordId,
-          },
-          data: {
-            rounds: {
-              push: [
-                {
-                  prompt: response.prompt,
-                  completion: response.completion,
-                },
-              ],
+        try {
+          const db = new PrismaClient();
+          if (!response.completion) return;
+          await db.conversationRecord.update({
+            where: {
+              id: conversationRecordId,
             },
-          },
-        });
+            data: {
+              rounds: {
+                push: [
+                  {
+                    prompt: response.prompt,
+                    completion: response.completion,
+                  },
+                ],
+              },
+            },
+          });
+        }
+        catch (error) {
+          console.error(error);
+        }
       },
     );
 
