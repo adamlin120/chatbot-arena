@@ -1,4 +1,4 @@
-'force dynamic';
+export const dynamic = 'force-dyniamic';
 
 import { Message, ModelResponse } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";

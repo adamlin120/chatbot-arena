@@ -1,5 +1,5 @@
 "use client";
-"force dynamic";
+
 import { useSession } from "next-auth/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

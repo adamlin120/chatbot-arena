@@ -1,5 +1,4 @@
-'force dynamic';
-
+export const dynamic = 'force-dyniamic';
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@/prisma/client";
 import { auth } from "@/lib/auth";
