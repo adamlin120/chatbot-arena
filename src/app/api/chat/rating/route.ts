@@ -11,7 +11,6 @@ import {
   getModelByConversationRecordId,
 } from "@/data/conversation";
 
-export const dynamic = "force-dynamic";
 
 export const maxDuration = 30;
 
