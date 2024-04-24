@@ -1,5 +1,3 @@
-export const dynamic = 'force-dyniamic';
-
 import { Message, ModelResponse } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@/prisma/client";
@@ -78,7 +76,7 @@ Request:
 ```
 */
 
-
+export const dynamic = "force-dynamic";
 export const maxDuration = 250;
 
 export async function POST(request: NextRequest) {

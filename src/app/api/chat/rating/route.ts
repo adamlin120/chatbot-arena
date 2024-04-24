@@ -1,4 +1,3 @@
-export const dynamic = 'force-dyniamic';
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@/prisma/client";
 import { auth } from "@/lib/auth";
@@ -13,6 +12,7 @@ import {
 
 
 export const maxDuration = 30;
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const db = new PrismaClient();
