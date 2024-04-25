@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     await getSiblingConversationRecord(conversationRecordId);
 
   if (!siblingRecordId) {
+    console.log("siblingRecordId not found");
     return NextResponse.json(
       { error: "Conversation record not found" },
       { status: 404 },
@@ -61,9 +62,11 @@ export async function POST(request: NextRequest) {
   }
 
   if (!(await checkIfRoundExists(conversationRecordId))) {
+    console.log("checkIfRoundExists conversationRecordId not found");
     return NextResponse.json({ error: "No rounds found" }, { status: 404 });
   }
   if (!(await checkIfRoundExists(siblingRecordId))) {
+    console.log("checkIfRoundExists siblingRecordId not found");
     return NextResponse.json({ error: "No rounds found" }, { status: 404 });
   }
 
