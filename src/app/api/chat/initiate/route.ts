@@ -103,24 +103,31 @@ export async function POST(request: NextRequest) {
   if (!conversation) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
   }
-  const conversationRecords = await Promise.all([
-    db.conversationRecord.create({
-      data: {
-        conversationId: conversation.id,
-        modelName: modelA,
-      },
-    }),
-    db.conversationRecord.create({
-      data: {
-        conversationId: conversation.id,
-        modelName: modelB,
-      },
-    }),
-  ]);
 
-  const conversationRecordId = conversationRecords.map((record) => record.id);
-
-  // db.$disconnect();
-
-  return NextResponse.json({ conversationRecordId });
+  try {
+    const conversationRecords = await Promise.all([
+      db.conversationRecord.create({
+        data: {
+          conversationId: conversation.id,
+          modelName: modelA,
+        },
+      }),
+      db.conversationRecord.create({
+        data: {
+          conversationId: conversation.id,
+          modelName: modelB,
+        },
+      }),
+    ]);
+  
+    const conversationRecordId = conversationRecords.map((record) => record.id);
+  
+    // db.$disconnect();
+  
+    return NextResponse.json({ conversationRecordId });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+  
 }
