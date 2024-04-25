@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma/client";
 import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
@@ -10,6 +10,8 @@ import {
   getModelByConversationRecordId,
 } from "@/data/conversation";
 
+
+export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {

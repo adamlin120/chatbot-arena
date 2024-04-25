@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const privateEnvSchema = z.object({
-  DATABASE_URL: z.string(),
+  MONGODB_URI: z.string(),
   OPENAI_KEY: z.string(),
   ANTHROPIC_KEY: z.string(),
   MISTRAL_KEY: z.string(),
@@ -11,7 +11,7 @@ const privateEnvSchema = z.object({
 type PrivateEnv = z.infer<typeof privateEnvSchema>;
 
 export const privateEnv: PrivateEnv = {
-  DATABASE_URL: process.env.DATABASE_URL!,
+  MONGODB_URI: process.env.MONGODB_URI!,
   OPENAI_KEY: process.env.OPENAI_KEY!,
   ANTHROPIC_KEY: process.env.ANTHROPIC_KEY!,
   MISTRAL_KEY: process.env.MISTRAL_KEY!,

@@ -1,10 +1,11 @@
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = env("MONGODB_URI")
 }
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/prisma/client"
 }
 
 model User {

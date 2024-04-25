@@ -1,6 +1,6 @@
 import { Message, ModelResponse } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma/client";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
 import { getModelByConversationRecordId } from "@/data/conversation";
@@ -9,7 +9,7 @@ import { getModelByConversationRecordId } from "@/data/conversation";
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = env("MONGODB_URI")
 }
 
 generator client {
@@ -77,6 +77,7 @@ Request:
 */
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 250;
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,23 +106,26 @@ export async function POST(request: NextRequest) {
       model,
       async (response: ModelResponse) => {
         // Append the prompt and the response to the conversationRecord with the conversationRecordId
-
-        if (!response.completion) return;
-        await db.conversationRecord.update({
-          where: {
-            id: conversationRecordId,
-          },
-          data: {
-            rounds: {
-              push: [
-                {
+        try {
+          const db = new PrismaClient();
+          if (!response.completion) return;
+          await db.conversationRecord.update({
+            where: {
+              id: conversationRecordId,
+            },
+            data: {
+              rounds: {
+                push: {
                   prompt: response.prompt,
                   completion: response.completion,
                 },
-              ],
+              },
             },
-          },
-        });
+          });
+        }
+        catch (error) {
+          console.error(error);
+        }
       },
     );
 
