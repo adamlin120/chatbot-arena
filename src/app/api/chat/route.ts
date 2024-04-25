@@ -9,7 +9,7 @@ import { getModelByConversationRecordId } from "@/data/conversation";
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = env("MONGODB_URI")
 }
 
 generator client {
