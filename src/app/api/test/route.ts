@@ -3,7 +3,8 @@
 import { PrismaClient } from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+// const db = new PrismaClient();
+import { db } from "../_base";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const reqBody = await req.json();
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     reqBody;
 
   try {
-    const user = await prisma.user.create({
+    const user = await db.user.create({
       data: {
         email,
         username,
@@ -33,6 +34,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       { status: 500 },
     );
   } finally {
-    await prisma.$disconnect();
+    // await db.$disconnect();
   }
 }

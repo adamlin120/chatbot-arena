@@ -4,6 +4,7 @@ import { PrismaClient } from "@/prisma/client";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
 import { getModelByConversationRecordId } from "@/data/conversation";
+import { db } from "../_base";
 /* Database Schema
 // schema.prisma
 
@@ -81,7 +82,7 @@ export const maxDuration = 250;
 
 export async function POST(request: NextRequest) {
   try {
-    const db = new PrismaClient();
+    // const db = new PrismaClient();
 
     // Get the message from the request query
     const requestBody = await request.json();
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
       async (response: ModelResponse) => {
         // Append the prompt and the response to the conversationRecord with the conversationRecordId
         try {
-          const db = new PrismaClient();
+          // const db = new PrismaClient();
           if (!response.completion) return;
           await db.conversationRecord.update({
             where: {
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    db.$disconnect();
+    // db.$disconnect();
 
     return new StreamingTextResponse(stream || new ReadableStream(), {
       status: 200,

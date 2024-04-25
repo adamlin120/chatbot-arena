@@ -6,6 +6,7 @@ import { authSchema } from "@/validators/auth";
 import { generateVerificationToken } from "../token/tokens";
 import { sendVerificationEmail } from "../mail/mail";
 import { validate } from "uuid";
+import { db } from "@/app/api/_base";
 
 export default CredentialsProvider({
   name: "credentials",
@@ -22,7 +23,7 @@ export default CredentialsProvider({
     };
     const parts = req.url.split("=");
     const isSignUp = parts.slice(1).join("=");
-    const db = new PrismaClient();
+    // const db = new PrismaClient();
 
     try {
       validatedCredentials = authSchema.parse(credentials);
@@ -88,7 +89,7 @@ export default CredentialsProvider({
         verificationToken.token,
       );
     }
-    db.$disconnect();
+    // db.$disconnect();
     return {
       email: existedUser.email,
       name: existedUser.username,

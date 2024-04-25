@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaClient } from "@/prisma/client";
+import { db } from "@/app/api/_base";
 
 export const ANONYMOUS_USER_ID = "6622924f82b05d4bf154d3e9";
 
@@ -35,7 +36,7 @@ export const {
       };
     },
     async jwt({ token, account }) {
-      const db = new PrismaClient();
+      // const db = new PrismaClient();
       if (!account) return token;
       const provider = account.provider;
       if (!provider) return token;
@@ -107,7 +108,7 @@ export const {
         console.error("Error in jwt function:", error);
         throw error; // Rethrow the error for handling elsewhere if needed
       } finally {
-        await db.$disconnect(); // Disconnect from the database after operation
+        // await  db.$disconnect(); // Disconnect from the database after operation
       }
     },
   },

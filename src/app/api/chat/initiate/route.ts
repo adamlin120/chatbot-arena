@@ -3,6 +3,7 @@ import { PrismaClient } from "@/prisma/client";
 import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
+import { db } from "../../_base";
 /*
 Below is the schema for conversation:
 
@@ -56,7 +57,7 @@ Two conversation record ids are returned. These ids are used to identify the two
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const db = new PrismaClient();
+  // const db = new PrismaClient();
   //Read user id from nextauth session
   let conversation;
   const session = await auth();
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
 
   const conversationRecordId = conversationRecords.map((record) => record.id);
 
-  db.$disconnect();
+  // db.$disconnect();
 
   return NextResponse.json({ conversationRecordId });
 }
