@@ -54,7 +54,7 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
       },
     });
     return stream;
@@ -71,7 +71,7 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
       },
     });
     return stream;
@@ -101,7 +101,7 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
       },
     });
     return stream;
