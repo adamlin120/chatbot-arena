@@ -28,7 +28,5 @@ export async function POST(req: NextRequest) {
       { error: "Something went wrong!" },
       { status: 500 },
     );
-  } finally {
-    // await db.$disconnect();
-  }
+  } 
 }

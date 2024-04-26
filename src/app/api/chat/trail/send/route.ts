@@ -29,7 +29,5 @@ export async function POST(req: NextRequest) {
       { error: "Failed to store IP and quota" },
       { status: 500 },
     );
-  } finally {
-    // await db.$disconnect();
-  }
+  } 
 }
