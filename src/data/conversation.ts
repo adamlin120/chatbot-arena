@@ -58,14 +58,11 @@ export const checkIfRoundExists = async (conversationRecordId: string) => {
       where: { id: conversationRecordId },
     });
     if (!conversationRecord) {
-      console.log("Conversation Record not found", conversationRecordId);
       return false;
     }
     if (conversationRecord.rounds && conversationRecord.rounds.length > 0) {
-      console.log(conversationRecord.rounds, "Round exists");
       return true;
     }
-    console.log(conversationRecord.rounds, "Round not exists");
     return false;
   } catch {
     error("Error in checkIfRoundExists");
