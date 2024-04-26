@@ -28,7 +28,7 @@ avatarUrl "anonymous.com"
 bio "anonymous"
 verified true
 ```
-is already exists in the database.
+is already existed in the database.
 Change the ANONYMOUS_USER_ID and ANONYMOUS_USER_EMAIL in @/lib/auth/index.ts to the _id value provided by mongo.
 
 Last, run:
