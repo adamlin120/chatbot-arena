@@ -1,5 +1,5 @@
 import Button from "@/app/_components/Button";
-import { SendHorizonal } from "lucide-react";
+import { LoaderCircle, SendHorizonal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
@@ -184,7 +184,7 @@ export default function PromptInput() {
         </div>
         <div>
           <Button
-            text={<SendHorizonal size={25} />}
+            text={(messageAWaiting || messageBWaiting) ? <LoaderCircle size={25} className="animate-spin" /> : <SendHorizonal size={25} />}
             onClick={sendMessage}
             disableCond={
               messageAWaiting || messageBWaiting || ratingButtonDisabled

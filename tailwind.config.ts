@@ -15,11 +15,16 @@ const config: Config = {
       },
       animation: {
         "slide-up": "slideUp 1s ease-out",
+        "spin": 'spin 2s linear infinite',
       },
       keyframes: {
         slideUp: {
           "0%": { transform: "translateY(100%)" },
           "100%": { transform: "translateY(0)" },
+        },
+        spin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
         },
       },
     },
