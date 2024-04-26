@@ -26,6 +26,7 @@ export default function PromptInput() {
     setMessageBWaiting,
     ratingButtonDisabled,
     setRatingButtonDisabled,
+    initiateChat,
   } = context;
 
   const MAX_TOKENS = 1024;
@@ -109,6 +110,9 @@ export default function PromptInput() {
 
   const sendMessage = async () => {
     if (prompt.length === 0 || prompt.trim().length === 0) return;
+    if(!conversationRecordIds) { // Todo: check if this is needed, and note that I cannot use await here.
+      initiateChat();
+    }
     setPrompt(prompt.trim());
 
     processMessages(
@@ -126,6 +130,7 @@ export default function PromptInput() {
       setMessageBWaiting,
     );
     setPrompt("");
+
     if (!session || !session.user) {
       const response = await fetch("https://api.ipify.org?format=json");
       const data = await response.json();
