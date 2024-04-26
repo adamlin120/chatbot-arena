@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/prisma/client";
+
 import { db } from "@/app/api/_base";
 /*
 Schema

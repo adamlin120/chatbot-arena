@@ -1,81 +1,8 @@
-import { Message, ModelResponse } from "@/lib/types/db";
+import { Message } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/prisma/client";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
 import { getModelByConversationRecordId } from "@/data/conversation";
-import { db } from "../_base";
-/* Database Schema
-// schema.prisma
-
-datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  email         String   @unique
-  username      String
-  provider      String
-  hashedPassword String
-  coins         Int
-  avatarUrl     String
-  bio           String
-  verified      Boolean
-  conversations Conversation[]
-}
-
-model Verification {
-  email         String    @id @map("_id")
-  token         String         
-  expires       DateTime 
-}
-
-model Conversation {
-  id            String               @id @default(auto()) @map("_id") @db.ObjectId
-  contributor   User?                @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  contributorId String               @db.ObjectId
-  records       ConversationRecord[]
-}
-
-model ConversationRecord {
-  id                       String               @id @default(auto()) @map("_id") @db.ObjectId
-  rounds                   ConversationRound[]
-  conversation             Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  conversationId           String?              @db.ObjectId
-  prevConversationRecordId String?              @db.ObjectId
-  prevConversationRecord   ConversationRecord?  @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  nextConversationRecords  ConversationRecord[] @relation("conversationTree")
-  modelName                String
-  rating                   Int?
-}
-
-type ConversationRound {
-  prompt     String
-  completion String
-}
-
-### Get Chat Streaming
-
-Endpoint: /api/chat/
-
-method: POST
-
-Request:
-
-```typescript
-{
-  "message": Messages[],
-  "conversationRecordId": String
-
-}
-```
-*/
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 250;
