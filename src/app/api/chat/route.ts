@@ -82,7 +82,7 @@ export const maxDuration = 250;
 
 export async function POST(request: NextRequest) {
   try {
-    // const db = new PrismaClient();
+    
 
     // Get the message from the request query
     const requestBody = await request.json();
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       async (response: ModelResponse) => {
         // Append the prompt and the response to the conversationRecord with the conversationRecordId
         try {
-          // const db = new PrismaClient();
+          
           if (!response.completion) return;
           await db.conversationRecord.update({
             where: {

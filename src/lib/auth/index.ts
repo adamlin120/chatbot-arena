@@ -36,7 +36,7 @@ export const {
       };
     },
     async jwt({ token, account }) {
-      // const db = new PrismaClient();
+      
       if (!account) return token;
       const provider = account.provider;
       if (!provider) return token;

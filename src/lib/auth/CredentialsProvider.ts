@@ -23,7 +23,7 @@ export default CredentialsProvider({
     };
     const parts = req.url.split("=");
     const isSignUp = parts.slice(1).join("=");
-    // const db = new PrismaClient();
+    
 
     try {
       validatedCredentials = authSchema.parse(credentials);

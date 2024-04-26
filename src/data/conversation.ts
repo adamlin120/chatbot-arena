@@ -33,7 +33,7 @@ export const getSiblingConversationRecord = async (
   conversationRecordId: string,
 ) => {
   try {
-    // const db = new PrismaClient();
+    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
       include: { conversation: { include: { records: true } } },
@@ -52,7 +52,7 @@ export const getSiblingConversationRecord = async (
 
 export const checkIfRoundExists = async (conversationRecordId: string) => {
   try {
-    // const db = new PrismaClient();
+    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
@@ -74,7 +74,7 @@ export const getModelByConversationRecordId = async (
   conversationRecordId: string,
 ) => {
   try {
-    // const db = new PrismaClient();
+    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
@@ -90,7 +90,7 @@ export const editRatingByConversationRecordId = async (
   rating: number,
 ) => {
   try {
-    // const db = new PrismaClient();
+    
     await db.conversationRecord.update({
       where: { id: conversationRecordId },
       data: { rating },

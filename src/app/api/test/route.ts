@@ -3,7 +3,7 @@
 import { PrismaClient } from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-// const db = new PrismaClient();
+
 import { db } from "../_base";
 
 export async function POST(req: NextRequest, res: NextResponse) {

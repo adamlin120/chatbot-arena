@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/app/api/_base";
 
 export const generateVerificationToken = async (email: string) => {
-  // const db = new PrismaClient();
+  
 
   const token = uuidv4();
   const expires = new Date(new Date().getTime() + 3600 * 1000);

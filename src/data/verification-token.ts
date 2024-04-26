@@ -3,7 +3,7 @@ import { db } from "@/app/api/_base";
 
 export const getVerificationTokenByToken = async (token: string) => {
   try {
-    // const db = new PrismaClient();
+    
     const vtoken = await db.verification.findFirst({
       where: {
         token: token,
@@ -18,7 +18,7 @@ export const getVerificationTokenByToken = async (token: string) => {
 };
 export const getVerificationTokenByEmail = async (email: string) => {
   try {
-    // const db = new PrismaClient();
+    
     const vtoken = await db.verification.findFirst({
       where: {
         email: email,

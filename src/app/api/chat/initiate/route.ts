@@ -57,7 +57,7 @@ Two conversation record ids are returned. These ids are used to identify the two
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  // const db = new PrismaClient();
+  
   //Read user id from nextauth session
   let conversation;
   const session = await auth();
