@@ -53,6 +53,10 @@ export default function FunctionalButtons() {
   const [sendingRating, setSendingRating] = useState<boolean>(false);
 
   const restartChat = () => {
+    if(messageA.length === 2 && messageB.length === 2) {
+      console.log("Useless action, you have already restarted the chat.");
+      return;
+    }
     setMessageA([
       {
         role: "user",
