@@ -44,14 +44,12 @@ export default function MessageSection() {
         messagesEndRef={messageAEndRef}
         isCompleted={!messageAWaiting}
         conversationRecordId={conversationRecordIds[0]}
-        type="A"
       />
       <MessageDisplay
         messages={messageB}
         messagesEndRef={messageBEndRef}
         isCompleted={!messageBWaiting}
         conversationRecordId={conversationRecordIds[1]}
-        type="B"
       />
     </div>
   );
@@ -61,14 +59,12 @@ function MessageDisplay({
   messages,
   messagesEndRef,
   isCompleted,
-  conversationRecordId,
-  type,
+  conversationRecordId
 }: {
   messages: Message[];
   messagesEndRef: React.RefObject<HTMLDivElement>;
   isCompleted: boolean;
   conversationRecordId: string;
-  type: string;
 }) {
   return (
     <div className="flex-1 flex flex-col gap-8 border-b md:border-r p-5 py-4 overflow-y-auto">
