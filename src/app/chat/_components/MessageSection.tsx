@@ -75,15 +75,14 @@ function MessageDisplay({
       {messages.length > 2 ? (
         messages.map((message, index) => { 
           return index >= 2 && (
-            <MessageContainer
-              key={index}
-              msgIndex={index}
-              origMessage={message.content}
-              isUser={message.role === "user"}
-              isCompleted={isCompleted}
-              conversationRecordId={conversationRecordId}
-              type={type}
-            />
+              <MessageContainer
+                msgIndex={index}
+                origMessage={message.content}
+                isUser={message.role === "user"}
+                isCompleted={isCompleted}
+                conversationRecordId={conversationRecordId}
+                messages={messages}
+              />
           );
         })
       ) : (

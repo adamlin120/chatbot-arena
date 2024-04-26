@@ -24,6 +24,7 @@ export default function FunctionalButtons() {
     initiateChat,
     setModelAName,
     setModelBName,
+    setRated,
   } = context;
 
   const MIN_RATING_MESSAGE_COUNT = 3;
@@ -50,6 +51,8 @@ export default function FunctionalButtons() {
   const [sendingRating, setSendingRating] = useState<boolean>(false);
 
   const restartChat = () => {
+    setRated(false);
+    setRatingButtonDisabled(false);
     setMessageA([
       {
         role: "user",
@@ -103,6 +106,7 @@ export default function FunctionalButtons() {
     if (response.status === 200) {
       // Use a pop up to show the message that the rating has been submitted, do not use toast
       toast.success("您的回饋已經送出，謝謝！");
+      setRated(true);
       // read the model names from the response
       const responseData = await response.json();
       const modelA = responseData.find(

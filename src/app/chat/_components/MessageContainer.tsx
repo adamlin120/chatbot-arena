@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Message } from "@/lib/types/db";
 
 
 export default function MessageContainer({
@@ -13,14 +14,15 @@ export default function MessageContainer({
   msgIndex,
   isUser,
   isCompleted,
-  type,
+  conversationRecordId,
+  messages,
 }: {
   origMessage: string;
   msgIndex: number;
   isUser: boolean;
   isCompleted: boolean;
   conversationRecordId: string;
-  type: string;
+  messages: Message[];
 }) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -36,7 +38,7 @@ export default function MessageContainer({
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { messageA, messageB, conversationRecordIds, ratingButtonDisabled } = context;
+  const { ratingButtonDisabled } = context;
 
   useEffect(() => {
     if (messageTextAreaRef.current) {
@@ -72,17 +74,16 @@ export default function MessageContainer({
     } else {
       await saveEditedModelOutput();
     }
-    type === 'A' ? messageA[msgIndex].content = message : messageB[msgIndex].content = message;
+    messages[msgIndex].content = message;
     router.refresh();
   };
 
   // Todo: save new message to database
   const saveEditedModelOutput = async () => {
-    let originalPrompt, editedPrompt, conversationRecordId;
+    let originalPrompt, editedPrompt;
     const index = msgIndex - 1;
-    originalPrompt = (type === 'A') ? messageA[index] : messageB[index];
+    originalPrompt = messages[index];
     editedPrompt = originalPrompt;
-    conversationRecordId = (type === 'A') ? conversationRecordIds[0] : conversationRecordIds[1];
     try {
       const response = await fetch("/api/chat/editing", {
         method: "POST",
@@ -117,12 +118,10 @@ export default function MessageContainer({
 
   // Todo: edit the prompt
   const handleEditPrompt = async () => {
-    let originalCompletion, editedCompletion, conversationRecordId;
+    let originalCompletion, editedCompletion;
     const index = msgIndex + 1;
-    originalCompletion = (type === 'A') ? messageA[index] : messageB[index];
+    originalCompletion = messages[index];
     editedCompletion = originalCompletion;
-    conversationRecordId = (type === 'A') ? conversationRecordIds[0] : conversationRecordIds[1];
-
     try {
       const response = await fetch("/api/chat/editing", {
         method: "POST",
