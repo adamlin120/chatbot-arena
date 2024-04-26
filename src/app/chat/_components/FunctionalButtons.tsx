@@ -18,12 +18,15 @@ export default function FunctionalButtons() {
     setMessageB,
     messageAWaiting,
     messageBWaiting,
+    setMessageAWaiting,
+    setMessageBWaiting,
     conversationRecordIds,
     ratingButtonDisabled,
     setRatingButtonDisabled,
     initiateChat,
     setModelAName,
     setModelBName,
+    DEFAULT_MODEL_NAME,
   } = context;
 
   const MIN_RATING_MESSAGE_COUNT = 3;
@@ -70,6 +73,11 @@ export default function FunctionalButtons() {
         content: "No problem, I can do my best to assist you",
       },
     ]);
+    setModelAName(DEFAULT_MODEL_NAME);
+    setModelBName(DEFAULT_MODEL_NAME);
+    setRatingButtonDisabled(false);
+    setMessageAWaiting(false);
+    setMessageBWaiting(false);
     initiateChat();
   };
 
