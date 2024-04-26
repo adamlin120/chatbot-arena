@@ -9,8 +9,9 @@ export const maxDuration = 250;
 
 export async function POST(request: NextRequest) {
   try {
+    // This is to test frontend time out
+    // await new Promise(resolve => setTimeout(resolve, 7000));
     
-
     // Get the message from the request query
     const requestBody = await request.json();
     // Please use a validator in production

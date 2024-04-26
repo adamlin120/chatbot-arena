@@ -57,15 +57,33 @@ export default function PromptInput() {
     ];
     setMessages(newMessages);
 
+    // Abort the request if it takes too long (currently 10 second)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify({
         messages: newMessages.slice(0, newMessages.length - 1),
         conversationRecordId: conversationRecordId,
       }),
-    });
+      signal: controller.signal,
+    }).catch((error) => {
+      if (error.name === 'AbortError') { // This may due to llm api error
+        console.error('Request timed out');
+        toast.error('伺服器沒有回應，請稍後再試');
+        setMessageWaiting(false);
+        setMessages((messages) => {
+          return messages.slice(0, messages.length - 2);
+        });
+        setPrompt(currPrompt);
+      } else {
+        console.error("Error processing messages:", error);
+        toast.error(serverErrorMessage);
+      }
+      return;
+    }).finally(() => clearTimeout(timeoutId));
 
-    if (!response.body) {
+    if (!response || !response.body) {
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
@@ -174,7 +192,7 @@ export default function PromptInput() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                if (!messageAWaiting && !messageBWaiting) {
+                if (!messageAWaiting && !messageBWaiting && !ratingButtonDisabled) {
                   sendMessage();
                 }
               }
