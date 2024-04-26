@@ -174,12 +174,13 @@ export default function PromptInput() {
             className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
             onCompositionStart={handleComposingStart}
             onCompositionEnd={handleComposingEnd}
-            placeholder="輸入訊息..."
+            placeholder={ratingButtonDisabled ? "評分完畢，歡迎編輯以上對話！" : "輸入訊息..."}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             ref={promptInputRef}
+            disabled={ratingButtonDisabled||!conversationRecordIds[0]||!conversationRecordIds[1]}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !isComposing && conversationRecordIds[0] && conversationRecordIds[1]) {
+              if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                 e.preventDefault();
                 if (!messageAWaiting && !messageBWaiting) {
                   sendMessage();
