@@ -8,7 +8,9 @@ export default function RatingPage() {
   const contributor = "[contributor name here]";
   const [feedbackText, setFeedbackText] = useState<string>("");
   const [promptRating, setPromptRating] = useState<number | undefined>(); // 1 - 5
-  const [completionRating, setCompletionRating] = useState<number | undefined>(); // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
+  const [completionRating, setCompletionRating] = useState<
+    number | undefined
+  >(); // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
   // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
   const router = useRouter();
   const [loading, setLoading] = useState(true);

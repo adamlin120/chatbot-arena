@@ -10,11 +10,6 @@
     "postinstall": "prisma generate",
     "format": "prettier --write ."
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint && yarn format"
-    }
-  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.19.0",
     "@emotion/react": "^11.11.4",
