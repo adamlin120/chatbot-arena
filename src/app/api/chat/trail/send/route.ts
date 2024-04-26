@@ -1,6 +1,6 @@
-import { PrismaClient } from "@/prisma/client";
+
 import { NextRequest, NextResponse } from "next/server";
-const prisma = new PrismaClient();
+import { db } from "@/app/api/_base";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,13 +8,13 @@ export async function POST(req: NextRequest) {
     const ip = requestBody.ip;
 
     // Find the trail with the provided IP address
-    let existingTrail = await prisma.trail.findFirst({
+    let existingTrail = await db.trail.findFirst({
       where: { ip: ip },
     });
 
     if (existingTrail) {
       // If the trail exists, update its quota
-      existingTrail = await prisma.trail.update({
+      existingTrail = await db.trail.update({
         where: { id: existingTrail.id },
         data: { quota: existingTrail.quota + 1 },
       });
@@ -30,6 +30,6 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   } finally {
-    await prisma.$disconnect();
+    // await db.$disconnect();
   }
 }

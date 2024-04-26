@@ -1,11 +1,11 @@
-import { PrismaClient } from "@/prisma/client";
+
 import { NextRequest, NextResponse } from "next/server";
-const prisma = new PrismaClient();
+import { db } from "../../_base";
 
 export async function POST(req: NextRequest) {
   const requestBody = await req.json();
   const ip = requestBody.ip;
-  const existingTrail = await prisma.trail.findFirst({
+  const existingTrail = await db.trail.findFirst({
     where: { ip: ip },
   });
   if (existingTrail) {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   }
   try {
     // Store the IP address and set quota to 0
-    await prisma.trail.create({
+    await db.trail.create({
       data: {
         quota: 0,
         ip: ip,
@@ -33,6 +33,6 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   } finally {
-    await prisma.$disconnect();
+    // await db.$disconnect();
   }
 }

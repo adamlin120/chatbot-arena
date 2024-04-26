@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/prisma/client";
+
 import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
@@ -9,13 +9,14 @@ import {
   editRatingByConversationRecordId,
   getModelByConversationRecordId,
 } from "@/data/conversation";
+import { db } from "../../_base";
 
 
 export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const db = new PrismaClient();
+  
   const session = await auth();
   var userId;
   if (!session || !session.user) {
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
 
   if (!siblingRecordId) {
     return NextResponse.json(
-      { error: "Conversation record not found" },
+      { error: "Sibling conversation record not found" },
       { status: 404 },
     );
   }
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
     siblingConversationRoundRating,
   );
 
-  db.$disconnect();
+  
   return NextResponse.json([
     {
       conversationRecordId,

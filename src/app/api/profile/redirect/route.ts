@@ -1,13 +1,13 @@
 // getIdByEmail
 
-import { PrismaClient } from "@/prisma/client";
+
 import { NextRequest, NextResponse } from "next/server";
-const prisma = new PrismaClient();
+import { db } from "../../_base";
 
 export async function POST(req: NextRequest) {
   const requestBody = await req.json();
   try {
-    const user = await prisma.user.findFirst({
+    const user = await db.user.findFirst({
       where: {
         email: requestBody.email,
       },
@@ -27,6 +27,6 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   } finally {
-    await prisma.$disconnect();
+    // await db.$disconnect();
   }
 }

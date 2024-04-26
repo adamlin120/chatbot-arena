@@ -1,5 +1,6 @@
-import { PrismaClient } from "@/prisma/client";
 
+import { db } from "@/app/api/_base";
+import { error } from "console";
 /*
 Schema
 
@@ -33,7 +34,7 @@ export const getSiblingConversationRecord = async (
   conversationRecordId: string,
 ) => {
   try {
-    const db = new PrismaClient();
+    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
       include: { conversation: { include: { records: true } } },
@@ -43,7 +44,7 @@ export const getSiblingConversationRecord = async (
     const siblingRecord = records?.find(
       (record) => record.id !== conversationRecordId,
     );
-    db.$disconnect();
+    
     return siblingRecord?.id;
   } catch {
     return null;
@@ -52,7 +53,7 @@ export const getSiblingConversationRecord = async (
 
 export const checkIfRoundExists = async (conversationRecordId: string) => {
   try {
-    const db = new PrismaClient();
+    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
@@ -60,12 +61,11 @@ export const checkIfRoundExists = async (conversationRecordId: string) => {
       return false;
     }
     if (conversationRecord.rounds && conversationRecord.rounds.length > 0) {
-      db.$disconnect();
       return true;
     }
-    db.$disconnect();
     return false;
   } catch {
+    error("Error in checkIfRoundExists");
     return false;
   }
 };
@@ -74,11 +74,11 @@ export const getModelByConversationRecordId = async (
   conversationRecordId: string,
 ) => {
   try {
-    const db = new PrismaClient();
+    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
-    db.$disconnect();
+    
     return conversationRecord?.modelName;
   } catch {
     return null;
@@ -90,12 +90,12 @@ export const editRatingByConversationRecordId = async (
   rating: number,
 ) => {
   try {
-    const db = new PrismaClient();
+    
     await db.conversationRecord.update({
       where: { id: conversationRecordId },
       data: { rating },
     });
-    db.$disconnect();
+    
   } catch {
     return null;
   }

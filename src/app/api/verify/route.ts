@@ -1,11 +1,12 @@
 import { getUserByEmail } from "@/data/user";
 import { getVerificationTokenByToken } from "@/data/verification-token";
-import { PrismaClient } from "@/prisma/client";
+
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "../_base";
 
 export async function POST(req: NextRequest) {
   try {
-    const db = new PrismaClient();
+    
     const reqBody = await req.json();
     //console.log(reqBody)
     const existingToken = await getVerificationTokenByToken(reqBody.token);

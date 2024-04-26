@@ -5,15 +5,39 @@ import MistralClient from "@mistralai/mistralai";
 import Anthropic from "@anthropic-ai/sdk";
 import { privateEnv } from "@/lib/env/private";
 import { ModelResponse } from "@/lib/types/db";
+import { db } from "@/app/api/_base";
 export const MAX_TOKENS = 1024;
 
 const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
 const anthropic = new Anthropic({ apiKey: privateEnv.ANTHROPIC_KEY });
+
+async function writeStreamToDatabase(conversationRecordId: string, response: ModelResponse) {
+  try {
+    if (!response.completion) return;
+    await db.conversationRecord.update({
+      where: {
+        id: conversationRecordId,
+      },
+      data: {
+        rounds: {
+          push: {
+            prompt: response.prompt,
+            completion: response.completion,
+          },
+        },
+      },
+    });
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
 export default async function getStream(
   messages: Message[],
   model: string,
-  callback: Function,
+  conversationRecordId: string,
 ) {
   if (model.includes("gpt")) {
     const response = await openai.chat.completions.create({
@@ -30,7 +54,7 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        callback(ModelResponse);
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
       },
     });
     return stream;
@@ -47,7 +71,7 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        callback(ModelResponse);
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
       },
     });
     return stream;
@@ -77,7 +101,7 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        callback(ModelResponse);
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
       },
     });
     return stream;
