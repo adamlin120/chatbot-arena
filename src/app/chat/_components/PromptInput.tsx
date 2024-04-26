@@ -35,6 +35,16 @@ export default function PromptInput() {
   const [prompt, setPrompt] = useState<string>("");
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
+  const [isComposing, setIsComposing] = useState(false);
+
+  const handleComposingStart = () => {
+    setIsComposing(true);
+  }
+
+  const handleComposingEnd = () => {
+    setIsComposing(false);
+  }
+
   const processMessages = async (
     currPrompt: string,
     messages: Message[],
@@ -162,12 +172,14 @@ export default function PromptInput() {
         <div className="flex-grow overflow-y-auto max-h-60 px-2 pr-5">
           <textarea
             className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
+            onCompositionStart={handleComposingStart}
+            onCompositionEnd={handleComposingEnd}
             placeholder="輸入訊息..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             ref={promptInputRef}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && e.shiftKey === false) {
+              if (e.key === "Enter" && !e.shiftKey && !isComposing && conversationRecordIds[0] && conversationRecordIds[1]) {
                 e.preventDefault();
                 if (!messageAWaiting && !messageBWaiting) {
                   sendMessage();
