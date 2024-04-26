@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     siblingConversationRoundRating,
   );
 
-  // db.$disconnect();
+  
   return NextResponse.json([
     {
       conversationRecordId,

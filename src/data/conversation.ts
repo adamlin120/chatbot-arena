@@ -43,7 +43,7 @@ export const getSiblingConversationRecord = async (
     const siblingRecord = records?.find(
       (record) => record.id !== conversationRecordId,
     );
-    // db.$disconnect();
+    
     return siblingRecord?.id;
   } catch {
     return null;
@@ -60,10 +60,10 @@ export const checkIfRoundExists = async (conversationRecordId: string) => {
       return false;
     }
     if (conversationRecord.rounds && conversationRecord.rounds.length > 0) {
-      // db.$disconnect();
+      
       return true;
     }
-    // db.$disconnect();
+    
     return false;
   } catch {
     return false;
@@ -78,7 +78,7 @@ export const getModelByConversationRecordId = async (
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
-    // db.$disconnect();
+    
     return conversationRecord?.modelName;
   } catch {
     return null;
@@ -95,7 +95,7 @@ export const editRatingByConversationRecordId = async (
       where: { id: conversationRecordId },
       data: { rating },
     });
-    // db.$disconnect();
+    
   } catch {
     return null;
   }

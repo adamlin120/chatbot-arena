@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    // db.$disconnect();
+    
 
     return new StreamingTextResponse(stream || new ReadableStream(), {
       status: 200,

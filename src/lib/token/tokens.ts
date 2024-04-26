@@ -25,6 +25,6 @@ export const generateVerificationToken = async (email: string) => {
     },
   });
 
-  // db.$disconnect();
+  
   return newToken;
 };

@@ -9,7 +9,7 @@ export const getVerificationTokenByToken = async (token: string) => {
         token: token,
       },
     });
-    // db.$disconnect();
+    
     return vtoken;
   } catch (error) {
     console.error(error);
@@ -24,7 +24,7 @@ export const getVerificationTokenByEmail = async (email: string) => {
         email: email,
       },
     });
-    // db.$disconnect();
+    
     return vtoken;
   } catch (error) {
     console.error(error);

@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
   
     const conversationRecordId = conversationRecords.map((record) => record.id);
   
-    // db.$disconnect();
+    
   
     return NextResponse.json({ conversationRecordId });
   } catch (error) {

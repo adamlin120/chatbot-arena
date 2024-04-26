@@ -89,7 +89,7 @@ export default CredentialsProvider({
         verificationToken.token,
       );
     }
-    // db.$disconnect();
+    
     return {
       email: existedUser.email,
       name: existedUser.username,
