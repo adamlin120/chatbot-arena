@@ -105,32 +105,8 @@ export async function POST(request: NextRequest) {
     const stream = await getStream(
       messages,
       model,
-      async (response: ModelResponse) => {
-        // Append the prompt and the response to the conversationRecord with the conversationRecordId
-        try {
-          
-          if (!response.completion) return;
-          await db.conversationRecord.update({
-            where: {
-              id: conversationRecordId,
-            },
-            data: {
-              rounds: {
-                push: {
-                  prompt: response.prompt,
-                  completion: response.completion,
-                },
-              },
-            },
-          });
-        }
-        catch (error) {
-          console.error(error);
-        }
-      },
+      conversationRecordId,
     );
-
-    
 
     return new StreamingTextResponse(stream || new ReadableStream(), {
       status: 200,
