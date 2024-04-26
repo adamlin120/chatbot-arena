@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     // This is to test frontend time out
     // await new Promise(resolve => setTimeout(resolve, 7000));
-    
+
     // Get the message from the request query
     const requestBody = await request.json();
     // Please use a validator in production
@@ -30,11 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid Model" }, { status: 400 });
     }
 
-    const stream = await getStream(
-      messages,
-      model,
-      conversationRecordId,
-    );
+    const stream = await getStream(messages, model, conversationRecordId);
 
     return new StreamingTextResponse(stream || new ReadableStream(), {
       status: 200,

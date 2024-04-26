@@ -57,7 +57,9 @@ export default function SideBar() {
           `fixed z-30 bg-gray-800 bottom-0 left-0 right-0 w-screen h-16`,
         )}
       >
-        <div className="hidden md:flex items-center ml-2 mt-5 gap-3"> { /* Temporarily hidden on mobile */}
+        <div className="hidden md:flex items-center ml-2 mt-5 gap-3">
+          {" "}
+          {/* Temporarily hidden on mobile */}
           <button
             className="rounded-full p-2 transition duration-500 ease-in-out transform hover:scale-125 active:scale-90"
             onClick={() => setIsOpen(!isOpen)}

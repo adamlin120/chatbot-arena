@@ -17,5 +17,5 @@ export default function HeaderSubtitle() {
         ? ` - ${subtitle[currentPath]}`
         : ""}
     </span>
-  )
+  );
 }

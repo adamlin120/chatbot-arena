@@ -67,21 +67,24 @@ export default function PromptInput() {
         conversationRecordId: conversationRecordId,
       }),
       signal: controller.signal,
-    }).catch((error) => {
-      if (error.name === 'AbortError') { // This may due to llm api error
-        console.error('Request timed out');
-        toast.error('伺服器沒有回應，請稍後再試');
-        setMessageWaiting(false);
-        setMessages((messages) => {
-          return messages.slice(0, messages.length - 2);
-        });
-        setPrompt(currPrompt);
-      } else {
-        console.error("Error processing messages:", error);
-        toast.error(serverErrorMessage);
-      }
-      return;
-    }).finally(() => clearTimeout(timeoutId));
+    })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          // This may due to llm api error
+          console.error("Request timed out");
+          toast.error("伺服器沒有回應，請稍後再試");
+          setMessageWaiting(false);
+          setMessages((messages) => {
+            return messages.slice(0, messages.length - 2);
+          });
+          setPrompt(currPrompt);
+        } else {
+          console.error("Error processing messages:", error);
+          toast.error(serverErrorMessage);
+        }
+        return;
+      })
+      .finally(() => clearTimeout(timeoutId));
 
     if (!response || !response.body) {
       return;
@@ -128,7 +131,8 @@ export default function PromptInput() {
 
   const sendMessage = async () => {
     if (prompt.length === 0 || prompt.trim().length === 0) return;
-    if(!conversationRecordIds) { // Todo: check if this is needed, and note that I cannot use await here.
+    if (!conversationRecordIds) {
+      // Todo: check if this is needed, and note that I cannot use await here.
       initiateChat();
     }
     setPrompt(prompt.trim());
@@ -192,7 +196,11 @@ export default function PromptInput() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.shiftKey === false) {
                 e.preventDefault();
-                if (!messageAWaiting && !messageBWaiting && !ratingButtonDisabled) {
+                if (
+                  !messageAWaiting &&
+                  !messageBWaiting &&
+                  !ratingButtonDisabled
+                ) {
                   sendMessage();
                 }
               }
@@ -202,7 +210,13 @@ export default function PromptInput() {
         </div>
         <div>
           <Button
-            text={(messageAWaiting || messageBWaiting) ? <LoaderCircle size={25} className="animate-spin" /> : <SendHorizonal size={25} />}
+            text={
+              messageAWaiting || messageBWaiting ? (
+                <LoaderCircle size={25} className="animate-spin" />
+              ) : (
+                <SendHorizonal size={25} />
+              )
+            }
             onClick={sendMessage}
             disableCond={
               messageAWaiting || messageBWaiting || ratingButtonDisabled

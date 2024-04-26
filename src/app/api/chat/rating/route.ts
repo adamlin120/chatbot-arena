@@ -11,12 +11,10 @@ import {
 } from "@/data/conversation";
 import { db } from "../../_base";
 
-
 export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  
   const session = await auth();
   var userId;
   if (!session || !session.user) {
@@ -94,7 +92,6 @@ export async function POST(request: NextRequest) {
     siblingConversationRoundRating,
   );
 
-  
   return NextResponse.json([
     {
       conversationRecordId,

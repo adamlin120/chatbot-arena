@@ -23,7 +23,6 @@ export default CredentialsProvider({
     };
     const parts = req.url.split("=");
     const isSignUp = parts.slice(1).join("=");
-    
 
     try {
       validatedCredentials = authSchema.parse(credentials);
@@ -89,7 +88,7 @@ export default CredentialsProvider({
         verificationToken.token,
       );
     }
-    
+
     return {
       email: existedUser.email,
       name: existedUser.username,

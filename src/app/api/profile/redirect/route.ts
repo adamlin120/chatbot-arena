@@ -1,6 +1,5 @@
 // getIdByEmail
 
-
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../_base";
 
@@ -26,5 +25,5 @@ export async function POST(req: NextRequest) {
       { error: "Something went wrong!" },
       { status: 500 },
     );
-  } 
+  }
 }
