@@ -13,7 +13,6 @@ export default function MessageContainer({
   msgIndex,
   isUser,
   isCompleted,
-  conversationRecordId,
   type,
 }: {
   origMessage: string;
@@ -37,7 +36,7 @@ export default function MessageContainer({
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { messageA, messageB, conversationRecordIds, ratingButtonDisabled} = context;
+  const { messageA, messageB, conversationRecordIds, ratingButtonDisabled } = context;
 
   useEffect(() => {
     if (messageTextAreaRef.current) {
@@ -73,26 +72,17 @@ export default function MessageContainer({
     } else {
       await saveEditedModelOutput();
     }
-    if (type == 'A') {
-      messageA[msgIndex].content = message;
-    } else {
-      messageB[msgIndex].content = message;
-    }
+    type === 'A' ? messageA[msgIndex].content = message : messageB[msgIndex].content = message;
     router.refresh();
   };
 
   // Todo: save new message to database
   const saveEditedModelOutput = async () => {
     let originalPrompt, editedPrompt, conversationRecordId;
-    if (type === 'A') {
-      originalPrompt = messageA[msgIndex - 1];
-      editedPrompt = messageA[msgIndex - 1];
-      conversationRecordId = conversationRecordIds[0];
-    } else {
-      originalPrompt = messageB[msgIndex - 1];
-      editedPrompt = messageB[msgIndex - 1];
-      conversationRecordId = conversationRecordIds[1];
-    }
+    const index = msgIndex - 1;
+    originalPrompt = (type === 'A') ? messageA[index] : messageB[index];
+    editedPrompt = originalPrompt;
+    conversationRecordId = (type === 'A') ? conversationRecordIds[0] : conversationRecordIds[1];
     try {
       const response = await fetch("/api/chat/editing", {
         method: "POST",
@@ -101,7 +91,7 @@ export default function MessageContainer({
         },
         body: JSON.stringify({
           conversationRecordId: conversationRecordId,
-          msgIndex: msgIndex-1,
+          msgIndex: msgIndex - 1,
           contributorEmail: userEmail,
           originalPrompt: originalPrompt.content,
           editedPrompt: editedPrompt.content,
@@ -127,16 +117,12 @@ export default function MessageContainer({
 
   // Todo: edit the prompt
   const handleEditPrompt = async () => {
-    let originalCompletion, editedCompletion,conversationRecordId;
-    if (type === 'A') {
-      originalCompletion = messageA[msgIndex + 1];
-      editedCompletion = messageA[msgIndex + 1];
-      conversationRecordId = conversationRecordIds[0];
-    } else {
-      originalCompletion = messageB[msgIndex + 1];
-      editedCompletion = messageB[msgIndex + 1];
-      conversationRecordId = conversationRecordIds[1];
-    }
+    let originalCompletion, editedCompletion, conversationRecordId;
+    const index = msgIndex + 1;
+    originalCompletion = (type === 'A') ? messageA[index] : messageB[index];
+    editedCompletion = originalCompletion;
+    conversationRecordId = (type === 'A') ? conversationRecordIds[0] : conversationRecordIds[1];
+
     try {
       const response = await fetch("/api/chat/editing", {
         method: "POST",
@@ -154,14 +140,14 @@ export default function MessageContainer({
         })
       })
       if (response.ok)
-      // After saving the new prompt, you can show a toast message to indicate the success
-      toast.success("輸入提示已更新，請稍後", {
-        autoClose: 1000,
-      });
+        // After saving the new prompt, you can show a toast message to indicate the success
+        toast.success("輸入提示已更新，請稍後", {
+          autoClose: 1000,
+        });
       else
-      toast.error("輸入提示更新失敗，請再試一次", {
-        autoClose: 1000,
-      });
+        toast.error("輸入提示更新失敗，請再試一次", {
+          autoClose: 1000,
+        });
     } catch (error) {
       toast.error("輸入提示更新失敗，請再試一次", {
         autoClose: 1000,
@@ -248,7 +234,7 @@ export default function MessageContainer({
               <IterationCw size={20} />
             </button>
           )}
-          {ratingButtonDisabled&&(<button
+          {ratingButtonDisabled && (<button
             className="p-1 opacity-0 group-hover:opacity-100 self-end"
             onClick={handleClickEdit}
             title={
