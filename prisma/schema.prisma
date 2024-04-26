@@ -56,3 +56,17 @@ model Trail {
   ip    String @unique
   quota Int
 }
+
+model RateEditing {
+  id                    String  @id @default(auto()) @map("_id") @db.ObjectId
+  conversationRecordId  String  @db.ObjectId
+  msgIndex              Int
+  contributorEmail      String
+  model                 String
+  originalPrompt        String
+  editedPrompt          String
+  promptEditedScore     Int?
+  originalCompletion    String
+  editedCompletion      String
+  completionEditedScore Int?
+}

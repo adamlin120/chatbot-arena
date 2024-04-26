@@ -85,7 +85,7 @@ export default function ChatPage() {
         </div>
       </div>
       <div className="flex flex-col flex-grow h-full">
-        <MessageSection />
+        <MessageSection/>
         <PromptInput />
         <FunctionalButtons />
       </div>

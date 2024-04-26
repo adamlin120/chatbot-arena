@@ -185,7 +185,7 @@ function RuleDialog({
           </li>
           <li>您可以持續對話，直到確定贏家。</li>
           <li>如果在對話過程中透露了模型身份，則不計入投票。</li>
-          <li>您可以編輯模型出輸出，讓我們的模型有機會做得更好！</li>
+          <li>確定贏家並評分後，您可以編輯模型的輸出以及您的輸入，讓我們的模型有機會做得更好！</li>
         </ul>
         <div className="flex justify-end mt-5">
           <Button
