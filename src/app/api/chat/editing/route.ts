@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
         if (!model) {
             return NextResponse.json(
-                { message: "No model founded!" },
+                { message: "No model found!" },
                 { status: 500 },
             );
         }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
                 const contributorId = user?.id;
                 if (!contributorId) {
                     return NextResponse.json(
-                        { error: "userId not founded!" },
+                        { error: "userId not found!" },
                         { status: 404 },
                     );
                 }
