@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
         if (!model) {
             return NextResponse.json(
-                { message: "No model found!" },
+                { message: "No model found" },
                 { status: 500 },
             );
         }
