@@ -107,5 +107,28 @@ export default async function getStream(
       },
     });
     return stream;
+  } else if (model.includes("Taiwan-Llama")) {
+    const client = new OpenAI({
+      apiKey: "", // privateEnv.OPENAI_KEY,
+      baseURL: "http://api.twllm.com:20009/v1",
+    });
+    const response = await client.chat.completions.create({
+      messages: messages,
+      model: "yentinglin/" + model,
+      temperature: 0,
+      max_tokens: MAX_TOKENS,
+      stream: true,
+    });
+    const stream = OpenAIStream(response, {
+      onCompletion: async (response) => {
+        const ModelResponse: ModelResponse = {
+          prompt: messages[messages.length - 1].content,
+          completion: response,
+          model_name: model,
+        };
+        await writeStreamToDatabase(conversationRecordId, ModelResponse);
+      },
+    });
+    return stream;
   }
 }
