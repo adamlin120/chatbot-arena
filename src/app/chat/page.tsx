@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MessageSection from "./_components/MessageSection";
 import PromptInput from "./_components/PromptInput";
@@ -46,8 +46,6 @@ export default function ChatPage() {
   }, []);
   // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
   // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
-
-  // Todo: get model names after rating
 
   const context = useContext(MessageContext);
   if (!context) {

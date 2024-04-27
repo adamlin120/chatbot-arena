@@ -26,6 +26,7 @@ export const MessageContext = createContext<{
   rated: boolean;
   setRated: React.Dispatch<React.SetStateAction<boolean>>;
   initiateChat: () => void;
+  DEFAULT_MODEL_NAME: string;
 } | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
@@ -105,6 +106,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         setModelBName,
         rated,
         setRated,
+        DEFAULT_MODEL_NAME,
       }}
     >
       {children}

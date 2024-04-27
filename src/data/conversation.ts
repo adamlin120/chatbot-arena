@@ -1,4 +1,3 @@
-
 import { db } from "@/app/api/_base";
 import { error } from "console";
 /*
@@ -34,7 +33,6 @@ export const getSiblingConversationRecord = async (
   conversationRecordId: string,
 ) => {
   try {
-    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
       include: { conversation: { include: { records: true } } },
@@ -44,7 +42,7 @@ export const getSiblingConversationRecord = async (
     const siblingRecord = records?.find(
       (record) => record.id !== conversationRecordId,
     );
-    
+
     return siblingRecord?.id;
   } catch {
     return null;
@@ -53,7 +51,6 @@ export const getSiblingConversationRecord = async (
 
 export const checkIfRoundExists = async (conversationRecordId: string) => {
   try {
-    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
@@ -74,11 +71,10 @@ export const getModelByConversationRecordId = async (
   conversationRecordId: string,
 ) => {
   try {
-    
     const conversationRecord = await db.conversationRecord.findFirst({
       where: { id: conversationRecordId },
     });
-    
+
     return conversationRecord?.modelName;
   } catch {
     return null;
@@ -90,12 +86,10 @@ export const editRatingByConversationRecordId = async (
   rating: number,
 ) => {
   try {
-    
     await db.conversationRecord.update({
       where: { id: conversationRecordId },
       data: { rating },
     });
-    
   } catch {
     return null;
   }

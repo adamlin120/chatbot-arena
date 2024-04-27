@@ -18,6 +18,8 @@ export default function FunctionalButtons() {
     setMessageB,
     messageAWaiting,
     messageBWaiting,
+    setMessageAWaiting,
+    setMessageBWaiting,
     conversationRecordIds,
     ratingButtonDisabled,
     setRatingButtonDisabled,
@@ -25,6 +27,7 @@ export default function FunctionalButtons() {
     setModelAName,
     setModelBName,
     setRated,
+    DEFAULT_MODEL_NAME,
   } = context;
 
   const MIN_RATING_MESSAGE_COUNT = 3;
@@ -53,6 +56,10 @@ export default function FunctionalButtons() {
   const restartChat = () => {
     setRated(false);
     setRatingButtonDisabled(false);
+    if (messageA.length <= 2 && messageB.length <= 2) {
+      console.log("Useless action, you have already restarted the chat.");
+      return;
+    }
     setMessageA([
       {
         role: "user",
@@ -73,6 +80,11 @@ export default function FunctionalButtons() {
         content: "No problem, I can do my best to assist you",
       },
     ]);
+    setModelAName(DEFAULT_MODEL_NAME);
+    setModelBName(DEFAULT_MODEL_NAME);
+    setRatingButtonDisabled(false);
+    setMessageAWaiting(false);
+    setMessageBWaiting(false);
     initiateChat();
   };
 

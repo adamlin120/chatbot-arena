@@ -1,5 +1,5 @@
 import Button from "@/app/_components/Button";
-import { SendHorizonal } from "lucide-react";
+import { LoaderCircle, SendHorizonal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
@@ -27,6 +27,7 @@ export default function PromptInput() {
     ratingButtonDisabled,
     setRatingButtonDisabled,
     rated,
+    initiateChat,
   } = context;
 
   const MAX_TOKENS = 2048;
@@ -67,15 +68,36 @@ export default function PromptInput() {
     ];
     setMessages(newMessages);
 
+    // Abort the request if it takes too long (currently 10 second)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify({
         messages: newMessages.slice(0, newMessages.length - 1),
         conversationRecordId: conversationRecordId,
       }),
-    });
+      signal: controller.signal,
+    })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          // This may due to llm api error
+          console.error("Request timed out");
+          toast.error("伺服器沒有回應，請稍後再試");
+          setMessageWaiting(false);
+          setMessages((messages) => {
+            return messages.slice(0, messages.length - 2);
+          });
+          setPrompt(currPrompt);
+        } else {
+          console.error("Error processing messages:", error);
+          toast.error(serverErrorMessage);
+        }
+        return;
+      })
+      .finally(() => clearTimeout(timeoutId));
 
-    if (!response.body) {
+    if (!response || !response.body) {
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
@@ -124,6 +146,10 @@ export default function PromptInput() {
 
   const sendMessage = async () => {
     if (prompt.length === 0 || prompt.trim().length === 0) return;
+    if (!conversationRecordIds) {
+      // Todo: check if this is needed, and note that I cannot use await here.
+      initiateChat();
+    }
     setPrompt(prompt.trim());
 
     processMessages(
@@ -141,6 +167,7 @@ export default function PromptInput() {
       setMessageBWaiting,
     );
     setPrompt("");
+
     if (!session || !session.user) {
       const response = await fetch("https://api.ipify.org?format=json");
       const data = await response.json();
@@ -187,7 +214,11 @@ export default function PromptInput() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                 e.preventDefault();
-                if (!messageAWaiting && !messageBWaiting) {
+                if (
+                  !messageAWaiting &&
+                  !messageBWaiting &&
+                  !ratingButtonDisabled
+                ) {
                   sendMessage();
                 }
               }
@@ -197,7 +228,13 @@ export default function PromptInput() {
         </div>
         <div>
           <Button
-            text={<SendHorizonal size={25} />}
+            text={
+              messageAWaiting || messageBWaiting ? (
+                <LoaderCircle size={25} className="animate-spin" />
+              ) : (
+                <SendHorizonal size={25} />
+              )
+            }
             onClick={sendMessage}
             disableCond={
               messageAWaiting || messageBWaiting || ratingButtonDisabled

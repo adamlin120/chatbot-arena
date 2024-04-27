@@ -37,7 +37,6 @@ export const {
       };
     },
     async jwt({ token, account }) {
-      
       if (!account) return token;
       const provider = account.provider;
       if (!provider) return token;
