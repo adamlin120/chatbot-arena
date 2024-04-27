@@ -1,1 +1,1 @@
-yarn lint && yarn format && git add .
+yarn format && yarn lint && git add .
