@@ -72,6 +72,7 @@ function MessageDisplay({
         messages.map((message, index) => { 
           return index >= 2 && (
               <MessageContainer
+                key = {index}
                 msgIndex={index}
                 origMessage={message.content}
                 isUser={message.role === "user"}
