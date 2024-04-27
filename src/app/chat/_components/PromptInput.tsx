@@ -26,15 +26,26 @@ export default function PromptInput() {
     setMessageBWaiting,
     ratingButtonDisabled,
     setRatingButtonDisabled,
+    rated,
     initiateChat,
   } = context;
 
-  const MAX_TOKENS = 1024;
+  const MAX_TOKENS = 2048;
   const { data: session } = useSession();
   const router = useRouter();
 
   const [prompt, setPrompt] = useState<string>("");
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
+
+  const [isComposing, setIsComposing] = useState(false);
+
+  const handleComposingStart = () => {
+    setIsComposing(true);
+  }
+
+  const handleComposingEnd = () => {
+    setIsComposing(false);
+  }
 
   const processMessages = async (
     currPrompt: string,
@@ -93,6 +104,9 @@ export default function PromptInput() {
       return;
     }
 
+    function fluent(ms: number | undefined) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
     const reader = response.body!.getReader();
     const decoder = new TextDecoder();
     let count = 0;
@@ -116,6 +130,7 @@ export default function PromptInput() {
         ];
       });
       count++;
+      await fluent(50);
     }
     setRatingButtonDisabled(false);
     setMessageWaiting(false);
@@ -189,12 +204,15 @@ export default function PromptInput() {
         <div className="flex-grow overflow-y-auto max-h-60 px-2 pr-5">
           <textarea
             className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
-            placeholder="輸入訊息..."
+            onCompositionStart={handleComposingStart}
+            onCompositionEnd={handleComposingEnd}
+            placeholder={rated ? "評分完畢，歡迎編輯以上對話！" : "輸入訊息..."}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             ref={promptInputRef}
+            disabled={ratingButtonDisabled||!conversationRecordIds[0]||!conversationRecordIds[1]}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && e.shiftKey === false) {
+              if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                 e.preventDefault();
                 if (
                   !messageAWaiting &&

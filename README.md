@@ -16,6 +16,21 @@ yarn
 
 To install the packages. Database schema will also be created in this step.
 
+Make sure that an anonymous user with info:
+```bash
+_id ObjectId('ANONYMOUS_USER_ID')
+email ANONYMOUS_USER_EMAIL
+username "anonymous"
+provider "google"
+hashedPassword "jwt"
+coins 0
+avatarUrl "anonymous.com"
+bio "anonymous"
+verified true
+```
+is already existed in the database.
+Change the ANONYMOUS_USER_ID and ANONYMOUS_USER_EMAIL in @/lib/auth/index.ts to the _id value provided by mongo.
+
 Last, run:
 
 ```bash

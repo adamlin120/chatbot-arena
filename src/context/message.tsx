@@ -23,6 +23,8 @@ export const MessageContext = createContext<{
   setModelAName: React.Dispatch<React.SetStateAction<string>>;
   modelBName: string;
   setModelBName: React.Dispatch<React.SetStateAction<string>>;
+  rated: boolean;
+  setRated: React.Dispatch<React.SetStateAction<boolean>>;
   initiateChat: () => void;
   DEFAULT_MODEL_NAME: string;
 } | null>(null);
@@ -55,7 +57,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   const [modelAName, setModelAName] = useState<string>(DEFAULT_MODEL_NAME);
   const [modelBName, setModelBName] = useState<string>(DEFAULT_MODEL_NAME);
-
+  const [rated, setRated] = useState<boolean>(false);
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
   const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
   const [ratingButtonDisabled, setRatingButtonDisabled] =
@@ -102,6 +104,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         setModelAName,
         modelBName,
         setModelBName,
+        rated,
+        setRated,
         DEFAULT_MODEL_NAME,
       }}
     >

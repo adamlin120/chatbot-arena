@@ -26,6 +26,7 @@ export default function FunctionalButtons() {
     initiateChat,
     setModelAName,
     setModelBName,
+    setRated,
     DEFAULT_MODEL_NAME,
   } = context;
 
@@ -53,6 +54,8 @@ export default function FunctionalButtons() {
   const [sendingRating, setSendingRating] = useState<boolean>(false);
 
   const restartChat = () => {
+    setRated(false);
+    setRatingButtonDisabled(false);
     if (messageA.length <= 2 && messageB.length <= 2) {
       console.log("Useless action, you have already restarted the chat.");
       return;
@@ -115,6 +118,7 @@ export default function FunctionalButtons() {
     if (response.status === 200) {
       // Use a pop up to show the message that the rating has been submitted, do not use toast
       toast.success("您的回饋已經送出，謝謝！");
+      setRated(true);
       // read the model names from the response
       const responseData = await response.json();
       const modelA = responseData.find(
@@ -197,7 +201,7 @@ function RuleDialog({
           </li>
           <li>您可以持續對話，直到確定贏家。</li>
           <li>如果在對話過程中透露了模型身份，則不計入投票。</li>
-          <li>您可以編輯模型出輸出，讓我們的模型有機會做得更好！</li>
+          <li>確定贏家並評分後，您可以編輯模型的輸出以及您的輸入，讓我們的模型有機會做得更好！</li>
         </ul>
         <div className="flex justify-end mt-5">
           <Button

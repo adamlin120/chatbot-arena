@@ -33,19 +33,13 @@ function AuthForm(props: Props) {
     };*/
   const handleGoogleSignIn = () => {
     signIn("google", {
-      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating`,
-    });
-  };
-
-  const handleTwitterSignIn = () => {
-    signIn("twitter", {
-      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/chat`,
     });
   };
 
   const handleGithubSignIn = () => {
     signIn("github", {
-      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/rating`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/chat`,
     });
   };
 

@@ -9,7 +9,7 @@ export default function MessageSection() {
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { messageA, messageB, messageAWaiting, messageBWaiting } = context;
+  const { messageA, messageB, messageAWaiting, messageBWaiting, conversationRecordIds } = context;
 
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
   const messageBEndRef = useRef<HTMLDivElement | null>(null);
@@ -35,6 +35,7 @@ export default function MessageSection() {
     }
   }, [messageB]);
 
+
   return (
     // Todo: think a better way to handle the height of the container
     <div className="flex flex-col md:flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
@@ -42,11 +43,13 @@ export default function MessageSection() {
         messages={messageA}
         messagesEndRef={messageAEndRef}
         isCompleted={!messageAWaiting}
+        conversationRecordId={conversationRecordIds[0]}
       />
       <MessageDisplay
         messages={messageB}
         messagesEndRef={messageBEndRef}
         isCompleted={!messageBWaiting}
+        conversationRecordId={conversationRecordIds[1]}
       />
     </div>
   );
@@ -56,25 +59,28 @@ function MessageDisplay({
   messages,
   messagesEndRef,
   isCompleted,
+  conversationRecordId
 }: {
   messages: Message[];
   messagesEndRef: React.RefObject<HTMLDivElement>;
   isCompleted: boolean;
+  conversationRecordId: string;
 }) {
   return (
     <div className="flex-1 flex flex-col gap-8 border-b md:border-r p-5 py-4 overflow-y-auto">
       {messages.length > 2 ? (
-        messages.map(
-          (message, index) =>
-            index >= 2 && (
+        messages.map((message, index) => { 
+          return index >= 2 && (
               <MessageContainer
-                key={index}
+                msgIndex={index}
                 origMessage={message.content}
                 isUser={message.role === "user"}
                 isCompleted={isCompleted}
+                conversationRecordId={conversationRecordId}
+                messages={messages}
               />
-            ),
-        )
+          );
+        })
       ) : (
         <div className="flex flex-col items-center justify-center h-screen gap-5 text-2xl">
           <Bot size={45} /> 我今天要怎麼幫你呢？
