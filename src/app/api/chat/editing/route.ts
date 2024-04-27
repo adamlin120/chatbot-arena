@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/app/api/_base";
 import { getModelByConversationRecordId } from "@/data/conversation";
-import { ANONYMOUS_USER_EMAIL } from "@/lib/auth";
+import { ANONYMOUS_USER_ID } from "@/lib/auth";
+import { getUserByEmail } from "@/data/user";
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
 
         if (!model) {
             return NextResponse.json(
-                { message: "No model founded!" },
+                { message: "No model found" },
                 { status: 500 },
             );
         }
@@ -37,11 +38,19 @@ export async function POST(req: NextRequest) {
         }
         else {
             if (contributorEmail) {
+                const user = await getUserByEmail(contributorEmail);
+                const contributorId = user?.id;
+                if (!contributorId) {
+                    return NextResponse.json(
+                        { error: "userId not found!" },
+                        { status: 404 },
+                    );
+                }
                 await db.rateEditing.create({
                     data: {
                         conversationRecordId: conversationRecordId,
                         msgIndex: msgIndex,
-                        contributorEmail: contributorEmail,
+                        contributorId: contributorId,
                         model: model,
                         originalPrompt: originalPrompt,
                         editedPrompt: editedPrompt,
@@ -57,7 +66,7 @@ export async function POST(req: NextRequest) {
                     data: {
                         conversationRecordId: conversationRecordId,
                         msgIndex: msgIndex,
-                        contributorEmail: ANONYMOUS_USER_EMAIL,
+                        contributorId: ANONYMOUS_USER_ID,
                         model: model,
                         originalPrompt: originalPrompt,
                         editedPrompt: editedPrompt,

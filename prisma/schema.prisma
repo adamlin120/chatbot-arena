@@ -58,10 +58,10 @@ model Trail {
 }
 
 model RateEditing {
-  id                    String  @id @default(auto()) @map("_id") @db.ObjectId
-  conversationRecordId  String  @db.ObjectId
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  conversationRecordId  String @db.ObjectId
   msgIndex              Int
-  contributorEmail      String
+  contributorId         String @db.ObjectId
   model                 String
   originalPrompt        String
   editedPrompt          String
