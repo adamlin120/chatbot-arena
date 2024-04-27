@@ -12,7 +12,10 @@ const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
 const anthropic = new Anthropic({ apiKey: privateEnv.ANTHROPIC_KEY });
 
-async function writeStreamToDatabase(conversationRecordId: string, response: ModelResponse) {
+async function writeStreamToDatabase(
+  conversationRecordId: string,
+  response: ModelResponse,
+) {
   try {
     if (!response.completion) return;
     await db.conversationRecord.update({
@@ -28,8 +31,7 @@ async function writeStreamToDatabase(conversationRecordId: string, response: Mod
         },
       },
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
   }
 }

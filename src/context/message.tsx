@@ -24,6 +24,7 @@ export const MessageContext = createContext<{
   modelBName: string;
   setModelBName: React.Dispatch<React.SetStateAction<string>>;
   initiateChat: () => void;
+  DEFAULT_MODEL_NAME: string;
 } | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
@@ -101,6 +102,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         setModelAName,
         modelBName,
         setModelBName,
+        DEFAULT_MODEL_NAME,
       }}
     >
       {children}

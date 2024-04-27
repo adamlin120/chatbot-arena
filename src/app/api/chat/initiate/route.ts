@@ -4,11 +4,9 @@ import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 import { db } from "../../_base";
 
-
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  
   //Read user id from nextauth session
   let conversation;
   const session = await auth();
@@ -70,15 +68,15 @@ export async function POST(request: NextRequest) {
         },
       }),
     ]);
-  
+
     const conversationRecordId = conversationRecords.map((record) => record.id);
-  
-    
-  
+
     return NextResponse.json({ conversationRecordId });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
-  
 }

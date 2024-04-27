@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/app/api/_base";
 
@@ -29,7 +28,5 @@ export async function POST(req: NextRequest) {
       { error: "Failed to store IP and quota" },
       { status: 500 },
     );
-  } finally {
-    // await db.$disconnect();
   }
 }

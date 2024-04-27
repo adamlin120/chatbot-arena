@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils/shadcn";
 
@@ -23,7 +22,6 @@ const SideBarContext = createContext<{
 export default function SideBar() {
   const [userId, setUserId] = useState(null);
   const { data: session } = useSession();
-  const router = useRouter();
   const username = session?.user?.name;
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -47,32 +45,8 @@ export default function SideBar() {
     fetchUserId();
   }, [session]);
 
-  // const pathNames = usePathname().split("/");
-  // const currentPath = pathNames[1];
-  // const subtitle: { [key: string]: string } = {
-  //   chat: "語言模型競技場 ⚔️",
-  //   rating: "模型評分區 👍👎",
-  //   dataset: "對話資料集 📚",
-  //   leaderboard: "模型排行榜 🏆",
-  //   profile: "個人頁面",
-  // };
-
   return (
     <>
-      {/* <Link
-        href="/"
-        className="text-2xl ml-[4rem] mt-6 font-semibold text-nowrap"
-        // onClick={() => setIsOpen(false)}
-      >
-        LLM Arena
-        <span className="text-xl">
-          {currentPath && subtitle[currentPath]
-            ? ` - ${subtitle[currentPath]}`
-            : ""}
-        </span>
-      </Link> */}
-      {/* <div className="flex "> */}
-
       <aside
         className={cn(
           "flex",
@@ -85,7 +59,7 @@ export default function SideBar() {
       >
         <div className="hidden md:flex items-center ml-2 mt-5 gap-3">
           {" "}
-          {/* temprarily hidden */}
+          {/* Temporarily hidden on mobile */}
           <button
             className="rounded-full p-2 transition duration-500 ease-in-out transform hover:scale-125 active:scale-90"
             onClick={() => setIsOpen(!isOpen)}
@@ -106,7 +80,7 @@ export default function SideBar() {
           <div
             className={cn(
               "flex",
-              "md:flex-col md:w-full md:mt-5 md:flex-grow md:justify-start",
+              "md:flex-col md:w-full md:mt-5 md:flex-grow md:justify-start md:items-start",
               "flex-row w-screen justify-around",
             )}
           >
@@ -136,7 +110,7 @@ export default function SideBar() {
                 {session?.user?.image && userId && (
                   <Link
                     href={`/profile/${userId}`}
-                    className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center gap-3 truncate flex-grow "
+                    className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate flex-grow "
                     onClick={() => setIsOpen(false)}
                   >
                     <div
@@ -203,7 +177,7 @@ function LinkComponent({
   return (
     <Link
       href={href}
-      className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center gap-3 truncate w-full"
+      className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate w-full"
       onClick={() => setIsOpen(false)}
     >
       <div className="transition-none" title={!isOpen ? text : ""}>

@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import ThreeDText from "./_components/ThreeDText";

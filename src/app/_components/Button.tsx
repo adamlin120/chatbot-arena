@@ -16,7 +16,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        `bg-gray-600 text-white hover:bg-gray-700 transform transition duration-500  hover:scale-105 active:scale-100 flex items-center gap-2 active:opacity-75 text-md py-2 rounded-xl ml-2 text-nowrap whitespace-nowrap px-6 ${disableCond ? "opacity-50 cursor-not-allowed" : ""}`,
+        `bg-gray-600 text-white transform transition duration-500 flex items-center gap-2 text-md py-2 rounded-xl ml-2 text-nowrap whitespace-nowrap px-6 ${disableCond ? "opacity-50 cursor-not-allowed" : "active:opacity-75 hover:scale-105 active:scale-100 hover:bg-gray-700"}`,
         className,
       )}
       onClick={onClick}

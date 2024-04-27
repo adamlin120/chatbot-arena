@@ -2,5 +2,6 @@
   "extends": ["next", "prettier"],
   "rules": {
     "no-unused-vars": "warn"
-  }
+  },
+  "ignorePatterns": ["node_modules/", ".next/", "out/", "src/prisma/client"]
 }
