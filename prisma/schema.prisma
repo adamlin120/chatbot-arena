@@ -65,8 +65,14 @@ model RateEditing {
   model                 String
   originalPrompt        String
   editedPrompt          String
-  promptEditedScore     Int?
+  scores                Score[]
   originalCompletion    String
   editedCompletion      String
-  completionEditedScore Int?
+}
+
+type Score {
+  completionEditedScore  Int
+  promptEditedScore      Int
+  raterId               String @db.ObjectId
+  feedback              String?
 }

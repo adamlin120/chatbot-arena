@@ -153,3 +153,46 @@ Format of JSON file:
 ```
 
 The purpose of this API is to export all conversation records as a JSON file, which our sponsor might need. The JSON file contains an array of conversation records. Each conversation record contains the prompt content, completion content, and model name.
+
+## Rate Edited Conversation API
+
+### Get a random edited conversation
+
+Endpoint: /api/rating
+Method: GET
+
+Response:
+
+```json
+{
+  "rateEditingID": "Rate Editing ID",
+  "originalPrompt": "Original Prompt",
+  "originalCompletion": "Original Completion",
+  "editedPrompt": "Edited Prompt",
+  "editedCompletion": "Edited Completion"
+}
+```
+
+### Submit Rating for Edited Conversation
+
+Endpoint: /api/rating
+Method: POST
+
+Request:
+
+```json
+{
+  "rateEditingID": "Rate Editing ID",
+  "promptEditedScore": Number(1-5),
+  "completionEditedScore": Number(1-5),
+  "feedback": "Feedback"
+}
+```
+
+Response:
+
+```json
+{
+  "success": true
+}
+```

@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import Column from "./_components/Column";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export default function RatingPage() {
   const contributor = "[contributor name here]";
@@ -14,6 +15,45 @@ export default function RatingPage() {
   // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [rateEditingID, setRateEditingID] = useState<string | undefined>();
+  const [originalPrompt, setOriginalPrompt] = useState<string | undefined>();
+  const [originalCompletion, setOriginalCompletion] = useState<
+    string | undefined
+  >();
+  const [editedPrompt, setEditedPrompt] = useState<string | undefined>();
+  const [editedCompletion, setEditedCompletion] = useState<
+    string | undefined
+  >();
+
+  const fetchRandomRating = async () => {
+    const res = await fetch("/api/rating");
+    const data = await res.json();
+
+    if (res.status == 404) {
+      toast.error("No edited messages!");
+      return;
+    }
+
+    if (!data || !res.ok) {
+      toast.error("Failed to fetch data");
+      return;
+    }
+
+    setRateEditingID(data.rateEditingID);
+    if (
+      !data.originalPrompt ||
+      !data.originalCompletion ||
+      !data.editedPrompt ||
+      !data.editedCompletion
+    ) {
+      toast.error("Loss of data from server. Please try again.");
+      return;
+    }
+    setOriginalPrompt(data.originalPrompt);
+    setOriginalCompletion(data.originalCompletion);
+    setEditedPrompt(data.editedPrompt);
+    setEditedCompletion(data.editedCompletion);
+  };
 
   useEffect(() => {
     (async () => {
@@ -25,6 +65,8 @@ export default function RatingPage() {
       } else {
         setLoading(false); // Set loading to false when session verified
       }
+
+      await fetchRandomRating();
     })();
   }, [router]);
 
@@ -34,16 +76,40 @@ export default function RatingPage() {
   const handleSkip = () => {};
 
   const handleSubmit = async () => {
-    console.log("Submit feedback");
-    console.log(feedbackText);
-    console.log(promptRating);
-    console.log(completionRating! - 5);
+    //console.log("Submit feedback");
+    //console.log(feedbackText);
+    //console.log(promptRating);
+    //console.log(completionRating! - 5);
 
     if (promptRating === undefined || completionRating === undefined) {
       console.log("Please rate both prompts and completions");
       alert("Please rate both prompts and completions");
       return;
     }
+
+    const res = await fetch("/api/rating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rateEditingID: rateEditingID,
+        promptEditedScore: promptRating,
+        completionEditedScore: completionRating! - 5,
+        feedback: feedbackText,
+      }),
+    });
+    const data = await res.json();
+    if (!data.success) {
+      toast.error("Failed to submit feedback");
+      return;
+    }
+
+    toast.success("Feedback submitted successfully");
+    await fetchRandomRating();
+    setFeedbackText("");
+    setPromptRating(undefined);
+    setCompletionRating(undefined);
   };
   return (
     <div className="p-5 px-44">
@@ -58,15 +124,15 @@ export default function RatingPage() {
         <div className="flex mt-5 gap-8 p-1">
           <Column
             isPrompt={true}
-            original="Original Prompt"
-            edited="Edited Prompt"
+            original={String(originalPrompt)}
+            edited={String(editedPrompt)}
             rating={promptRating}
             setRating={setPromptRating}
           />
           <Column
             isPrompt={false}
-            original="Original Completion"
-            edited="Edited Completion"
+            original={String(originalCompletion)}
+            edited={String(editedCompletion)}
             rating={completionRating}
             setRating={setCompletionRating}
           />
