@@ -41,11 +41,11 @@ export default function PromptInput() {
 
   const handleComposingStart = () => {
     setIsComposing(true);
-  }
+  };
 
   const handleComposingEnd = () => {
     setIsComposing(false);
-  }
+  };
 
   const processMessages = async (
     currPrompt: string,
@@ -105,7 +105,7 @@ export default function PromptInput() {
     }
 
     function fluent(ms: number | undefined) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise((resolve) => setTimeout(resolve, ms));
     }
     const reader = response.body!.getReader();
     const decoder = new TextDecoder();
@@ -210,7 +210,11 @@ export default function PromptInput() {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             ref={promptInputRef}
-            disabled={ratingButtonDisabled||!conversationRecordIds[0]||!conversationRecordIds[1]}
+            disabled={
+              ratingButtonDisabled ||
+              !conversationRecordIds[0] ||
+              !conversationRecordIds[1]
+            }
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                 e.preventDefault();

@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 
-
 export default function MessageContainer({
   origMessage,
   msgIndex,
@@ -60,7 +59,7 @@ export default function MessageContainer({
     }
   };
 
-  const handleRegenerate = async () => { };
+  const handleRegenerate = async () => {};
 
   const handleSubmit = async () => {
     setIsEditing(false);
@@ -97,9 +96,9 @@ export default function MessageContainer({
           originalPrompt: originalPrompt.content,
           editedPrompt: editedPrompt.content,
           originalCompletion: origMessage,
-          editedCompletion: message
-        })
-      })
+          editedCompletion: message,
+        }),
+      });
       // After saving the new message, you can show a toast message to indicate the success
       if (response.ok)
         toast.success("模型輸出已更新，感謝您的貢獻！", {
@@ -113,7 +112,7 @@ export default function MessageContainer({
       toast.error("模型輸出更新失敗，請再試一次！", {
         autoClose: 1000,
       });
-    };
+    }
   };
 
   // Todo: edit the prompt
@@ -135,9 +134,9 @@ export default function MessageContainer({
           editedPrompt: message,
           originalCompletion: originalCompletion.content,
           editedCompletion: editedCompletion.content,
-          conversationRecordId: conversationRecordId
-        })
-      })
+          conversationRecordId: conversationRecordId,
+        }),
+      });
       if (response.ok)
         // After saving the new prompt, you can show a toast message to indicate the success
         toast.success("輸入提示已更新，請稍後", {
@@ -152,7 +151,6 @@ export default function MessageContainer({
         autoClose: 1000,
       });
     }
-
   };
 
   // for the loading dots
@@ -233,18 +231,20 @@ export default function MessageContainer({
               <IterationCw size={20} />
             </button>
           )}
-          {ratingButtonDisabled && (<button
-            className="p-1 opacity-0 group-hover:opacity-100 self-end"
-            onClick={handleClickEdit}
-            title={
-              isUser
-                ? "點擊以修改訊息"
-                : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
-            }
-            disabled={isEditing}
-          >
-            <Pencil color="white" size={20} />
-          </button>)}
+          {ratingButtonDisabled && (
+            <button
+              className="p-1 opacity-0 group-hover:opacity-100 self-end"
+              onClick={handleClickEdit}
+              title={
+                isUser
+                  ? "點擊以修改訊息"
+                  : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
+              }
+              disabled={isEditing}
+            >
+              <Pencil color="white" size={20} />
+            </button>
+          )}
         </div>
       )}
     </div>

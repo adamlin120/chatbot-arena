@@ -9,7 +9,13 @@ export default function MessageSection() {
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { messageA, messageB, messageAWaiting, messageBWaiting, conversationRecordIds } = context;
+  const {
+    messageA,
+    messageB,
+    messageAWaiting,
+    messageBWaiting,
+    conversationRecordIds,
+  } = context;
 
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
   const messageBEndRef = useRef<HTMLDivElement | null>(null);
@@ -35,7 +41,6 @@ export default function MessageSection() {
     }
   }, [messageB]);
 
-
   return (
     // Todo: think a better way to handle the height of the container
     <div className="flex flex-col md:flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
@@ -59,7 +64,7 @@ function MessageDisplay({
   messages,
   messagesEndRef,
   isCompleted,
-  conversationRecordId
+  conversationRecordId,
 }: {
   messages: Message[];
   messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -69,10 +74,11 @@ function MessageDisplay({
   return (
     <div className="flex-1 flex flex-col gap-8 border-b md:border-r p-5 py-4 overflow-y-auto">
       {messages.length > 2 ? (
-        messages.map((message, index) => { 
-          return index >= 2 && (
+        messages.map((message, index) => {
+          return (
+            index >= 2 && (
               <MessageContainer
-                key = {index}
+                key={index}
                 msgIndex={index}
                 origMessage={message.content}
                 isUser={message.role === "user"}
@@ -80,6 +86,7 @@ function MessageDisplay({
                 conversationRecordId={conversationRecordId}
                 messages={messages}
               />
+            )
           );
         })
       ) : (

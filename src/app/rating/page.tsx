@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import Column from "./_components/Column";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export default function RatingPage() {
   const contributor = "[contributor name here]";
@@ -14,6 +15,15 @@ export default function RatingPage() {
   // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [rateEditingID, setRateEditingID] = useState<string | undefined>();
+  const [originalPrompt, setOriginalPrompt] = useState<string | undefined>();
+  const [originalCompletion, setOriginalCompletion] = useState<
+    string | undefined
+  >();
+  const [editedPrompt, setEditedPrompt] = useState<string | undefined>();
+  const [editedCompletion, setEditedCompletion] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     (async () => {
@@ -25,6 +35,29 @@ export default function RatingPage() {
       } else {
         setLoading(false); // Set loading to false when session verified
       }
+
+      // Get a random edited prompt and completion
+      const res = await fetch("/api/rating");
+      const data = await res.json();
+      if (!data || !res.ok) {
+        toast.error("Failed to fetch data");
+        return;
+      }
+
+      setRateEditingID(data.rateEditingID);
+      if (
+        !data.originalPrompt ||
+        !data.originalCompletion ||
+        !data.editedPrompt ||
+        !data.editedCompletion
+      ) {
+        toast.error("Loss of data from server. Please try again.");
+        return;
+      }
+      setOriginalPrompt(data.originalPrompt);
+      setOriginalCompletion(data.originalCompletion);
+      setEditedPrompt(data.editedPrompt);
+      setEditedCompletion(data.editedCompletion);
     })();
   }, [router]);
 
@@ -58,15 +91,15 @@ export default function RatingPage() {
         <div className="flex mt-5 gap-8 p-1">
           <Column
             isPrompt={true}
-            original="Original Prompt"
-            edited="Edited Prompt"
+            original={String(originalPrompt)}
+            edited={String(editedPrompt)}
             rating={promptRating}
             setRating={setPromptRating}
           />
           <Column
             isPrompt={false}
-            original="Original Completion"
-            edited="Edited Completion"
+            original={String(originalCompletion)}
+            edited={String(editedCompletion)}
             rating={completionRating}
             setRating={setCompletionRating}
           />
