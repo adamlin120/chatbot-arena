@@ -172,3 +172,27 @@ Response:
   "editedCompletion": "Edited Completion"
 }
 ```
+
+### Submit Rating for Edited Conversation
+
+Endpoint: /api/rating
+Method: POST
+
+Request:
+
+```json
+{
+  "rateEditingID": "Rate Editing ID",
+  "promptEditedScore": Number(1-5),
+  "completionEditedScore": Number(1-5),
+  "feedback": "Feedback"
+}
+```
+
+Response:
+
+```json
+{
+  "success": true
+}
+```

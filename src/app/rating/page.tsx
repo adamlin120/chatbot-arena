@@ -25,6 +25,36 @@ export default function RatingPage() {
     string | undefined
   >();
 
+  const fetchRandomRating = async () => {
+    const res = await fetch("/api/rating");
+    const data = await res.json();
+
+    if (res.status == 404) {
+      toast.error("No edited messages!");
+      return;
+    }
+
+    if (!data || !res.ok) {
+      toast.error("Failed to fetch data");
+      return;
+    }
+
+    setRateEditingID(data.rateEditingID);
+    if (
+      !data.originalPrompt ||
+      !data.originalCompletion ||
+      !data.editedPrompt ||
+      !data.editedCompletion
+    ) {
+      toast.error("Loss of data from server. Please try again.");
+      return;
+    }
+    setOriginalPrompt(data.originalPrompt);
+    setOriginalCompletion(data.originalCompletion);
+    setEditedPrompt(data.editedPrompt);
+    setEditedCompletion(data.editedCompletion);
+  };
+
   useEffect(() => {
     (async () => {
       const session = await getSession();
@@ -36,28 +66,7 @@ export default function RatingPage() {
         setLoading(false); // Set loading to false when session verified
       }
 
-      // Get a random edited prompt and completion
-      const res = await fetch("/api/rating");
-      const data = await res.json();
-      if (!data || !res.ok) {
-        toast.error("Failed to fetch data");
-        return;
-      }
-
-      setRateEditingID(data.rateEditingID);
-      if (
-        !data.originalPrompt ||
-        !data.originalCompletion ||
-        !data.editedPrompt ||
-        !data.editedCompletion
-      ) {
-        toast.error("Loss of data from server. Please try again.");
-        return;
-      }
-      setOriginalPrompt(data.originalPrompt);
-      setOriginalCompletion(data.originalCompletion);
-      setEditedPrompt(data.editedPrompt);
-      setEditedCompletion(data.editedCompletion);
+      await fetchRandomRating();
     })();
   }, [router]);
 
@@ -67,16 +76,40 @@ export default function RatingPage() {
   const handleSkip = () => {};
 
   const handleSubmit = async () => {
-    console.log("Submit feedback");
-    console.log(feedbackText);
-    console.log(promptRating);
-    console.log(completionRating! - 5);
+    //console.log("Submit feedback");
+    //console.log(feedbackText);
+    //console.log(promptRating);
+    //console.log(completionRating! - 5);
 
     if (promptRating === undefined || completionRating === undefined) {
       console.log("Please rate both prompts and completions");
       alert("Please rate both prompts and completions");
       return;
     }
+
+    const res = await fetch("/api/rating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rateEditingID: rateEditingID,
+        promptEditedScore: promptRating,
+        completionEditedScore: completionRating! - 5,
+        feedback: feedbackText,
+      }),
+    });
+    const data = await res.json();
+    if (!data.success) {
+      toast.error("Failed to submit feedback");
+      return;
+    }
+
+    toast.success("Feedback submitted successfully");
+    await fetchRandomRating();
+    setFeedbackText("");
+    setPromptRating(undefined);
+    setCompletionRating(undefined);
   };
   return (
     <div className="p-5 px-44">

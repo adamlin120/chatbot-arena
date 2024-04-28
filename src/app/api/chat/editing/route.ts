@@ -62,10 +62,8 @@ export async function POST(req: NextRequest) {
             model: model,
             originalPrompt: originalPrompt,
             editedPrompt: editedPrompt,
-            promptEditedScore: 0,
             originalCompletion: originalCompletion,
             editedCompletion: editedCompletion,
-            completionEditedScore: 0,
           },
         });
       } else {
@@ -77,10 +75,8 @@ export async function POST(req: NextRequest) {
             model: model,
             originalPrompt: originalPrompt,
             editedPrompt: editedPrompt,
-            promptEditedScore: 0,
             originalCompletion: originalCompletion,
             editedCompletion: editedCompletion,
-            completionEditedScore: 0,
           },
         });
       }
