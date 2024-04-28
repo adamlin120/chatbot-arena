@@ -3,8 +3,9 @@ import { auth } from "@/lib/auth";
 import { getRandomRatings, updateRating } from "@/data/rating";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
+export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
   const user = await auth();
   if (!user) {
     return NextResponse.redirect("/login");

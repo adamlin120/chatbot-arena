@@ -3,7 +3,9 @@ import { useRouter } from "next/navigation";
 import Column from "./_components/Column";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loading from "./Loading";
 
 export default function RatingPage() {
   const contributor = "[contributor name here]";
@@ -24,6 +26,7 @@ export default function RatingPage() {
   const [editedCompletion, setEditedCompletion] = useState<
     string | undefined
   >();
+
 
   const fetchRandomRating = async () => {
     const res = await fetch("/api/rating");
@@ -62,18 +65,51 @@ export default function RatingPage() {
         router.push("/login");
       } else if (!session) {
         router.push("/login");
-      } else {
-        setLoading(false); // Set loading to false when session verified
       }
-
       await fetchRandomRating();
+      setLoading(false);
     })();
   }, [router]);
 
   if (loading) {
-    return <div></div>; //TODO: think of more elegant way
+    return <Loading />;
   }
-  const handleSkip = () => {};
+
+  function fadeOutAndIn(direction: number): void {
+    if (direction == 1) {
+      const content = document.getElementById('content');
+      if (content) {
+        content.classList.add('fade-out-R');
+        setTimeout(async () => {
+          await fetchRandomRating();
+          setFeedbackText("");
+          setPromptRating(undefined);
+          setCompletionRating(undefined);
+          content.classList.remove('fade-out-R');
+          content.classList.remove('fade-out-L');
+        }, 500);
+      }
+    }
+    else {
+      const content = document.getElementById('content');
+      if (content) {
+        content.classList.add('fade-out-L');
+        setTimeout(async () => {
+          await fetchRandomRating();
+          setFeedbackText("");
+          setPromptRating(undefined);
+          setCompletionRating(undefined);
+          content.classList.remove('fade-out-R');
+          content.classList.remove('fade-out-L');
+        }, 500);
+      }
+    }
+  }
+
+  const handleSkip = async () => {
+    fadeOutAndIn(0);
+    toast.info("略過此問答紀錄！");
+  };
 
   const handleSubmit = async () => {
     //console.log("Submit feedback");
@@ -101,26 +137,39 @@ export default function RatingPage() {
     });
     const data = await res.json();
     if (!data.success) {
-      toast.error("Failed to submit feedback");
+      toast.error("回饋送出失敗，請再試一次！");
       return;
     }
-
-    toast.success("Feedback submitted successfully");
+    toast.success("回饋送出成功，感謝你的幫助！");
+    fadeOutAndIn(1);
+    
     await fetchRandomRating();
-    setFeedbackText("");
-    setPromptRating(undefined);
-    setCompletionRating(undefined);
   };
+
+
   return (
-    <div className="p-5 px-44">
+    <main>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    <div id="content" className="p-5 px-44 fade-in">
       <div className="flex flex-col gap-3">
-        <div className="text-4xl font-bold">Review User Feedback</div>
+        <div className="text-3xl font-bold">Review Feedback</div>
         <div className="text-xl">
-          Help rate other users edited prompts and completions.
+          對其他使用者編輯後的prompts和completions進行評分
         </div>
       </div>
       <div className="flex flex-col mt-10">
-        <div className="text-2xl">Contributed by: {contributor}</div>
+        <div className="text-l">Contributor: {contributor}</div>
         <div className="flex mt-5 gap-8 p-1">
           <Column
             isPrompt={true}
@@ -137,15 +186,21 @@ export default function RatingPage() {
             setRating={setCompletionRating}
           />
         </div>
-        <div className="flex flex-col gap-3 p-3 mt-10 text-xl w-full">
-          <div className="font-semibold">
-            <span className="font-normal text-gray-300">(Optional)</span> Why
-            did you give this rating?
+        <div className="flex flex-col gap-3 p-3 mt-10 w-full">
+          <div className="font-semibold text-xl">
+            評分理由 &nbsp;
+            <span className="font-normal text-gray-300">(Optional)</span>
           </div>
           <textarea
-            className="p-3 rounded-lg text-black w-full"
+            className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] rounded-lg border border-white focus:outline-none overflow-auto h-32"
+            placeholder="輸入內容..."
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
+            }}
           />
         </div>
         <div className="flex gap-4 justify-center mt-5 text-xl w-1/3 mx-auto">
@@ -159,10 +214,11 @@ export default function RatingPage() {
             className="flex-1 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-2 px-4 rounded-3xl"
             onClick={handleSubmit}
           >
-            Submit Feedback
+            Submit
           </button>
         </div>
       </div>
     </div>
+    </main>
   );
 }

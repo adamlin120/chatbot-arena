@@ -1,6 +1,5 @@
 import { db } from "@/app/api/_base";
 import { RateEditing } from "@/prisma/client";
-import { UserRoundIcon } from "lucide-react";
 
 export const getRandomRatings = async (count: number) => {
   const productsCount = await db.rateEditing.count();
@@ -34,12 +33,33 @@ export const updateRating = async (
   rateEditingID: string,
   feedback: string | undefined = undefined,
 ) => {
+  // Fetch existing ratings
+  const existingRating = await db.rateEditing.findUnique({
+    where: {
+      id: rateEditingID,
+    },
+    select: {
+      totalPromptEditedScore: true,
+      totalCompletionEditedScore: true,
+    },
+  });
+  console.log(existingRating)
+  if (!existingRating){
+    return null;
+  }
+  // Calculate updated totals
+  const updatedPromptEditedScore = existingRating.totalPromptEditedScore + promptEditedScore;
+  const updatedCompletionEditedScore = existingRating.totalCompletionEditedScore + completionEditedScore;
+
+  // Update the database
   if (feedback) {
     await db.rateEditing.update({
       where: {
         id: rateEditingID,
       },
       data: {
+        totalPromptEditedScore: updatedPromptEditedScore,
+        totalCompletionEditedScore: updatedCompletionEditedScore,
         scores: {
           push: {
             promptEditedScore: promptEditedScore,
@@ -56,6 +76,8 @@ export const updateRating = async (
         id: rateEditingID,
       },
       data: {
+        totalPromptEditedScore: updatedPromptEditedScore,
+        totalCompletionEditedScore: updatedCompletionEditedScore,
         scores: {
           push: {
             promptEditedScore: promptEditedScore,

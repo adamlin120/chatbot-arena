@@ -58,21 +58,23 @@ model Trail {
 }
 
 model RateEditing {
-  id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  conversationRecordId  String @db.ObjectId
-  msgIndex              Int
-  contributorId         String @db.ObjectId
-  model                 String
-  originalPrompt        String
-  editedPrompt          String
-  scores                Score[]
-  originalCompletion    String
-  editedCompletion      String
+  id                         String  @id @default(auto()) @map("_id") @db.ObjectId
+  conversationRecordId       String  @db.ObjectId
+  msgIndex                   Int
+  contributorId              String  @db.ObjectId
+  model                      String
+  originalPrompt             String
+  editedPrompt               String
+  totalPromptEditedScore     Int
+  originalCompletion         String
+  editedCompletion           String
+  totalCompletionEditedScore Int
+  scores                     Score[]
 }
 
 type Score {
-  completionEditedScore  Int
-  promptEditedScore      Int
-  raterId               String @db.ObjectId
+  completionEditedScore Int
+  promptEditedScore     Int
+  raterId               String  @db.ObjectId
   feedback              String?
 }
