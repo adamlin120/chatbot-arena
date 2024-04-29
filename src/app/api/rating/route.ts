@@ -20,7 +20,7 @@ export async function GET() {
       { status: 404 },
     );
   }
-  const contributor = await getUserById(randomRatings[0].contributorId);
+  const contributor = randomRatings[0].contributor;
 
   return NextResponse.json({
     rateEditingID: randomRatings[0].id,

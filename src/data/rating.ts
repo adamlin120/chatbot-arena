@@ -11,12 +11,27 @@ export const getRandomRatings = async (count: number) => {
       "Count is bigger than the number of products in the database",
     );
   }
-  var result: RateEditing[] = [];
+  var result: any[] = [];
   for (var i = 0; i < count; i++) {
     const skip = Math.floor(Math.random() * productsCount);
     const pickedRating = await db.rateEditing.findFirst({
       skip: skip + i,
-    });
+      select: {
+        id: true,
+        originalPrompt: true,
+        originalCompletion: true,
+        editedPrompt: true,
+        editedCompletion: true,
+        contributorId: true,
+        contributor: {
+          select: {
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      }
+      }
+    );
     if (!pickedRating || result.includes(pickedRating)) {
       i--;
       continue;
@@ -41,15 +56,19 @@ export const updateRating = async (
     select: {
       totalPromptEditedScore: true,
       totalCompletionEditedScore: true,
+      scores: true,
     },
   });
-  console.log(existingRating)
+
   if (!existingRating){
     return null;
   }
+
+  const scoreLength = existingRating.scores.length;
+
   // Calculate updated totals
-  const updatedPromptEditedScore = existingRating.totalPromptEditedScore + promptEditedScore;
-  const updatedCompletionEditedScore = existingRating.totalCompletionEditedScore + completionEditedScore;
+  const updatedPromptEditedScore = (existingRating.totalPromptEditedScore * scoreLength + promptEditedScore) / (scoreLength + 1);
+  const updatedCompletionEditedScore = (existingRating.totalCompletionEditedScore * scoreLength + completionEditedScore) / (scoreLength + 1);
 
   // Update the database
   if (feedback) {
