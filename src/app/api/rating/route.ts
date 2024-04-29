@@ -3,13 +3,20 @@ import { auth } from "@/lib/auth";
 import { getRandomRatings, updateRating } from "@/data/rating";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
+import { User } from "lucide-react";
+export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest, res: NextResponse) {
-  const user = await auth();
-  if (!user) {
+export async function GET() {
+  const session = await auth();
+  if (!session || !session.user) {
     return NextResponse.redirect("/login");
   }
-  const randomRatings = await getRandomRatings(1);
+  const user = await getUserByEmail(session.user.email);
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const randomRatings = await getRandomRatings(1, user.id);
 
   if (randomRatings.length === 0) {
     return NextResponse.json(
@@ -19,6 +26,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       { status: 404 },
     );
   }
+  const contributor = randomRatings[0].contributor;
 
   return NextResponse.json({
     rateEditingID: randomRatings[0].id,
@@ -26,6 +34,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
     originalCompletion: randomRatings[0].originalCompletion,
     editedPrompt: randomRatings[0].editedPrompt,
     editedCompletion: randomRatings[0].editedCompletion,
+    contributorId: randomRatings[0].contributorId,
+    contributorName: contributor?.username,
+    contributorAvatar: contributor?.avatarUrl,
   });
 }
 

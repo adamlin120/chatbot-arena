@@ -62,8 +62,10 @@ export async function POST(req: NextRequest) {
             model: model,
             originalPrompt: originalPrompt,
             editedPrompt: editedPrompt,
+            totalPromptEditedScore: 0,
             originalCompletion: originalCompletion,
             editedCompletion: editedCompletion,
+            totalCompletionEditedScore: 0,
           },
         });
       } else {
@@ -75,8 +77,10 @@ export async function POST(req: NextRequest) {
             model: model,
             originalPrompt: originalPrompt,
             editedPrompt: editedPrompt,
+            totalPromptEditedScore: 0,
             originalCompletion: originalCompletion,
             editedCompletion: editedCompletion,
+            totalCompletionEditedScore: 0,
           },
         });
       }

@@ -19,6 +19,7 @@ model User {
   bio            String?
   verified       Boolean
   conversations  Conversation[]
+  rateEditings   RateEditing[]
 }
 
 model Verification {
@@ -44,6 +45,7 @@ model ConversationRecord {
   nextConversationRecords  ConversationRecord[] @relation("conversationTree")
   modelName                String
   rating                   Int?
+  rateEditings             RateEditing[]
 }
 
 type ConversationRound {
@@ -58,21 +60,25 @@ model Trail {
 }
 
 model RateEditing {
-  id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  conversationRecordId  String @db.ObjectId
-  msgIndex              Int
-  contributorId         String @db.ObjectId
-  model                 String
-  originalPrompt        String
-  editedPrompt          String
-  scores                Score[]
-  originalCompletion    String
-  editedCompletion      String
+  id                         String             @id @default(auto()) @map("_id") @db.ObjectId
+  conversationRecordId       String             @db.ObjectId
+  conversationRecord         ConversationRecord @relation(fields: [conversationRecordId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  msgIndex                   Int
+  contributorId              String             @db.ObjectId
+  contributor                User               @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  model                      String
+  originalPrompt             String
+  editedPrompt               String
+  totalPromptEditedScore     Float
+  originalCompletion         String
+  editedCompletion           String
+  totalCompletionEditedScore Float
+  scores                     Score[]
 }
 
 type Score {
-  completionEditedScore  Int
-  promptEditedScore      Int
-  raterId               String @db.ObjectId
+  completionEditedScore Int
+  promptEditedScore     Int
+  raterId               String  @db.ObjectId
   feedback              String?
 }

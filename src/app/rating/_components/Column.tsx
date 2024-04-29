@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+const jsDiff = require("diff");
 
 type Props = {
   isPrompt: boolean;
@@ -42,26 +43,79 @@ export default function Column({
   const [toggle, setToggle] = useState(false);
 
   const type = isPrompt ? "Prompts" : "Completions";
+
+  function editDistance(str1: string, str2: string): number {
+    const m: number = str1.length;
+    const n: number = str2.length;
+
+    const dp: number[][] = [];
+    for (let i = 0; i <= m; i++) {
+      dp[i] = [];
+      for (let j = 0; j <= n; j++) {
+        if (i === 0) {
+          dp[i][j] = j;
+        } else if (j === 0) {
+          dp[i][j] = i;
+        } else if (str1[i - 1] === str2[j - 1]) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        }
+      }
+    }
+
+    return dp[m][n];
+  }
+  function disableHTML(htmlString: string) {
+    return htmlString
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function highlightDifferences(original: string, modified: string): string {
+    const diffResult = jsDiff.diffChars(
+      disableHTML(original),
+      disableHTML(modified),
+    );
+    let highlightedText = "";
+
+    diffResult.forEach(
+      (part: { added?: boolean; removed?: boolean; value: string }) => {
+        if (part.added) {
+          highlightedText += `<span style="color: green;">${part.value}</span>`;
+        } else if (part.removed) {
+          highlightedText += `<span style="color: red;">${part.value}</span>`;
+        } else {
+          highlightedText += part.value;
+        }
+      },
+    );
+
+    return highlightedText;
+  }
+
   return (
-    <div className="flex-1 flex flex-col justify-center gap-10 p-3 bg-gray-600 rounded-lg text-xl">
-      <div className="bg-gray-400 text-center font-bold text-3xl rounded-xl p-3 w-1/2 mx-auto mt-4">
+    <div className="flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border border-white">
+      <div className="bg-[rgb(31,41,55)] text-center font-bold text-2xl rounded-xl p-3 mx-auto mt-4 whitespace-nowrap">
         Step {isPrompt ? `1: ${type}` : `2: ${type}`}
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
-        <div className="font-semibold text-xl">Read the Original {type}</div>
+        <div className="font-semibold text-xl">Original {type}</div>
         <textarea
-          className="p-3 rounded-lg text-black"
+          className="p-3 rounded-lg text-black resize-none overflow-auto h-32"
           value={original}
           readOnly
         />
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
-        <div className="font-semibold text-xl">
-          Read the Edited {type}
-          {/* TODO: Below is the "Show edits" button. The highlighting of differences has not been done. */}
-          <label className="ml-3 inline-flex align-middle items-center cursor-pointer">
+        <div className="font-semibold text-xl flex justify-between">
+          <span>Edited {type}</span>
+          <label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none">
             <input
               type="checkbox"
               value=""
@@ -69,26 +123,39 @@ export default function Column({
               onChange={() => setToggle(!toggle)}
               className="sr-only peer"
             />
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-400"></div>
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-400"></div>
             <span className="ms-3 text-lg dark:text-gray-300">Show Edits</span>
           </label>
         </div>
-        <textarea
-          className="p-3 rounded-lg text-black"
-          value={edited}
-          readOnly
-        />
-
-        <div>Edit Distance [{type}]: [TODO]</div>
+        {toggle && (
+          <div
+            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32"
+            dangerouslySetInnerHTML={{
+              __html: highlightDifferences(original, edited),
+            }}
+          />
+        )}
+        {!toggle && (
+          <textarea
+            className="p-3 rounded-lg text-black resize-none overflow-auto h-32"
+            value={edited}
+            readOnly
+          />
+        )}
+        <div className="text-l">
+          Edit Distance: {editDistance(edited, original)}
+        </div>
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
-        <div className="font-semibold text-xl">
-          <span className="text-red-400 font-normal">*Required </span> <br />
-          Is the edited {type.toLowerCase().slice(0, -1)} an improvement over
-          the original?
+        <div className="font-semibold">
+          <span className="text-m text-red-400 font-normal">*必填</span> <br />
+          <p className="text-l">
+            Is the edited {type.toLowerCase().slice(0, -1)} an improvement over
+            the original?
+          </p>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 text-l">
           {feedbackDescription.map((feedback) => (
             <div className="flex gap-2" key={feedback.id}>
               <input
@@ -106,6 +173,8 @@ export default function Column({
             </div>
           ))}
         </div>
+        <div></div>
+        <div></div>
       </div>
     </div>
   );

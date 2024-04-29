@@ -1,24 +1,51 @@
 import { db } from "@/app/api/_base";
 import { RateEditing } from "@/prisma/client";
-import { UserRoundIcon } from "lucide-react";
 
-export const getRandomRatings = async (count: number) => {
-  const productsCount = await db.rateEditing.count();
-  if (productsCount === 0) {
+const userInScore = (score: RateEditing["scores"], userId: string) => {
+  return score.some((s) => s.raterId === userId);
+};
+
+export const getRandomRatings = async (count: number, userId?: string) => {
+  const rateEditingCount = await db.rateEditing.count();
+  if (rateEditingCount === 0) {
     return [];
   }
-  if (count > productsCount) {
+  if (count > rateEditingCount) {
     throw new Error(
       "Count is bigger than the number of products in the database",
     );
   }
-  var result: RateEditing[] = [];
+  var result: any[] = [];
+  var trials = 0;
   for (var i = 0; i < count; i++) {
-    const skip = Math.floor(Math.random() * productsCount);
+    trials++;
+    const skip = Math.floor(Math.random() * rateEditingCount);
     const pickedRating = await db.rateEditing.findFirst({
       skip: skip + i,
+      select: {
+        id: true,
+        originalPrompt: true,
+        originalCompletion: true,
+        editedPrompt: true,
+        editedCompletion: true,
+        contributorId: true,
+        scores: true,
+        contributor: {
+          select: {
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
-    if (!pickedRating || result.includes(pickedRating)) {
+    if (
+      !pickedRating ||
+      result.includes(pickedRating) ||
+      (userId && userInScore(pickedRating.scores, userId))
+    ) {
+      if (trials > rateEditingCount || trials > Math.max(count * 2, 10)) {
+        break;
+      }
       i--;
       continue;
     }
@@ -34,12 +61,42 @@ export const updateRating = async (
   rateEditingID: string,
   feedback: string | undefined = undefined,
 ) => {
+  // Fetch existing ratings
+  const existingRating = await db.rateEditing.findUnique({
+    where: {
+      id: rateEditingID,
+    },
+    select: {
+      totalPromptEditedScore: true,
+      totalCompletionEditedScore: true,
+      scores: true,
+    },
+  });
+
+  if (!existingRating) {
+    return null;
+  }
+
+  const scoreLength = existingRating.scores.length;
+
+  // Calculate updated totals
+  const updatedPromptEditedScore =
+    (existingRating.totalPromptEditedScore * scoreLength + promptEditedScore) /
+    (scoreLength + 1);
+  const updatedCompletionEditedScore =
+    (existingRating.totalCompletionEditedScore * scoreLength +
+      completionEditedScore) /
+    (scoreLength + 1);
+
+  // Update the database
   if (feedback) {
     await db.rateEditing.update({
       where: {
         id: rateEditingID,
       },
       data: {
+        totalPromptEditedScore: updatedPromptEditedScore,
+        totalCompletionEditedScore: updatedCompletionEditedScore,
         scores: {
           push: {
             promptEditedScore: promptEditedScore,
@@ -56,6 +113,8 @@ export const updateRating = async (
         id: rateEditingID,
       },
       data: {
+        totalPromptEditedScore: updatedPromptEditedScore,
+        totalCompletionEditedScore: updatedCompletionEditedScore,
         scores: {
           push: {
             promptEditedScore: promptEditedScore,

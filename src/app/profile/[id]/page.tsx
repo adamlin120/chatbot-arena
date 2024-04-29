@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/_components/Loading";
 import Image from "next/image";
+export const dynamic = "force-dynamic";
 
 const ProfilePage = () => {
   const { data: session, status } = useSession();
@@ -90,7 +91,7 @@ const ProfilePage = () => {
     setNewBio(profile.bio); // Reset newBio to the current bio
   };
   return (
-    <div className="bg-[rgb(31,41,55,0.3)] rounded-lg p-6">
+    <div className="bg-[rgb(31,41,55,0.3)] rounded-lg p-6 fade-in">
       <h1 className="text-3xl font-bold mb-6 text-white">個人檔案/Profile</h1>
       <div className="max-w-md mx-auto">
         <div className="flex items-center mb-6">

@@ -33,6 +33,8 @@ export default function MessageContainer({
   const [message, setMessage] = useState<string>(origMessage);
   const messageTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  const [isComposing, setIsComposing] = useState(false);
+
   const context = useContext(MessageContext);
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
@@ -60,6 +62,14 @@ export default function MessageContainer({
   };
 
   const handleRegenerate = async () => {};
+
+  const handleComposingStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleComposingEnd = () => {
+    setIsComposing(false);
+  };
 
   const handleSubmit = async () => {
     setIsEditing(false);
@@ -193,9 +203,11 @@ export default function MessageContainer({
           <textarea
             className="bg-transparent p-5 text-white px-2 pt-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
             autoFocus
+            onCompositionStart={handleComposingStart}
+            onCompositionEnd={handleComposingEnd}
             ref={messageTextAreaRef}
             onKeyDown={async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-              if (e.key === "Enter" && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                 e.preventDefault();
                 e.currentTarget.blur(); // will trigger handleSubmit
               }
