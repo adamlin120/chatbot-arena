@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getRandomRatings, updateRating } from "@/data/rating";
-import { getUserByEmail } from "@/data/user";
+import { getUserByEmail, getUserById } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
@@ -20,6 +20,7 @@ export async function GET() {
       { status: 404 },
     );
   }
+  const contributor = await getUserById(randomRatings[0].contributorId);
 
   return NextResponse.json({
     rateEditingID: randomRatings[0].id,
@@ -27,6 +28,9 @@ export async function GET() {
     originalCompletion: randomRatings[0].originalCompletion,
     editedPrompt: randomRatings[0].editedPrompt,
     editedCompletion: randomRatings[0].editedCompletion,
+    contributorId: randomRatings[0].contributorId,
+    contributorName: contributor?.username,
+    contributorAvatar: contributor?.avatarUrl
   });
 }
 

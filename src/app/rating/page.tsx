@@ -6,28 +6,24 @@ import { getSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "./Loading";
+import Image from "next/image";
 
 export default function RatingPage() {
-  const contributor = "[contributor name here]";
   const [feedbackText, setFeedbackText] = useState<string>("");
   const [promptRating, setPromptRating] = useState<number | undefined>(); // 1 - 5
-  const [completionRating, setCompletionRating] = useState<
-    number | undefined
-  >(); // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
+  const [completionRating, setCompletionRating] = useState<number | undefined>();
+  // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
   // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [rateEditingID, setRateEditingID] = useState<string | undefined>();
   const [originalPrompt, setOriginalPrompt] = useState<string | undefined>();
-  const [originalCompletion, setOriginalCompletion] = useState<
-    string | undefined
-  >();
+  const [originalCompletion, setOriginalCompletion] = useState<string | undefined>();
   const [editedPrompt, setEditedPrompt] = useState<string | undefined>();
-  const [editedCompletion, setEditedCompletion] = useState<
-    string | undefined
-  >();
-
-
+  const [editedCompletion, setEditedCompletion] = useState<string | undefined>();
+  const [contributorName, setContributorName] = useState<string | undefined>();
+  const [contributorAvatar, setContributorAvatar] = useState<string | undefined>();
+  const imageSize = 30;
   const fetchRandomRating = async () => {
     const res = await fetch("/api/rating");
     const data = await res.json();
@@ -56,6 +52,10 @@ export default function RatingPage() {
     setOriginalCompletion(data.originalCompletion);
     setEditedPrompt(data.editedPrompt);
     setEditedCompletion(data.editedCompletion);
+    setContributorName(data.contributorName);
+    if (data.contributorAvatar !== null) {
+      setContributorAvatar(data.contributorAvatar);
+    }
   };
 
   useEffect(() => {
@@ -142,7 +142,7 @@ export default function RatingPage() {
     }
     toast.success("回饋送出成功，感謝你的幫助！");
     fadeOutAndIn(1);
-    
+
     await fetchRandomRating();
   };
 
@@ -161,64 +161,76 @@ export default function RatingPage() {
         pauseOnHover
         theme="light"
       />
-    <div id="content" className="p-5 px-44 fade-in">
-      <div className="flex flex-col gap-3">
-        <div className="text-3xl font-bold">Review Feedback</div>
-        <div className="text-xl">
-          對其他使用者編輯後的prompts和completions進行評分
-        </div>
-      </div>
-      <div className="flex flex-col mt-10">
-        <div className="text-l">Contributor: {contributor}</div>
-        <div className="flex mt-5 gap-8 p-1">
-          <Column
-            isPrompt={true}
-            original={String(originalPrompt)}
-            edited={String(editedPrompt)}
-            rating={promptRating}
-            setRating={setPromptRating}
-          />
-          <Column
-            isPrompt={false}
-            original={String(originalCompletion)}
-            edited={String(editedCompletion)}
-            rating={completionRating}
-            setRating={setCompletionRating}
-          />
-        </div>
-        <div className="flex flex-col gap-3 p-3 mt-10 w-full">
-          <div className="font-semibold text-xl">
-            評分理由 &nbsp;
-            <span className="font-normal text-gray-300">(Optional)</span>
+      <div id="content" className="p-5 px-44 fade-in">
+        <div className="flex flex-col gap-3">
+          <div className="text-3xl font-bold">Review Feedback</div>
+          <div className="text-xl">
+            對其他使用者編輯後的prompts和completions進行評分
           </div>
-          <textarea
-            className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] rounded-lg border border-white focus:outline-none overflow-auto h-32"
-            placeholder="輸入內容..."
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch'
-            }}
-          />
         </div>
-        <div className="flex gap-4 justify-center mt-5 text-xl w-1/3 mx-auto">
-          <button
-            className="flex-1 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-white font-bold py-2 px-4 rounded-3xl"
-            onClick={handleSkip}
-          >
-            Skip
-          </button>
-          <button
-            className="flex-1 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-2 px-4 rounded-3xl"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
+        <div className="flex flex-col mt-10">
+          <div className="flex items-center">
+            <div className="text-l">Contributor: &nbsp;</div>
+            {contributorAvatar && (
+              <Image
+              src={contributorAvatar}
+              alt="Contributor Image"
+              width={imageSize}
+              height={imageSize}
+              className="rounded-full"
+            />
+            )}
+            <div> &nbsp; {contributorName}</div>
+          </div>
+          <div className="flex mt-5 gap-8 p-1">
+            <Column
+              isPrompt={true}
+              original={String(originalPrompt)}
+              edited={String(editedPrompt)}
+              rating={promptRating}
+              setRating={setPromptRating}
+            />
+            <Column
+              isPrompt={false}
+              original={String(originalCompletion)}
+              edited={String(editedCompletion)}
+              rating={completionRating}
+              setRating={setCompletionRating}
+            />
+          </div>
+          <div className="flex flex-col gap-3 p-3 mt-10 w-full">
+            <div className="font-semibold text-xl">
+              評分理由 &nbsp;
+              <span className="font-normal text-gray-300">(Optional)</span>
+            </div>
+            <textarea
+              className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] rounded-lg border border-white focus:outline-none overflow-auto h-32"
+              placeholder="輸入內容..."
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch'
+              }}
+            />
+          </div>
+          <div className="flex gap-4 justify-center mt-5 text-xl w-1/3 mx-auto">
+            <button
+              className="flex-1 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-white font-bold py-2 px-4 rounded-3xl"
+              onClick={handleSkip}
+            >
+              Skip
+            </button>
+            <button
+              className="flex-1 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-2 px-4 rounded-3xl"
+              onClick={handleSubmit}
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </main>
   );
 }
