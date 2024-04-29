@@ -69,10 +69,10 @@ model RateEditing {
   model                      String
   originalPrompt             String
   editedPrompt               String
-  totalPromptEditedScore     Int
+  totalPromptEditedScore     Float
   originalCompletion         String
   editedCompletion           String
-  totalCompletionEditedScore Int
+  totalCompletionEditedScore Float
   scores                     Score[]
 }
 
