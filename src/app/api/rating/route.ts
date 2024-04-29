@@ -30,7 +30,7 @@ export async function GET() {
     editedCompletion: randomRatings[0].editedCompletion,
     contributorId: randomRatings[0].contributorId,
     contributorName: contributor?.username,
-    contributorAvatar: contributor?.avatarUrl
+    contributorAvatar: contributor?.avatarUrl,
   });
 }
 

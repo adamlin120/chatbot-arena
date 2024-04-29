@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-const jsDiff = require('diff');
+const jsDiff = require("diff");
 
 type Props = {
   isPrompt: boolean;
@@ -68,28 +68,31 @@ export default function Column({
   }
   function disableHTML(htmlString: string) {
     return htmlString
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function highlightDifferences(original: string, modified: string): string {
-    const diffResult = jsDiff.diffChars(disableHTML(original), disableHTML(modified));
-    let highlightedText = '';
+    const diffResult = jsDiff.diffChars(
+      disableHTML(original),
+      disableHTML(modified),
+    );
+    let highlightedText = "";
 
-    diffResult.forEach((part: { added?: boolean; removed?: boolean; value: string }) => {
-      if (part.added) {
-        highlightedText += `<span style="color: green;">${part.value}</span>`;
-      }
-      else if (part.removed) {
-        highlightedText += `<span style="color: red;">${part.value}</span>`;
-      }
-      else {
-        highlightedText += part.value;
-      }
-    });
+    diffResult.forEach(
+      (part: { added?: boolean; removed?: boolean; value: string }) => {
+        if (part.added) {
+          highlightedText += `<span style="color: green;">${part.value}</span>`;
+        } else if (part.removed) {
+          highlightedText += `<span style="color: red;">${part.value}</span>`;
+        } else {
+          highlightedText += part.value;
+        }
+      },
+    );
 
     return highlightedText;
   }
@@ -127,7 +130,9 @@ export default function Column({
         {toggle && (
           <div
             className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32"
-            dangerouslySetInnerHTML={{ __html: highlightDifferences(original, edited) }}
+            dangerouslySetInnerHTML={{
+              __html: highlightDifferences(original, edited),
+            }}
           />
         )}
         {!toggle && (
@@ -137,14 +142,17 @@ export default function Column({
             readOnly
           />
         )}
-        <div className="text-l">Edit Distance: {editDistance(edited, original)}</div>
+        <div className="text-l">
+          Edit Distance: {editDistance(edited, original)}
+        </div>
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
         <div className="font-semibold">
           <span className="text-m text-red-400 font-normal">*必填</span> <br />
           <p className="text-l">
-            Is the edited {type.toLowerCase().slice(0, -1)} an improvement over the original?
+            Is the edited {type.toLowerCase().slice(0, -1)} an improvement over
+            the original?
           </p>
         </div>
         <div className="flex flex-col gap-1 text-l">
@@ -162,9 +170,7 @@ export default function Column({
               <label htmlFor={feedback.id.toString()}>
                 {feedback.id - (isPrompt ? 0 : 5)} - {feedback.text}
               </label>
-
             </div>
-
           ))}
         </div>
         <div></div>

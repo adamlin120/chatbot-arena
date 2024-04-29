@@ -4,7 +4,6 @@ import { getModelByConversationRecordId } from "@/data/conversation";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 
-
 export async function POST(req: NextRequest) {
   try {
     const requestBody = await req.json();

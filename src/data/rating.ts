@@ -29,9 +29,8 @@ export const getRandomRatings = async (count: number) => {
             avatarUrl: true,
           },
         },
-      }
-      }
-    );
+      },
+    });
     if (!pickedRating || result.includes(pickedRating)) {
       i--;
       continue;
@@ -60,15 +59,20 @@ export const updateRating = async (
     },
   });
 
-  if (!existingRating){
+  if (!existingRating) {
     return null;
   }
 
   const scoreLength = existingRating.scores.length;
 
   // Calculate updated totals
-  const updatedPromptEditedScore = (existingRating.totalPromptEditedScore * scoreLength + promptEditedScore) / (scoreLength + 1);
-  const updatedCompletionEditedScore = (existingRating.totalCompletionEditedScore * scoreLength + completionEditedScore) / (scoreLength + 1);
+  const updatedPromptEditedScore =
+    (existingRating.totalPromptEditedScore * scoreLength + promptEditedScore) /
+    (scoreLength + 1);
+  const updatedCompletionEditedScore =
+    (existingRating.totalCompletionEditedScore * scoreLength +
+      completionEditedScore) /
+    (scoreLength + 1);
 
   // Update the database
   if (feedback) {

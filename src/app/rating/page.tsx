@@ -11,18 +11,26 @@ export const dynamic = "force-dynamic";
 export default function RatingPage() {
   const [feedbackText, setFeedbackText] = useState<string>("");
   const [promptRating, setPromptRating] = useState<number | undefined>(); // 1 - 5
-  const [completionRating, setCompletionRating] = useState<number | undefined>();
+  const [completionRating, setCompletionRating] = useState<
+    number | undefined
+  >();
   // 6 - 10 (need to subtract 5 to get 1 - 5 rating)
   // If we do not use 6 - 10, then the Column component will have the same ID, then there will be some strange bugs.
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [rateEditingID, setRateEditingID] = useState<string | undefined>();
   const [originalPrompt, setOriginalPrompt] = useState<string | undefined>();
-  const [originalCompletion, setOriginalCompletion] = useState<string | undefined>();
+  const [originalCompletion, setOriginalCompletion] = useState<
+    string | undefined
+  >();
   const [editedPrompt, setEditedPrompt] = useState<string | undefined>();
-  const [editedCompletion, setEditedCompletion] = useState<string | undefined>();
+  const [editedCompletion, setEditedCompletion] = useState<
+    string | undefined
+  >();
   const [contributorName, setContributorName] = useState<string | undefined>();
-  const [contributorAvatar, setContributorAvatar] = useState<string | undefined>();
+  const [contributorAvatar, setContributorAvatar] = useState<
+    string | undefined
+  >();
   const imageSize = 30;
   const fetchRandomRating = async () => {
     const res = await fetch("/api/rating");
@@ -77,30 +85,29 @@ export default function RatingPage() {
 
   function fadeOutAndIn(direction: number): void {
     if (direction == 1) {
-      const content = document.getElementById('content');
+      const content = document.getElementById("content");
       if (content) {
-        content.classList.add('fade-out-R');
+        content.classList.add("fade-out-R");
         setTimeout(async () => {
           await fetchRandomRating();
           setFeedbackText("");
           setPromptRating(undefined);
           setCompletionRating(undefined);
-          content.classList.remove('fade-out-R');
-          content.classList.remove('fade-out-L');
+          content.classList.remove("fade-out-R");
+          content.classList.remove("fade-out-L");
         }, 500);
       }
-    }
-    else {
-      const content = document.getElementById('content');
+    } else {
+      const content = document.getElementById("content");
       if (content) {
-        content.classList.add('fade-out-L');
+        content.classList.add("fade-out-L");
         setTimeout(async () => {
           await fetchRandomRating();
           setFeedbackText("");
           setPromptRating(undefined);
           setCompletionRating(undefined);
-          content.classList.remove('fade-out-R');
-          content.classList.remove('fade-out-L');
+          content.classList.remove("fade-out-R");
+          content.classList.remove("fade-out-L");
         }, 500);
       }
     }
@@ -146,7 +153,6 @@ export default function RatingPage() {
     await fetchRandomRating();
   };
 
-
   return (
     <main>
       <ToastContainer
@@ -173,12 +179,12 @@ export default function RatingPage() {
             <div className="text-l">Contributor: &nbsp;</div>
             {contributorAvatar && (
               <Image
-              src={contributorAvatar}
-              alt="Contributor Image"
-              width={imageSize}
-              height={imageSize}
-              className="rounded-full"
-            />
+                src={contributorAvatar}
+                alt="Contributor Image"
+                width={imageSize}
+                height={imageSize}
+                className="rounded-full"
+              />
             )}
             <div> &nbsp; {contributorName}</div>
           </div>
@@ -209,9 +215,9 @@ export default function RatingPage() {
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
               style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                WebkitOverflowScrolling: 'touch'
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                WebkitOverflowScrolling: "touch",
               }}
             />
           </div>
