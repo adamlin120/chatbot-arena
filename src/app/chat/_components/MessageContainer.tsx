@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { Bot, Pencil, User, IterationCw } from "lucide-react";
+import { Bot, Pencil, User, IterationCw, Clipboard, Check } from "lucide-react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
@@ -36,6 +36,8 @@ export default function MessageContainer({
   const imageUrl = session?.user?.image;
   const userEmail = session?.user?.email;
   const imageSize = 30;
+
+  const [justCopied, setJustCopied] = useState(false);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(origMessage);
@@ -351,6 +353,18 @@ export default function MessageContainer({
       </div>
       {!isEditing && isCompleted && (
         <div className="self-end">
+          <button
+            className="p-1 opacity-0 group-hover:opacity-100 self-end"
+            onClick={() => {
+              navigator.clipboard.writeText(message);
+              setJustCopied(true);
+              setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
+            }}
+            title={"複製"}
+            disabled={isEditing}
+          >
+            {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
+          </button>
           {!isUser && (
             <button
               className="p-1 opacity-0 group-hover:opacity-100 self-end"
