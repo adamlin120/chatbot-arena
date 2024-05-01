@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
+import Markdown from "react-markdown";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
@@ -282,7 +283,7 @@ export default function MessageContainer({
     let intervalId: NodeJS.Timeout;
     if (origMessage === "思考中...") {
       intervalId = setInterval(() => {
-        setDotCount((prevCount) => (prevCount % 4) + 1);
+        setDotCount((prevCount) => (prevCount % 3) + 1);
       }, 500); // Update every 500ms
     }
     return () => {
@@ -338,9 +339,13 @@ export default function MessageContainer({
             className={`px-2 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
           ${isEditing && "border-b border-solid"} focus:outline-none `}
           >
-            {message === "思考中..." && !isUser
-              ? `思考中${".".repeat(dotCount)}`
-              : message}
+            {message === "思考中..." && !isUser ? (
+              `思考中${".".repeat(dotCount)}`
+            ) : (
+              <Markdown>
+                {message.replace(/\\\[/g, "$").replace(/\\\]/g, "$")}
+              </Markdown>
+            )}
           </div>
         )}
       </div>
