@@ -37,7 +37,9 @@ export default function RatingPage() {
     const data = await res.json();
 
     if (res.status == 404) {
-      toast.info("You have rated all available edited prompts and completions!");
+      toast.info(
+        "You have rated all available edited prompts and completions!",
+      );
       return;
     }
 

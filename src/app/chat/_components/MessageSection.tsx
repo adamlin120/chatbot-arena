@@ -12,8 +12,12 @@ export default function MessageSection() {
   const {
     messageA,
     messageB,
+    setMessageA,
+    setMessageB,
     messageAWaiting,
     messageBWaiting,
+    setMessageAWaiting,
+    setMessageBWaiting,
     conversationRecordIds,
   } = context;
 
@@ -46,12 +50,16 @@ export default function MessageSection() {
     <div className="flex flex-col md:flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
       <MessageDisplay
         messages={messageA}
+        setMessages={setMessageA}
+        setMessagesWaiting={setMessageAWaiting}
         messagesEndRef={messageAEndRef}
         isCompleted={!messageAWaiting}
         conversationRecordId={conversationRecordIds[0]}
       />
       <MessageDisplay
         messages={messageB}
+        setMessages={setMessageB}
+        setMessagesWaiting={setMessageBWaiting}
         messagesEndRef={messageBEndRef}
         isCompleted={!messageBWaiting}
         conversationRecordId={conversationRecordIds[1]}
@@ -62,11 +70,15 @@ export default function MessageSection() {
 
 function MessageDisplay({
   messages,
+  setMessages,
+  setMessagesWaiting,
   messagesEndRef,
   isCompleted,
   conversationRecordId,
 }: {
   messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
   messagesEndRef: React.RefObject<HTMLDivElement>;
   isCompleted: boolean;
   conversationRecordId: string;
@@ -85,6 +97,8 @@ function MessageDisplay({
                 isCompleted={isCompleted}
                 conversationRecordId={conversationRecordId}
                 messages={messages}
+                setMessages={setMessages}
+                setMessagesWaiting={setMessagesWaiting}
               />
             )
           );

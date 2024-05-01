@@ -8,6 +8,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 
+const serverErrorMessage = "伺服器端錯誤，請稍後再試";
+const MAX_TOKENS = 2048;
+
 export default function MessageContainer({
   origMessage,
   msgIndex,
@@ -15,6 +18,8 @@ export default function MessageContainer({
   isCompleted,
   conversationRecordId,
   messages,
+  setMessages,
+  setMessagesWaiting,
 }: {
   origMessage: string;
   msgIndex: number;
@@ -22,6 +27,8 @@ export default function MessageContainer({
   isCompleted: boolean;
   conversationRecordId: string;
   messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -39,7 +46,7 @@ export default function MessageContainer({
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { ratingButtonDisabled } = context;
+  const { ratingButtonDisabled, setRatingButtonDisabled } = context;
 
   useEffect(() => {
     if (messageTextAreaRef.current) {
@@ -61,7 +68,113 @@ export default function MessageContainer({
     }
   };
 
-  const handleRegenerate = async () => {};
+  // below is copied from PromptInput.tsx
+  const handleRegenerate = async () => {
+    setMessagesWaiting(true);
+
+    const oldMessages: Message[] = messages;
+    const newMessages: Message[] = [
+      ...messages.slice(0, msgIndex),
+      {
+        role: "assistant",
+        content: "思考中...",
+      },
+    ];
+    console.log("newMessages: ", newMessages);
+    setMessages(newMessages);
+
+    // Abort the request if it takes too long (currently 10 second)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: newMessages.slice(0, newMessages.length - 1),
+        conversationRecordId: conversationRecordId,
+      }),
+      signal: controller.signal,
+    })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          // This may due to llm api error
+          console.error("Request timed out");
+          toast.error("伺服器沒有回應，請稍後再試");
+          setMessagesWaiting(false);
+          setMessages(oldMessages);
+        } else {
+          console.error("Error processing messages:", error);
+          toast.error(serverErrorMessage);
+        }
+        return;
+      })
+      .finally(() => clearTimeout(timeoutId));
+
+    if (!response || !response.body) {
+      return;
+    } else if (response.status !== 200) {
+      toast.error(serverErrorMessage);
+      return;
+    }
+
+    function fluent(ms: number | undefined) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let count = 0;
+    let buffer = "";
+    setRatingButtonDisabled(true);
+    while (count < MAX_TOKENS) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const text = decoder.decode(value);
+      buffer += text;
+
+      setMessages((messages) => {
+        return [
+          ...messages.slice(0, messages.length - 1),
+          {
+            ...messages[messages.length - 1],
+            content: buffer,
+          },
+        ];
+      });
+      count++;
+      await fluent(50);
+    }
+    setRatingButtonDisabled(false);
+    setMessagesWaiting(false);
+
+    // Todo: Do we need this here? If not, tell me and I will remove it. Otherwise, tell me and I will uncomment it.
+    // if (!session || !session.user) {
+    //   const response = await fetch("https://api.ipify.org?format=json");
+    //   const data = await response.json();
+    //   const { ip } = data;
+    //   try {
+    //     const response = await fetch("/api/chat/trail/send", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({ ip: ip }),
+    //     });
+    //     if (!response.ok) {
+    //       throw new Error("Failed to store IP address");
+    //     }
+    //     const responseData = await response.json();
+    //     const { quota } = responseData;
+    //     if (quota >= 3) {
+    //       toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+    //       setTimeout(() => {
+    //         router.push("/login");
+    //       }, 3000);
+    //       return;
+    //     }
+    //   } catch (error) {
+    //     console.error("Error storing IP address:", error);
+    //   }
+    // }
+  };
 
   const handleComposingStart = () => {
     setIsComposing(true);
@@ -243,7 +356,8 @@ export default function MessageContainer({
               <IterationCw size={20} />
             </button>
           )}
-          {ratingButtonDisabled && (
+          {ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
+            // there are some bugs here, I will fix them later
             <button
               className="p-1 opacity-0 group-hover:opacity-100 self-end"
               onClick={handleClickEdit}
