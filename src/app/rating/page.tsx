@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "./Loading";
 import Image from "next/image";
+import { User } from "lucide-react";
 export const dynamic = "force-dynamic";
 export default function RatingPage() {
   const [feedbackText, setFeedbackText] = useState<string>("");
@@ -179,15 +180,18 @@ export default function RatingPage() {
         <div className="flex flex-col mt-10">
           <div className="flex items-center">
             <div className="text-l">Contributor: &nbsp;</div>
-            {contributorAvatar && (
-              <Image
-                src={contributorAvatar}
-                alt="Contributor Image"
-                width={imageSize}
-                height={imageSize}
-                className="rounded-full"
-              />
-            )}
+            {contributorAvatar &&
+              (contributorAvatar === "anonymous.com" ? (
+                <User size={imageSize} />
+              ) : (
+                <Image
+                  src={contributorAvatar}
+                  alt="Contributor Image"
+                  width={imageSize}
+                  height={imageSize}
+                  className="rounded-full"
+                />
+              ))}
             <div> &nbsp; {contributorName}</div>
           </div>
           <div className="flex mt-5 gap-8 p-1">
