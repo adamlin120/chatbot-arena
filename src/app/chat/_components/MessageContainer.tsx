@@ -7,10 +7,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
-import Markdown from "react-markdown";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import "katex/dist/katex.min.css";
+import MarkdownRenderer from "@/app/_components/MarkdownRenderer";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
@@ -299,8 +296,8 @@ export default function MessageContainer({
   }, [origMessage]);
 
   return (
-    <div className="flex flex-col group">
-      <div className={`flex gap-3 mb-2`}>
+    <div className="flex flex-col w-full group">
+      <div className={`flex w-full gap-3 mb-2`}>
         <div className="self-start flex-shrink-0">
           {isUser ? (
             imageUrl ? (
@@ -341,7 +338,7 @@ export default function MessageContainer({
           ></textarea>
         ) : (
           <div
-            className={`px-2 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
+            className={`px-5 w-9/12 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
           ${isEditing && "border-b border-solid"} focus:outline-none `}
           >
             {message === "思考中..." && !isUser ? (
@@ -349,57 +346,54 @@ export default function MessageContainer({
             ) : isUser ? (
               message
             ) : (
-              <Markdown
-                remarkPlugins={[remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-              >
-                {message.replace(/\\\[/g, "$").replace(/\\\]/g, "$")}
-              </Markdown>
+              <MarkdownRenderer>{message}</MarkdownRenderer>
             )}
           </div>
         )}
       </div>
-      {!isEditing && isCompleted && (
-        <div className="self-end">
-          <button
-            className="p-1 opacity-0 group-hover:opacity-100 self-end"
-            onClick={() => {
-              navigator.clipboard.writeText(message);
-              setJustCopied(true);
-              setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
-            }}
-            title={"複製"}
-            disabled={isEditing}
-          >
-            {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
-          </button>
-          {!isUser && (
+      <div className="self-end h-10">
+        {!isEditing && isCompleted && (
+          <>
             <button
               className="p-1 opacity-0 group-hover:opacity-100 self-end"
-              onClick={handleRegenerate}
-              title={"重新生成模型輸出"}
+              onClick={() => {
+                navigator.clipboard.writeText(message);
+                setJustCopied(true);
+                setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
+              }}
+              title={"複製"}
               disabled={isEditing}
             >
-              <IterationCw size={20} />
+              {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
             </button>
-          )}
-          {ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
-            // there are some bugs here, I will fix them later
-            <button
-              className="p-1 opacity-0 group-hover:opacity-100 self-end"
-              onClick={handleClickEdit}
-              title={
-                isUser
-                  ? "點擊以修改訊息"
-                  : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
-              }
-              disabled={isEditing}
-            >
-              <Pencil color="white" size={20} />
-            </button>
-          )}
-        </div>
-      )}
+            {!isUser && (
+              <button
+                className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                onClick={handleRegenerate}
+                title={"重新生成模型輸出"}
+                disabled={isEditing}
+              >
+                <IterationCw size={20} />
+              </button>
+            )}
+            {ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
+              // there are some bugs here, I will fix them later
+              <button
+                className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                onClick={handleClickEdit}
+                title={
+                  isUser
+                    ? "點擊以修改訊息"
+                    : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
+                }
+                disabled={isEditing}
+              >
+                <Pencil color="white" size={20} />
+              </button>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
