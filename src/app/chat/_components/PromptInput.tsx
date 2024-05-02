@@ -34,7 +34,6 @@ export default function PromptInput() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const [prompt, setPrompt] = useState<string>("");
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
   const [isComposing, setIsComposing] = useState(false);
@@ -88,7 +87,9 @@ export default function PromptInput() {
           setMessages((messages) => {
             return messages.slice(0, messages.length - 2);
           });
-          setPrompt(currPrompt);
+          if (promptInputRef.current) {
+            promptInputRef.current.value = currPrompt;
+          }
         } else {
           console.error("Error processing messages:", error);
           toast.error(serverErrorMessage);
@@ -137,36 +138,41 @@ export default function PromptInput() {
   };
 
   // Auto resize the textarea
-  useEffect(() => {
-    if (promptInputRef.current) {
-      promptInputRef.current.style.height = "auto";
-      promptInputRef.current.style.height = `${promptInputRef.current.scrollHeight}px`;
-    }
-  }, [prompt]);
+  const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    event.currentTarget.style.height = "auto";
+    event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`;
+  };
 
   const sendMessage = async () => {
-    if (prompt.length === 0 || prompt.trim().length === 0) return;
+    if (!promptInputRef.current?.value) return;
+
+    if (
+      promptInputRef.current?.value.length === 0 ||
+      promptInputRef.current?.value.trim().length === 0
+    )
+      return;
     if (!conversationRecordIds) {
       // Todo: check if this is needed, and note that I cannot use await here.
       initiateChat();
     }
-    setPrompt(prompt.trim());
+    promptInputRef.current.value = promptInputRef.current.value.trim();
 
     processMessages(
-      prompt.trim(),
+      promptInputRef.current?.value.trim(),
       messageA,
       conversationRecordIds[0],
       setMessageA,
       setMessageAWaiting,
     );
     processMessages(
-      prompt.trim(),
+      promptInputRef.current?.value.trim(),
       messageB,
       conversationRecordIds[1],
       setMessageB,
       setMessageBWaiting,
     );
-    setPrompt("");
+    promptInputRef.current.value = "";
+    promptInputRef.current.style.height = "auto";
 
     if (!session || !session.user) {
       const response = await fetch("https://api.ipify.org?format=json");
@@ -206,12 +212,12 @@ export default function PromptInput() {
             className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
             onCompositionStart={handleComposingStart}
             onCompositionEnd={handleComposingEnd}
+            onInput={handleInput}
             placeholder={rated ? "評分完畢，歡迎編輯以上對話！" : "輸入訊息..."}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
             ref={promptInputRef}
             disabled={
-              ratingButtonDisabled ||
+              // I think it is better to make the textarea always focused. It is quite annoying to click on the textarea every time.
+              (ratingButtonDisabled && !messageAWaiting && !messageBWaiting) ||
               !conversationRecordIds[0] ||
               !conversationRecordIds[1]
             }
