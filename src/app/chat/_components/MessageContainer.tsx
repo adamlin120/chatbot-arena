@@ -8,6 +8,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 import Markdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
@@ -343,8 +346,13 @@ export default function MessageContainer({
           >
             {message === "思考中..." && !isUser ? (
               `思考中${".".repeat(dotCount)}`
+            ) : isUser ? (
+              message
             ) : (
-              <Markdown>
+              <Markdown
+                remarkPlugins={[remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+              >
                 {message.replace(/\\\[/g, "$").replace(/\\\]/g, "$")}
               </Markdown>
             )}

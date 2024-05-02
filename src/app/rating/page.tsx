@@ -212,7 +212,7 @@ export default function RatingPage() {
               <span className="font-normal text-gray-300">(Optional)</span>
             </div>
             <textarea
-              className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] rounded-lg border border-white focus:outline-none overflow-auto h-32"
+              className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] border border-white focus:outline-none overflow-auto h-32"
               placeholder="輸入內容..."
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
