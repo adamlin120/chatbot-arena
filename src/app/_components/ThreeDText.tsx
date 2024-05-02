@@ -1,16 +1,16 @@
 "use client";
-import { useRef, Suspense } from "react";
+import { Suspense } from "react";
 import {
   Text3D,
   OrbitControls,
   Center,
-  Stars,
-  Float,
-  Sparkles,
+  // Stars,
+  // Float,
+  // Sparkles,
   useMatcapTexture,
 } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Physics } from "@react-three/cannon";
+// import { Physics } from "@react-three/cannon";
 
 function Hero() {
   const [matcapTexture] = useMatcapTexture("161B1F_C7E0EC_90A5B3_7B8C9B");

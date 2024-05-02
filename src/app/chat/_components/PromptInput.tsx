@@ -1,7 +1,7 @@
 import Button from "@/app/_components/Button";
 import { LoaderCircle, SendHorizonal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
