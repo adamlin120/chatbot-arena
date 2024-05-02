@@ -21,12 +21,18 @@ export default function MarkdownRenderer({ children }: { children: string }) {
       components={{
         code({ className, children, ...props }: any) {
           const match = /language-(\w+)/.exec(className || "");
-          const language = match ? match[1] : undefined;
+          const language = match
+            ? match[1]
+            : children && children.includes("\n")
+              ? "text"
+              : undefined;
+          // Todo: inline props is removed accoding to the latest version of react-markdown. I do not know how to distinguish inline code and block code. Currently, I use '\n' to distinguish them.
+          // Some models will not give me the language
 
-          return match ? (
+          return language ? (
             <div className="w-full">
               <div className="flex justify-between border py-2 px-4 border-b-0 rounded-t-xl border-gray-700 bg-gray-700 font-sans">
-                {language}
+                {language === "text" ? "code" : language}
                 <button
                   className={`p-1 self-end rounded-xl ${!justCopied && "hover:bg-gray-600 active:scale-90"} transition-colors duration-200 ease-in-out`}
                   onClick={() => {
@@ -55,11 +61,18 @@ export default function MarkdownRenderer({ children }: { children: string }) {
               </SyntaxHighlighter>
             </div>
           ) : (
-            <span className="w-full overflow-x-auto">
-              <code className={className} {...props}>
+            <>
+              <code
+                className={className}
+                {...props}
+                style={{
+                  overflowX: "auto",
+                  maxWidth: "100%",
+                }}
+              >
                 {children}
               </code>
-            </span>
+            </>
           );
         },
       }}
