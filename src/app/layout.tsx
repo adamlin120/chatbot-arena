@@ -6,7 +6,6 @@ import { SessionProvider } from "next-auth/react";
 import SideBar from "./_components/SideBar";
 import Link from "next/link";
 import HeaderSubtitle from "./_components/HeaderSubtitle";
-import { auth } from "@/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,12 +14,11 @@ export const metadata: Metadata = {
   description: "The description of Chatbot Arena",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en">
       <SessionProvider>
@@ -38,7 +36,7 @@ export default async function RootLayout({
               {children}
             </div>
           </div>
-          <SideBar session={session} />
+          <SideBar />
           {/* <Footer /> */}
         </body>
       </SessionProvider>

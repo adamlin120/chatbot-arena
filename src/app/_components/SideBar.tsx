@@ -10,18 +10,18 @@ import {
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils/shadcn";
-import { Session } from "next-auth";
 
 const SideBarContext = createContext<{
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } | null>(null);
 
-export default function SideBar({ session }: { session: Session | null }) {
+export default function SideBar() {
   const [userId, setUserId] = useState(null);
+  const { data: session, status } = useSession();
   const username = session?.user?.name;
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -105,7 +105,7 @@ export default function SideBar({ session }: { session: Session | null }) {
               icon={<Trophy size={28} />}
             />
             <div className="hidden md:block md:flex-grow"></div>
-            {session?.user ? (
+            {status === "authenticated" ? (
               <div className="flex w-full">
                 {session?.user?.image && userId && (
                   <Link
@@ -139,11 +139,13 @@ export default function SideBar({ session }: { session: Session | null }) {
                 )}
               </div>
             ) : (
-              <LinkComponent
-                href="/login"
-                text="登入 / 註冊"
-                icon={<LogIn size={28} />}
-              />
+              status === "unauthenticated" && (
+                <LinkComponent
+                  href="/login"
+                  text="登入 / 註冊"
+                  icon={<LogIn size={28} />}
+                />
+              )
             )}
           </div>
         </SideBarContext.Provider>
