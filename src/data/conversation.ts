@@ -81,22 +81,23 @@ export const findForkIndexOfTwoList = async (
     index++;
   }
   return index;
-}
+};
 
 export const messagesToConversationRound = (message: Message[]) => {
-
-  let rounds : ConversationRound[] = [];
+  let rounds: ConversationRound[] = [];
   if (message[0].role != "user") {
-    rounds.push({prompt: "", completion: message[0].content});
+    rounds.push({ prompt: "", completion: message[0].content });
     message.shift();
   }
   for (let i = 0; i < message.length; i += 2) {
     if (message[i].role == "user" && message[i + 1].role == "assistant") {
-      rounds.push({prompt: message[i].content, completion: message[i + 1].content});
-    }
-    else {
+      rounds.push({
+        prompt: message[i].content,
+        completion: message[i + 1].content,
+      });
+    } else {
       return null;
     }
   }
   return rounds;
-}
+};
