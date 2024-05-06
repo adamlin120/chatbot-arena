@@ -19,3 +19,9 @@ export type ModelResponse = {
   completion: string;
   model_name: string;
 };
+
+export type ConversationRound = {
+  prompt: string;
+  completion: string;
+  nextConversationRecordId? : string;
+}
