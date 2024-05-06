@@ -44,6 +44,45 @@ Response:
 
 TextStreamingResponse object
 
+### Get New Conversation Record for Regeneration
+
+Endpoint: /api/chat/regenerate/initiate
+Method: POST
+
+Request:
+
+```typescript
+{
+  "conversationRecordId": String
+}
+```
+
+Response:
+
+```typescript
+{
+  "conversationRecordId": String
+}
+```
+
+### Get Chat Streaming for Regeneration
+
+Endpoint: /api/chat/regenerate
+Method: POST
+
+Request:
+
+```typescript
+{
+  "message": Messages[],
+  "conversationRecordId": String
+}
+```
+
+Response:
+
+TextStreamingResponse object
+
 ## Rating API
 
 ### Submit Rating
