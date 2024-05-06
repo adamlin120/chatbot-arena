@@ -1,5 +1,7 @@
 import { db } from "@/app/api/_base";
 import { error } from "console";
+import { Message } from "@/lib/types/db";
+
 /*
 Schema
 
@@ -94,3 +96,28 @@ export const editRatingByConversationRecordId = async (
     return null;
   }
 };
+
+export const findForkIndexOfTwoList = async (
+  messagesA: any[],
+  messagesB: any[],
+) => {
+  let index = 0;
+  while (
+    index < messagesA.length &&
+    index < messagesB.length &&
+    messagesA[index] === messagesB[index]
+  ) {
+    index++;
+  }
+  return index;
+}
+
+export const messagesToRound = (message: Message[]) => {
+
+  let rounds = [];
+  for (let i = 0; i < message.length; i++) {
+    
+    
+  }
+  return rounds;
+}
