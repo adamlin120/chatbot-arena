@@ -1,35 +1,6 @@
 import { db } from "@/app/api/_base";
 import { error } from "console";
-import { Message } from "@/lib/types/db";
-
-/*
-Schema
-
-model Conversation {
-  id            String               @id @default(auto()) @map("_id") @db.ObjectId
-  contributor   User?                @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  contributorId String               @db.ObjectId
-  records       ConversationRecord[]
-}
-
-model ConversationRecord {
-  id                       String               @id @default(auto()) @map("_id") @db.ObjectId
-  rounds                   ConversationRound[]
-  conversation             Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  conversationId           String?              @db.ObjectId
-  prevConversationRecordId String?              @db.ObjectId
-  prevConversationRecord   ConversationRecord?  @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  nextConversationRecords  ConversationRecord[] @relation("conversationTree")
-  modelName                String
-  rating                   Int?
-}
-
-type ConversationRound {
-  prompt     String
-  completion String
-}
-
-*/
+import { Message, ConversationRound } from "@/lib/types/db";
 
 export const getSiblingConversationRecord = async (
   conversationRecordId: string,
@@ -112,12 +83,20 @@ export const findForkIndexOfTwoList = async (
   return index;
 }
 
-export const messagesToRound = (message: Message[]) => {
+export const messagesToConversationRound = (message: Message[]) => {
 
-  let rounds = [];
-  for (let i = 0; i < message.length; i++) {
-    
-    
+  let rounds : ConversationRound[] = [];
+  if (message[0].role != "user") {
+    rounds.push({prompt: "", completion: message[0].content});
+    message.shift();
+  }
+  for (let i = 0; i < message.length; i += 2) {
+    if (message[i].role == "user" && message[i + 1].role == "assistant") {
+      rounds.push({prompt: message[i].content, completion: message[i + 1].content});
+    }
+    else {
+      return null;
+    }
   }
   return rounds;
 }
