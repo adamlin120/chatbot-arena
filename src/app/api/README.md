@@ -83,6 +83,8 @@ Response:
 
 TextStreamingResponse object
 
+Warning: You only need to call the regenerate API when the user clicks the regenerate button. If the user sends a message to the chat, even if the conversation is regenerated, you should use the normal chat API. However, once the user clicks the regenerate button, you should use the new conversation record ID acquired from regenerate initiate API.
+
 ## Rating API
 
 ### Submit Rating
