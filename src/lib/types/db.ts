@@ -23,5 +23,5 @@ export type ModelResponse = {
 export type ConversationRound = {
   prompt: string;
   completion: string;
-  nextConversationRecordId?: string;
+  modifiedConversationRecordId?: string;
 };

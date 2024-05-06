@@ -89,7 +89,7 @@ export const messagesToConversationRound = (message: Message[]) => {
     rounds.push({ prompt: "", completion: message[0].content });
     message.shift();
   }
-  for (let i = 0; i < message.length; i += 2) {
+  for (let i = 0; i < message.length - 1; i += 2) {
     if (message[i].role == "user" && message[i + 1].role == "assistant") {
       rounds.push({
         prompt: message[i].content,

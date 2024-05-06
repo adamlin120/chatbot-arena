@@ -18,18 +18,22 @@ export default function MessageContainer({
   isUser,
   isCompleted,
   conversationRecordId,
+  conversationRecordIds,
   messages,
   setMessages,
   setMessagesWaiting,
+  setConversationRecordIds,
 }: {
   origMessage: string;
   msgIndex: number;
   isUser: boolean;
   isCompleted: boolean;
   conversationRecordId: string;
+  conversationRecordIds: string[];
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
+  setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -86,14 +90,37 @@ export default function MessageContainer({
     console.log("newMessages: ", newMessages);
     setMessages(newMessages);
 
+    // Get the new conversation record ID for regenerated conversation
+    let newConversationRecordId: string;
+    try {
+      const response = await fetch("/api/chat/regenerate/initiate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ conversationRecordId }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to get new conversation record ID");
+      }
+      const responseData = await response.json();
+      newConversationRecordId = responseData.conversationRecordId;
+    } catch (error) {
+      console.error("Error getting new conversation record ID:", error);
+      toast.error(serverErrorMessage);
+      setMessagesWaiting(false);
+      setMessages(oldMessages);
+      return;
+    }
+
     // Abort the request if it takes too long (currently 10 second)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/api/chat/regenerate", {
       method: "POST",
       body: JSON.stringify({
         messages: newMessages.slice(0, newMessages.length - 1),
-        conversationRecordId: conversationRecordId,
+        conversationRecordId: newConversationRecordId,
       }),
       signal: controller.signal,
     })
@@ -122,6 +149,18 @@ export default function MessageContainer({
     function fluent(ms: number | undefined) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
+
+    function replaceConversationRecordId(
+      oldConversationRecordId: string,
+      newConversationRecordId: string,
+      conversationRecordIds: string[],
+    ) {
+      const index = conversationRecordIds.indexOf(oldConversationRecordId);
+      if (index !== -1) {
+        conversationRecordIds[index] = newConversationRecordId;
+      }
+      setConversationRecordIds(conversationRecordIds);
+    }
     const reader = response.body!.getReader();
     const decoder = new TextDecoder();
     let count = 0;
@@ -145,6 +184,11 @@ export default function MessageContainer({
       count++;
       await fluent(50);
     }
+    replaceConversationRecordId(
+      conversationRecordId,
+      newConversationRecordId,
+      conversationRecordIds,
+    );
     setRatingButtonDisabled(false);
     setMessagesWaiting(false);
 

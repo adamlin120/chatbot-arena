@@ -19,6 +19,7 @@ export default function MessageSection() {
     setMessageAWaiting,
     setMessageBWaiting,
     conversationRecordIds,
+    setConversationRecordIds,
   } = context;
 
   const messageAEndRef = useRef<HTMLDivElement | null>(null);
@@ -55,6 +56,8 @@ export default function MessageSection() {
         messagesEndRef={messageAEndRef}
         isCompleted={!messageAWaiting}
         conversationRecordId={conversationRecordIds[0]}
+        conversationRecordIds={conversationRecordIds}
+        setConversationRecordIds={setConversationRecordIds}
       />
       <MessageDisplay
         messages={messageB}
@@ -63,6 +66,8 @@ export default function MessageSection() {
         messagesEndRef={messageBEndRef}
         isCompleted={!messageBWaiting}
         conversationRecordId={conversationRecordIds[1]}
+        conversationRecordIds={conversationRecordIds}
+        setConversationRecordIds={setConversationRecordIds}
       />
     </div>
   );
@@ -75,6 +80,8 @@ function MessageDisplay({
   messagesEndRef,
   isCompleted,
   conversationRecordId,
+  conversationRecordIds,
+  setConversationRecordIds,
 }: {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
@@ -82,6 +89,8 @@ function MessageDisplay({
   messagesEndRef: React.RefObject<HTMLDivElement>;
   isCompleted: boolean;
   conversationRecordId: string;
+  conversationRecordIds: string[];
+  setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   return (
     <div className="flex-1 flex flex-col gap-8 border-b md:border-r p-5 py-4 overflow-y-auto">
@@ -96,9 +105,11 @@ function MessageDisplay({
                 isUser={message.role === "user"}
                 isCompleted={isCompleted}
                 conversationRecordId={conversationRecordId}
+                conversationRecordIds={conversationRecordIds}
                 messages={messages}
                 setMessages={setMessages}
                 setMessagesWaiting={setMessagesWaiting}
+                setConversationRecordIds={setConversationRecordIds}
               />
             )
           );

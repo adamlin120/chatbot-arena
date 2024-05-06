@@ -57,6 +57,8 @@ Request:
 }
 ```
 
+This should pass the old conversation record ID that you want to regenerate.
+
 Response:
 
 ```typescript
@@ -64,6 +66,8 @@ Response:
   "conversationRecordId": String
 }
 ```
+
+This will return a new conversation record ID that you should use for the next chat streaming.
 
 ### Get Chat Streaming for Regeneration
 

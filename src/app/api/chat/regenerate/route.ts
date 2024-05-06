@@ -1,36 +1,19 @@
-import { Message } from "@/lib/types/db";
 import { NextRequest, NextResponse } from "next/server";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
 import {
   getModelByConversationRecordId,
   messagesToConversationRound,
-  findForkIndexOfTwoList,
 } from "@/data/conversation";
 import { db } from "../../_base";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 250;
 
-/*
-Request:
-
-```typescript
-{
-  "message": Messages[],
-  "conversationRecordId": String
-}
-```
-
-Response:
-
-TextStreamingResponse object
-*/
-
 export async function POST(request: NextRequest) {
-  const { message, conversationRecordId } = await request.json();
+  const { messages, conversationRecordId } = await request.json();
 
-  if (!message || !conversationRecordId) {
+  if (!messages || !conversationRecordId) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
@@ -48,30 +31,31 @@ export async function POST(request: NextRequest) {
   if (!prevConversationRecordRounds) {
     return NextResponse.json({ error: "No PrevConv Found" }, { status: 404 });
   }
-  const currentConversationRecordRounds = messagesToConversationRound(message);
+  const currentConversationRecordRounds = messagesToConversationRound(
+    messages.slice(2),
+  ); // Skip the first two messages since it is the default header message
   if (!currentConversationRecordRounds) {
     return NextResponse.json({ error: "Invalid message" }, { status: 400 });
   }
-  const forkIndex = await findForkIndexOfTwoList(
-    prevConversationRecordRounds,
-    currentConversationRecordRounds,
-  );
 
-  if (forkIndex === 0) {
-    return NextResponse.json({ error: "No fork found" }, { status: 400 });
-  }
+  const forkIndex = !currentConversationRecordRounds
+    ? 0
+    : currentConversationRecordRounds.length;
 
-  // Let the database record all messages after the fork
-  const forkedConversationRound =
-    currentConversationRecordRounds.slice(forkIndex);
-  const newConversationRecord = await db.conversationRecord.update({
+  // Record where the fork happened in the old conversation record by making prevConversationRecordRounds.rounds[forkIndex].modifiedConversationRecordId = conversationRecordId
+
+  prevConversationRecordRounds[forkIndex] = {
+    prompt: prevConversationRecordRounds[forkIndex].prompt,
+    completion: prevConversationRecordRounds[forkIndex].completion,
+    modifiedConversationRecordId: conversationRecordId,
+  };
+
+  await db.conversationRecord.update({
     where: {
-      id: conversationRecordId,
+      id: conversationRecord.prevConversationRecord?.id,
     },
     data: {
-      rounds: {
-        push: forkedConversationRound,
-      },
+      rounds: prevConversationRecordRounds,
     },
   });
 
@@ -84,7 +68,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const stream = await getStream(message, modelName, conversationRecordId);
+  const stream = await getStream(messages, modelName, conversationRecordId);
 
   return new StreamingTextResponse(stream || new ReadableStream(), {
     status: 200,
