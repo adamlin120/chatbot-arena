@@ -49,8 +49,9 @@ model ConversationRecord {
 }
 
 type ConversationRound {
-  prompt     String
-  completion String
+  prompt                   String
+  completion               String
+  nextConversationRecordId String? @db.ObjectId
 }
 
 model Trail {
