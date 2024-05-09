@@ -7,7 +7,7 @@ type Props = {
   original: string;
   edited: string;
   rating: number | undefined;
-  setRating: (rating: number) => void;
+  setRating: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
 export default function Column({

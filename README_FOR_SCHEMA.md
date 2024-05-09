@@ -27,7 +27,7 @@ model ConversationRecord {
 type ConversationRound {
   prompt     String
   completion String
-  nextConversationRecordIds String[] @db.ObjectId
+  modifiedConversationRecordIds String[] @db.ObjectId
 }
 ```
 
@@ -41,8 +41,8 @@ The prevConversationRecord and nextConversationRecord part is a little be tricky
 
 ![Illustration of the schema](./public/conversation_schema_explanation.png)
 
-Once the conversation is modified, a new ConversationRecord object will be created. The nextConversationRecordIds indicates the different version of modifications of the conversation, which difference starts from this specific ConversationRound.
+Once the conversation is modified, a new ConversationRecord object will be created. The modifiedConversationRecordIds indicates the different version of modifications of the conversation, which difference starts from this specific ConversationRound.
 
 The prevConversationRecordId indicates the previous version of the conversation, if the conversation is a root conversation, the prevConversationRecordId will be null. The conversation attribute of the ConversationRecord object indicates the conversation that the ConversationRecord belongs to, if the conversation is NOT a root conversation, the conversation attribute will be null.
 
-The nextConversationRecords indicates the next versions of the conversation, all ConversationRecord objects appearing in the ConversationRound.nextConversationRecordIds will be stored in the nextConversationRecords to keep the relationship between the ConversationRecord objects. The reason why we do not include the nextConversationRecords is because in Prisma we cannot use relation in Type object, so we need a way to work around this limitation.
+The nextConversationRecords indicates the next versions of the conversation, all ConversationRecord objects appearing in the ConversationRound.modifiedConversationRecordIds will be stored in the nextConversationRecords to keep the relationship between the ConversationRecord objects. The reason why we do not include the nextConversationRecords is because in Prisma we cannot use relation in Type object, so we need a way to work around this limitation.

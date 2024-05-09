@@ -44,6 +44,51 @@ Response:
 
 TextStreamingResponse object
 
+### Get New Conversation Record for Regeneration
+
+Endpoint: /api/chat/regenerate/initiate
+Method: POST
+
+Request:
+
+```typescript
+{
+  "conversationRecordId": String
+}
+```
+
+This should pass the old conversation record ID that you want to regenerate.
+
+Response:
+
+```typescript
+{
+  "conversationRecordId": String
+}
+```
+
+This will return a new conversation record ID that you should use for the next chat streaming.
+
+### Get Chat Streaming for Regeneration
+
+Endpoint: /api/chat/regenerate
+Method: POST
+
+Request:
+
+```typescript
+{
+  "message": Messages[],
+  "conversationRecordId": String
+}
+```
+
+Response:
+
+TextStreamingResponse object
+
+Warning: You only need to call the regenerate API when the user clicks the regenerate button. If the user sends a message to the chat, even if the conversation is regenerated, you should use the normal chat API. However, once the user clicks the regenerate button, you should use the new conversation record ID acquired from regenerate initiate API.
+
 ## Rating API
 
 ### Submit Rating

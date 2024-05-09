@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "./Loading";
 import Image from "next/image";
+import { User } from "lucide-react";
 export const dynamic = "force-dynamic";
 export default function RatingPage() {
   const [feedbackText, setFeedbackText] = useState<string>("");
@@ -37,7 +38,9 @@ export default function RatingPage() {
     const data = await res.json();
 
     if (res.status == 404) {
-      toast.info("You have rated all available edited prompts and completions!");
+      toast.info(
+        "You have rated all available edited prompts and completions!",
+      );
       return;
     }
 
@@ -177,15 +180,18 @@ export default function RatingPage() {
         <div className="flex flex-col mt-10">
           <div className="flex items-center">
             <div className="text-l">Contributor: &nbsp;</div>
-            {contributorAvatar && (
-              <Image
-                src={contributorAvatar}
-                alt="Contributor Image"
-                width={imageSize}
-                height={imageSize}
-                className="rounded-full"
-              />
-            )}
+            {contributorAvatar &&
+              (contributorAvatar === "anonymous.com" ? (
+                <User size={imageSize} />
+              ) : (
+                <Image
+                  src={contributorAvatar}
+                  alt="Contributor Image"
+                  width={imageSize}
+                  height={imageSize}
+                  className="rounded-full"
+                />
+              ))}
             <div> &nbsp; {contributorName}</div>
           </div>
           <div className="flex mt-5 gap-8 p-1">
@@ -210,7 +216,7 @@ export default function RatingPage() {
               <span className="font-normal text-gray-300">(Optional)</span>
             </div>
             <textarea
-              className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] rounded-lg border border-white focus:outline-none overflow-auto h-32"
+              className="p-3 rounded-lg text-white w-full text-l bg-[rgb(31,41,55)] border border-white focus:outline-none overflow-auto h-32"
               placeholder="輸入內容..."
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}

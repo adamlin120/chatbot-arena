@@ -38,8 +38,8 @@ model Conversation {
 model ConversationRecord {
   id                       String               @id @default(auto()) @map("_id") @db.ObjectId
   rounds                   ConversationRound[]
-  conversation             Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  conversationId           String?              @db.ObjectId
+  conversation             Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  conversationId           String               @db.ObjectId
   prevConversationRecordId String?              @db.ObjectId
   prevConversationRecord   ConversationRecord?  @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   nextConversationRecords  ConversationRecord[] @relation("conversationTree")
@@ -49,8 +49,9 @@ model ConversationRecord {
 }
 
 type ConversationRound {
-  prompt     String
-  completion String
+  prompt                       String
+  completion                   String
+  modifiedConversationRecordId String? @db.ObjectId
 }
 
 model Trail {

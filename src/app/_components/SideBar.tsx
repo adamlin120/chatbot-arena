@@ -21,7 +21,7 @@ const SideBarContext = createContext<{
 
 export default function SideBar() {
   const [userId, setUserId] = useState(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const username = session?.user?.name;
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -105,7 +105,7 @@ export default function SideBar() {
               icon={<Trophy size={28} />}
             />
             <div className="hidden md:block md:flex-grow"></div>
-            {useSession().status === "authenticated" ? (
+            {status === "authenticated" ? (
               <div className="flex w-full">
                 {session?.user?.image && userId && (
                   <Link
@@ -139,11 +139,13 @@ export default function SideBar() {
                 )}
               </div>
             ) : (
-              <LinkComponent
-                href="/login"
-                text="登入 / 註冊"
-                icon={<LogIn size={28} />}
-              />
+              status === "unauthenticated" && (
+                <LinkComponent
+                  href="/login"
+                  text="登入 / 註冊"
+                  icon={<LogIn size={28} />}
+                />
+              )
             )}
           </div>
         </SideBarContext.Provider>

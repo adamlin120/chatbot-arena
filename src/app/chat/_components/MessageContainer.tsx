@@ -1,12 +1,16 @@
 "use client";
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { Bot, Pencil, User, IterationCw } from "lucide-react";
+import { Bot, Pencil, User, IterationCw, Clipboard, Check } from "lucide-react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
+import MarkdownRenderer from "@/app/_components/MarkdownRenderer";
+
+const serverErrorMessage = "伺服器端錯誤，請稍後再試";
+const MAX_TOKENS = 2048;
 
 export default function MessageContainer({
   origMessage,
@@ -14,20 +18,30 @@ export default function MessageContainer({
   isUser,
   isCompleted,
   conversationRecordId,
+  conversationRecordIds,
   messages,
+  setMessages,
+  setMessagesWaiting,
+  setConversationRecordIds,
 }: {
   origMessage: string;
   msgIndex: number;
   isUser: boolean;
   isCompleted: boolean;
   conversationRecordId: string;
+  conversationRecordIds: string[];
   messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
+  setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
   const imageUrl = session?.user?.image;
   const userEmail = session?.user?.email;
   const imageSize = 30;
+
+  const [justCopied, setJustCopied] = useState(false);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(origMessage);
@@ -39,7 +53,7 @@ export default function MessageContainer({
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { ratingButtonDisabled } = context;
+  const { ratingButtonDisabled, setRatingButtonDisabled } = context;
 
   useEffect(() => {
     if (messageTextAreaRef.current) {
@@ -61,7 +75,153 @@ export default function MessageContainer({
     }
   };
 
-  const handleRegenerate = async () => {};
+  // below is copied from PromptInput.tsx
+  const handleRegenerate = async () => {
+    setMessagesWaiting(true);
+
+    const oldMessages: Message[] = messages;
+    const newMessages: Message[] = [
+      ...messages.slice(0, msgIndex),
+      {
+        role: "assistant",
+        content: "思考中...",
+      },
+    ];
+    console.log("newMessages: ", newMessages);
+    setMessages(newMessages);
+
+    // Get the new conversation record ID for regenerated conversation
+    let newConversationRecordId: string;
+    try {
+      const response = await fetch("/api/chat/regenerate/initiate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ conversationRecordId }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to get new conversation record ID");
+      }
+      const responseData = await response.json();
+      newConversationRecordId = responseData.conversationRecordId;
+    } catch (error) {
+      console.error("Error getting new conversation record ID:", error);
+      toast.error(serverErrorMessage);
+      setMessagesWaiting(false);
+      setMessages(oldMessages);
+      return;
+    }
+
+    // Abort the request if it takes too long (currently 10 second)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const response = await fetch("/api/chat/regenerate", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: newMessages.slice(0, newMessages.length - 1),
+        conversationRecordId: newConversationRecordId,
+      }),
+      signal: controller.signal,
+    })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          // This may due to llm api error
+          console.error("Request timed out");
+          toast.error("伺服器沒有回應，請稍後再試");
+          setMessagesWaiting(false);
+          setMessages(oldMessages);
+        } else {
+          console.error("Error processing messages:", error);
+          toast.error(serverErrorMessage);
+        }
+        return;
+      })
+      .finally(() => clearTimeout(timeoutId));
+
+    if (!response || !response.body) {
+      return;
+    } else if (response.status !== 200) {
+      toast.error(serverErrorMessage);
+      return;
+    }
+
+    function fluent(ms: number | undefined) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function replaceConversationRecordId(
+      oldConversationRecordId: string,
+      newConversationRecordId: string,
+      conversationRecordIds: string[],
+    ) {
+      const index = conversationRecordIds.indexOf(oldConversationRecordId);
+      if (index !== -1) {
+        conversationRecordIds[index] = newConversationRecordId;
+      }
+      setConversationRecordIds(conversationRecordIds);
+    }
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let count = 0;
+    let buffer = "";
+    setRatingButtonDisabled(true);
+    while (count < MAX_TOKENS) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const text = decoder.decode(value);
+      buffer += text;
+
+      setMessages((messages) => {
+        return [
+          ...messages.slice(0, messages.length - 1),
+          {
+            ...messages[messages.length - 1],
+            content: buffer,
+          },
+        ];
+      });
+      count++;
+      await fluent(50);
+    }
+    replaceConversationRecordId(
+      conversationRecordId,
+      newConversationRecordId,
+      conversationRecordIds,
+    );
+    setRatingButtonDisabled(false);
+    setMessagesWaiting(false);
+
+    // Todo: Do we need this here? If not, tell me and I will remove it. Otherwise, tell me and I will uncomment it.
+    // if (!session || !session.user) {
+    //   const response = await fetch("https://api.ipify.org?format=json");
+    //   const data = await response.json();
+    //   const { ip } = data;
+    //   try {
+    //     const response = await fetch("/api/chat/trail/send", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({ ip: ip }),
+    //     });
+    //     if (!response.ok) {
+    //       throw new Error("Failed to store IP address");
+    //     }
+    //     const responseData = await response.json();
+    //     const { quota } = responseData;
+    //     if (quota >= 3) {
+    //       toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+    //       setTimeout(() => {
+    //         router.push("/login");
+    //       }, 3000);
+    //       return;
+    //     }
+    //   } catch (error) {
+    //     console.error("Error storing IP address:", error);
+    //   }
+    // }
+  };
 
   const handleComposingStart = () => {
     setIsComposing(true);
@@ -169,7 +329,7 @@ export default function MessageContainer({
     let intervalId: NodeJS.Timeout;
     if (origMessage === "思考中...") {
       intervalId = setInterval(() => {
-        setDotCount((prevCount) => (prevCount % 4) + 1);
+        setDotCount((prevCount) => (prevCount % 3) + 1);
       }, 500); // Update every 500ms
     }
     return () => {
@@ -180,8 +340,8 @@ export default function MessageContainer({
   }, [origMessage]);
 
   return (
-    <div className="flex flex-col group">
-      <div className={`flex gap-3 mb-2`}>
+    <div className="flex flex-col w-full group">
+      <div className={`flex w-full gap-3 mb-2`}>
         <div className="self-start flex-shrink-0">
           {isUser ? (
             imageUrl ? (
@@ -222,43 +382,62 @@ export default function MessageContainer({
           ></textarea>
         ) : (
           <div
-            className={`px-2 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
+            className={`px-5 w-9/12 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
           ${isEditing && "border-b border-solid"} focus:outline-none `}
           >
-            {message === "思考中..." && !isUser
-              ? `思考中${".".repeat(dotCount)}`
-              : message}
+            {message === "思考中..." && !isUser ? (
+              `思考中${".".repeat(dotCount)}`
+            ) : isUser ? (
+              message
+            ) : (
+              <MarkdownRenderer>{message}</MarkdownRenderer>
+            )}
           </div>
         )}
       </div>
-      {!isEditing && isCompleted && (
-        <div className="self-end">
-          {!isUser && (
+      <div className="self-end h-10">
+        {!isEditing && isCompleted && (
+          <>
             <button
               className="p-1 opacity-0 group-hover:opacity-100 self-end"
-              onClick={handleRegenerate}
-              title={"重新生成模型輸出"}
+              onClick={() => {
+                navigator.clipboard.writeText(message);
+                setJustCopied(true);
+                setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
+              }}
+              title={"複製"}
               disabled={isEditing}
             >
-              <IterationCw size={20} />
+              {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
             </button>
-          )}
-          {ratingButtonDisabled && (
-            <button
-              className="p-1 opacity-0 group-hover:opacity-100 self-end"
-              onClick={handleClickEdit}
-              title={
-                isUser
-                  ? "點擊以修改訊息"
-                  : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
-              }
-              disabled={isEditing}
-            >
-              <Pencil color="white" size={20} />
-            </button>
-          )}
-        </div>
-      )}
+            {!isUser && (
+              <button
+                className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                onClick={handleRegenerate}
+                title={"重新生成模型輸出"}
+                disabled={isEditing}
+              >
+                <IterationCw size={20} />
+              </button>
+            )}
+            {ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
+              // there are some bugs here, I will fix them later
+              <button
+                className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                onClick={handleClickEdit}
+                title={
+                  isUser
+                    ? "點擊以修改訊息"
+                    : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
+                }
+                disabled={isEditing}
+              >
+                <Pencil color="white" size={20} />
+              </button>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
