@@ -1,6 +1,11 @@
 import { db } from "@/app/api/_base";
 import { error } from "console";
-import { Message, ConversationRound } from "@/lib/types/db";
+import {
+  Message,
+  ConversationRound,
+  conversationRoundDBOutputType,
+} from "@/lib/types/db";
+import { getModifiedCookieValues } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export const getSiblingConversationRecord = async (
   conversationRecordId: string,
@@ -68,17 +73,22 @@ export const editRatingByConversationRecordId = async (
   }
 };
 
-export const findForkIndexOfTwoList = async (
-  messagesA: any[],
-  messagesB: any[],
+export const findForkIndexOfTwoRounds = async (
+  messagesA: ConversationRound[],
+  messagesB: ConversationRound[],
 ) => {
   let index = 0;
   while (
     index < messagesA.length &&
     index < messagesB.length &&
-    messagesA[index] === messagesB[index]
+    messagesA[index].prompt === messagesB[index].prompt &&
+    messagesA[index].completion === messagesB[index].completion
   ) {
     index++;
+  }
+  const minOfLength = Math.min(messagesA.length, messagesB.length);
+  if (index === minOfLength) {
+    return -1;
   }
   return index;
 };
@@ -100,4 +110,22 @@ export const messagesToConversationRound = (message: Message[]) => {
     }
   }
   return rounds;
+};
+
+export const conversationRoundDBOutputTypeToConversationRound = (
+  conversationRoundDBOutput: conversationRoundDBOutputType,
+): ConversationRound => {
+  let conversationRound = {
+    prompt: conversationRoundDBOutput.prompt,
+    completion: conversationRoundDBOutput.completion,
+    modifiedConversationRecordId:
+      conversationRoundDBOutput.modifiedConversationRecordId
+        ? conversationRoundDBOutput.modifiedConversationRecordId
+        : undefined,
+    originalConversationRecordId:
+      conversationRoundDBOutput.originalConversationRecordId
+        ? conversationRoundDBOutput.originalConversationRecordId
+        : undefined,
+  };
+  return conversationRound;
 };
