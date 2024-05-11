@@ -10,6 +10,8 @@ type Props = {
   editedCompletion: string;
   rating: number | undefined;
   setRating: React.Dispatch<React.SetStateAction<number | undefined>>;
+  selected: (value: boolean) => void;
+  isClick: boolean;
 };
 
 export default function Column({
@@ -20,6 +22,8 @@ export default function Column({
   editedCompletion,
   rating,
   setRating,
+  selected,
+  isClick
 }: Props) {
   const feedbackDescription = [
     {
@@ -48,7 +52,9 @@ export default function Column({
   const [toggleCompletion, setToggleCompletion] = useState(false);
 
   const type = isOriginal ? "Prompts" : "Completions";
-
+  const handleClick = () => {
+    selected(isOriginal);
+  };
   function editDistance(str1: string, str2: string): number {
     const m: number = str1.length;
     const n: number = str2.length;
@@ -101,7 +107,9 @@ export default function Column({
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border border-white">
+    <div className={`flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border ${isClick ? 'border-sky-500 border-4' : 'border-white border-4'}`} 
+      onClick={handleClick}
+    >
       <div className="bg-[rgb(31,41,55)] text-center font-bold text-2xl rounded-xl p-3 mx-auto mt-4 whitespace-nowrap">
         {isOriginal ? `Original Conversation` : `Revised Conversation`}
       </div>
@@ -109,13 +117,14 @@ export default function Column({
       <div className="text-left flex flex-col gap-2 px-4">
       <div className="font-semibold text-xl flex justify-between">
           <span>{isOriginal ? `Original Prompt` : `Revised Prompt`}</span>
-          {!isOriginal&&<label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none">
+          {!isOriginal&&<label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none" onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
               value=""
               checked={togglePrompt}
               onChange={() => setTogglePrompt(!togglePrompt)}
               className="sr-only peer"
+              onClick={(e) => e.stopPropagation()}
             />
             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-400"></div>
             <span className="ms-3 text-lg dark:text-gray-300">Show Edits</span>
@@ -127,6 +136,7 @@ export default function Column({
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(originalPrompt, editedPrompt),
             }}
+            onClick={(e) => e.stopPropagation()}
           />
         )}
         {!isOriginal && !togglePrompt && (
@@ -134,6 +144,7 @@ export default function Column({
           className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
           value={editedPrompt}
           readOnly
+          onClick={(e) => e.stopPropagation()}
         />
         )}
         {isOriginal && (
@@ -141,6 +152,7 @@ export default function Column({
             className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
             value={originalPrompt}
             readOnly
+            onClick={(e) => e.stopPropagation()}
           />
         )}
         {!isOriginal && <div className="text-l">
@@ -154,7 +166,7 @@ export default function Column({
       <div className="text-left flex flex-col gap-2 px-4">
         <div className="font-semibold text-xl flex justify-between">
           <span>{isOriginal ? `Original Completion` : `Revised Completion`}</span>
-          {!isOriginal&&<label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none">
+          {!isOriginal&&<label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none" onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
               value=""
@@ -172,6 +184,7 @@ export default function Column({
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(originalCompletion, editedCompletion),
             }}
+            onClick={(e) => e.stopPropagation()}
           />
         )}
         {!isOriginal && !toggleCompletion &&(
@@ -179,6 +192,7 @@ export default function Column({
           className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
           value={editedCompletion}
           readOnly
+          onClick={(e) => e.stopPropagation()}
         />
         )}
         {isOriginal && (
@@ -186,6 +200,7 @@ export default function Column({
             className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
             value={originalCompletion}
             readOnly
+            onClick={(e) => e.stopPropagation()}
           />
         )}
         {!isOriginal && <div className="text-l">
