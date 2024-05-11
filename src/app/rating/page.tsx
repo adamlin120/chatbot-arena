@@ -196,16 +196,20 @@ export default function RatingPage() {
           </div>
           <div className="flex mt-5 gap-8 p-1">
             <Column
-              isPrompt={true}
-              original={String(originalPrompt)}
-              edited={String(editedPrompt)}
+              isOriginal={true}
+              originalPrompt={String(originalPrompt)}
+              originalCompletion={String(originalCompletion)}
+              editedPrompt={String(editedPrompt)}
+              editedCompletion={String(editedCompletion)}
               rating={promptRating}
               setRating={setPromptRating}
             />
             <Column
-              isPrompt={false}
-              original={String(originalCompletion)}
-              edited={String(editedCompletion)}
+              isOriginal={false}
+              originalPrompt={String(originalPrompt)}
+              originalCompletion={String(originalCompletion)}
+              editedPrompt={String(editedPrompt)}
+              editedCompletion={String(editedCompletion)}
               rating={completionRating}
               setRating={setCompletionRating}
             />
