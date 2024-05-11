@@ -90,8 +90,9 @@ export default function RatingPage() {
       } else if (!session) {
         router.push("/login");
       }
+      else{
       await fetchRandomRating();
-      setLoading(false);
+      setLoading(false);}
     })();
   }, [router]);
 
