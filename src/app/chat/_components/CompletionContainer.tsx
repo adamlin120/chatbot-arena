@@ -14,11 +14,7 @@ export default function CompletionContainer({
   isUser,
   isCompleted,
   conversationRecordId,
-  conversationRecordIds,
   messages,
-  setMessages,
-  setMessagesWaiting,
-  setConversationRecordIds,
   isLeft,
 }: {
   origMessage: string;
@@ -26,11 +22,7 @@ export default function CompletionContainer({
   isUser: boolean;
   isCompleted: boolean;
   conversationRecordId: string;
-  conversationRecordIds: string[];
   messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
-  setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
   isLeft: boolean;
 }) {
   const router = useRouter();

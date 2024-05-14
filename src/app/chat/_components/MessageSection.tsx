@@ -1,7 +1,6 @@
 import { useContext, useEffect, useRef } from "react";
 import CompletionContainer from "./CompletionContainer";
 import { MessageContext } from "@/context/message";
-import { toast } from "react-toastify";
 import PromptContainer from "./PromptContainer";
 import { Bot } from "lucide-react";
 
@@ -14,11 +13,9 @@ export default function MessageSection() {
     messageA,
     messageB,
     setMessageA,
-    setMessageB,
     messageAWaiting,
     messageBWaiting,
     setMessageAWaiting,
-    setMessageBWaiting,
     conversationRecordIds,
     setConversationRecordIds,
   } = context;
@@ -47,11 +44,6 @@ export default function MessageSection() {
     }
   }, [messageB]);
 
-  if (messageA.length !== messageB.length) {
-    console.error("messageA and messageB should have the same length");
-    toast.error("哎呀有地方出錯了，請重新整理頁面");
-    return null;
-  }
   console.log("messageA.length", messageA.length);
 
   return (
@@ -68,31 +60,24 @@ export default function MessageSection() {
               index >= 2 &&
               (message.role === "user" ? (
                 <PromptContainer
-                  key={index}
+                  key={index + "prompt"}
                   msgIndex={index}
                   origMessage={message.content}
                   isCompleted={!messageAWaiting}
                   conversationRecordId={conversationRecordIds[0]}
                   conversationRecordIds={conversationRecordIds}
-                  messages={messageA}
-                  setMessages={setMessageA}
-                  setMessagesWaiting={setMessageAWaiting}
                   setConversationRecordIds={setConversationRecordIds}
                 />
               ) : (
                 <div className="flex flex-col gap-5 md:flex-row w-full">
                   <CompletionContainer
-                    key={index}
+                    key={index + "completion"}
                     msgIndex={index}
                     origMessage={message.content}
                     isUser={false}
                     isCompleted={!messageAWaiting}
                     conversationRecordId={conversationRecordIds[0]}
-                    conversationRecordIds={conversationRecordIds}
                     messages={messageA}
-                    setMessages={setMessageA}
-                    setMessagesWaiting={setMessageAWaiting}
-                    setConversationRecordIds={setConversationRecordIds}
                     isLeft={true}
                   />
                   <CompletionContainer
@@ -102,11 +87,7 @@ export default function MessageSection() {
                     isUser={false}
                     isCompleted={!messageBWaiting}
                     conversationRecordId={conversationRecordIds[1]}
-                    conversationRecordIds={conversationRecordIds}
                     messages={messageB}
-                    setMessages={setMessageB}
-                    setMessagesWaiting={setMessageBWaiting}
-                    setConversationRecordIds={setConversationRecordIds}
                     isLeft={false}
                   />
                 </div>

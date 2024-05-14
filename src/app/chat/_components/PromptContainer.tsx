@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
+import ip_test from "./ip_test";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
@@ -17,9 +18,6 @@ export default function PromptContainer({
   isCompleted,
   conversationRecordId,
   conversationRecordIds,
-  messages,
-  setMessages,
-  setMessagesWaiting,
   setConversationRecordIds,
 }: {
   origMessage: string;
@@ -27,9 +25,6 @@ export default function PromptContainer({
   isCompleted: boolean;
   conversationRecordId: string;
   conversationRecordIds: string[];
-  messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
   setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const router = useRouter();
@@ -50,7 +45,16 @@ export default function PromptContainer({
   if (!context) {
     throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
   }
-  const { ratingButtonDisabled, setRatingButtonDisabled } = context;
+  const {
+    ratingButtonDisabled,
+    setRatingButtonDisabled,
+    messageA,
+    setMessageA,
+    messageB,
+    setMessageB,
+    setMessageAWaiting,
+    setMessageBWaiting,
+  } = context;
 
   useEffect(() => {
     if (messageTextAreaRef.current) {
@@ -63,17 +67,16 @@ export default function PromptContainer({
     setMessage(origMessage);
   }, [origMessage]);
 
-  const handleClickEdit = () => {
-    setIsEditing(true);
-  };
-
-  // below is copied from PromptInput.tsx
-  const handleRegenerate = async () => {
+  const handleRegenerate = async (
+    setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>,
+    messages: Message[],
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+  ) => {
     setMessagesWaiting(true);
 
     const oldMessages: Message[] = messages;
     const newMessages: Message[] = [
-      ...messages.slice(0, msgIndex),
+      ...messages.slice(0, msgIndex + 1),
       {
         role: "assistant",
         content: "思考中...",
@@ -184,59 +187,50 @@ export default function PromptContainer({
     setRatingButtonDisabled(false);
     setMessagesWaiting(false);
 
-    // Todo: Do we need this here? If not, tell me and I will remove it. Otherwise, tell me and I will uncomment it.
-    // if (!session || !session.user) {
-    //   const response = await fetch("https://api.ipify.org?format=json");
-    //   const data = await response.json();
-    //   const { ip } = data;
-    //   try {
-    //     const response = await fetch("/api/chat/trail/send", {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({ ip: ip }),
-    //     });
-    //     if (!response.ok) {
-    //       throw new Error("Failed to store IP address");
-    //     }
-    //     const responseData = await response.json();
-    //     const { quota } = responseData;
-    //     if (quota >= 3) {
-    //       toast.info("喜歡這個GPT測試嗎？立刻註冊！");
-    //       setTimeout(() => {
-    //         router.push("/login");
-    //       }, 3000);
-    //       return;
-    //     }
-    //   } catch (error) {
-    //     console.error("Error storing IP address:", error);
-    //   }
-    // }
-  };
-
-  const handleComposingStart = () => {
-    setIsComposing(true);
-  };
-
-  const handleComposingEnd = () => {
-    setIsComposing(false);
+    if (!session || !session.user) {
+      ip_test(router);
+    }
   };
 
   const handleSubmit = async () => {
     setIsEditing(false);
+    if (message === origMessage) return;
 
-    console.log("newMessage: ", message);
-    await handleEditPrompt();
-    messages[msgIndex].content = message;
+    setMessageA([
+      ...messageA.slice(0, msgIndex),
+      {
+        role: "user",
+        content: message,
+      },
+      {
+        role: "assistant",
+        content: "思考中...",
+      },
+    ]);
+    setMessageB([
+      ...messageB.slice(0, msgIndex),
+      {
+        role: "user",
+        content: message,
+      },
+      {
+        role: "assistant",
+        content: "思考中...",
+      },
+    ]);
+    messageA[msgIndex].content = message;
+    messageB[msgIndex].content = message;
     router.refresh();
+
+    handleRegenerate(setMessageAWaiting, messageA, setMessageA);
+    handleRegenerate(setMessageBWaiting, messageB, setMessageB);
   };
 
   // Todo: edit the prompt
   const handleEditPrompt = async () => {
     let originalCompletion, editedCompletion;
     const index = msgIndex + 1;
-    originalCompletion = messages[index];
+    originalCompletion = messageA[index];
     editedCompletion = originalCompletion;
     try {
       const response = await fetch("/api/chat/editing", {
@@ -272,7 +266,7 @@ export default function PromptContainer({
 
   return (
     <div className="flex flex-col w-full group pt-6 px-5">
-      <div className={`flex w-full gap-3 mb-2 `}>
+      <div className="flex w-full gap-3 mb-2">
         <div className="self-start flex-shrink-0">
           {imageUrl ? (
             <Image
@@ -286,13 +280,17 @@ export default function PromptContainer({
             <User size={imageSize} />
           )}
         </div>
-        <div className="flex-grow flex flex-col border rounded-2xl rounded-tl-none mr-10">
+        <div className="flex-grow flex flex-col border rounded-sm mr-10">
           {isEditing ? (
             <textarea
-              className="bg-transparent p-5 text-white px-2 pt-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
+              className="bg-transparent p-5 mx-5 px-0 text-white pb-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
               autoFocus
-              onCompositionStart={handleComposingStart}
-              onCompositionEnd={handleComposingEnd}
+              onCompositionStart={() => {
+                setIsComposing(true);
+              }}
+              onCompositionEnd={() => {
+                setIsComposing(false);
+              }}
               ref={messageTextAreaRef}
               onKeyDown={async (
                 e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -336,7 +334,18 @@ export default function PromptContainer({
                 {!ratingButtonDisabled && (
                   <button
                     className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                    onClick={handleRegenerate}
+                    onClick={async () => {
+                      handleRegenerate(
+                        setMessageAWaiting,
+                        messageA,
+                        setMessageA,
+                      );
+                      handleRegenerate(
+                        setMessageBWaiting,
+                        messageB,
+                        setMessageB,
+                      );
+                    }}
                     title={"重新生成模型輸出"}
                     disabled={isEditing}
                   >
@@ -347,7 +356,9 @@ export default function PromptContainer({
                   // there are some bugs here, I will fix them later
                   <button
                     className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                    onClick={handleClickEdit}
+                    onClick={() => {
+                      setIsEditing(true);
+                    }}
                     title={"點擊以修改訊息"}
                     disabled={isEditing}
                   >
