@@ -3,6 +3,7 @@ import MessageContainer from "./MessageContainer";
 import { MessageContext } from "@/context/message";
 import { Message } from "@/lib/types/db";
 import { Bot } from "lucide-react";
+import { cn } from "@/lib/utils/shadcn";
 
 export default function MessageSection() {
   const context = useContext(MessageContext);
@@ -58,6 +59,7 @@ export default function MessageSection() {
         conversationRecordId={conversationRecordIds[0]}
         conversationRecordIds={conversationRecordIds}
         setConversationRecordIds={setConversationRecordIds}
+        className="border-r"
       />
       <MessageDisplay
         messages={messageB}
@@ -82,6 +84,7 @@ function MessageDisplay({
   conversationRecordId,
   conversationRecordIds,
   setConversationRecordIds,
+  className,
 }: {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
@@ -91,9 +94,15 @@ function MessageDisplay({
   conversationRecordId: string;
   conversationRecordIds: string[];
   setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
+  className?: string;
 }) {
   return (
-    <div className="flex-1 flex flex-col gap-8 border-b md:border-r p-5 py-4 overflow-y-auto">
+    <div
+      className={cn(
+        "flex-1 flex flex-col gap-8 p-5 py-4 overflow-y-auto",
+        className,
+      )}
+    >
       {messages.length > 2 ? (
         messages.map((message, index) => {
           return (

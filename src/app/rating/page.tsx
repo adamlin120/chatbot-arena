@@ -33,15 +33,14 @@ export default function RatingPage() {
     string | undefined
   >();
 
-  const [selected,setSelected] = useState<string>();
+  const [selected, setSelected] = useState<string>();
 
   const imageSize = 30;
 
   const handleColumnClick = (isOriginal: boolean) => {
-    if (isOriginal){
+    if (isOriginal) {
       setSelected("original");
-    }
-    else{
+    } else {
       setSelected("edited");
     }
   };
@@ -89,10 +88,10 @@ export default function RatingPage() {
         router.push("/login");
       } else if (!session) {
         router.push("/login");
+      } else {
+        await fetchRandomRating();
+        setLoading(false);
       }
-      else{
-      await fetchRandomRating();
-      setLoading(false);}
     })();
   }, [router]);
 
@@ -149,11 +148,10 @@ export default function RatingPage() {
     }
     var originalScore;
     var revisedScore;
-    if (selected=="original"){
+    if (selected == "original") {
       originalScore = 5;
       revisedScore = 1;
-    }
-    else if (selected=="edited"){
+    } else if (selected == "edited") {
       originalScore = 1;
       revisedScore = 5;
     }

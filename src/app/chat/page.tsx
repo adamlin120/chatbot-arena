@@ -61,7 +61,7 @@ export default function ChatPage() {
   return (
     // Todo: think a better way to handle the height of the main container
     // If min-h-[100dvh] is used, it will be too high
-    <main className="pt-3 px-10 md:min-h-[90dvh] md:max-h-[90dvh] flex flex-col fade-in">
+    <main className="pt-3 px-10 mb-3 md:min-h-[90dvh] md:max-h-[90dvh] flex flex-col fade-in">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -82,7 +82,7 @@ export default function ChatPage() {
           <h3>🤖 模型 B: {context.modelBName}</h3>
         </div>
       </div>
-      <div className="flex flex-col flex-grow h-full">
+      <div className="flex flex-col flex-grow h-full pb-5">
         <MessageSection />
         <PromptInput />
         <FunctionalButtons />
