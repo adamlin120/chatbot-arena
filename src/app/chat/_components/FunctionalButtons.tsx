@@ -34,19 +34,23 @@ export default function FunctionalButtons() {
   const ratingButtonAttributes = [
     {
       text: "👈  A表現較佳",
-      onClick: () => sendRating(conversationRecordIds[0], 1),
+      onClick: () =>
+        sendRating(conversationRecordIds[0], conversationRecordIds[1], 1),
     },
     {
       text: "👉  B表現較佳",
-      onClick: () => sendRating(conversationRecordIds[1], 1),
+      onClick: () =>
+        sendRating(conversationRecordIds[1], conversationRecordIds[0], 1),
     },
     {
       text: "🤝  平手",
-      onClick: () => sendRating(conversationRecordIds[0], 2),
+      onClick: () =>
+        sendRating(conversationRecordIds[0], conversationRecordIds[1], 2),
     },
     {
       text: "👎  兩者皆差",
-      onClick: () => sendRating(conversationRecordIds[0], 0),
+      onClick: () =>
+        sendRating(conversationRecordIds[0], conversationRecordIds[1], 0),
     },
   ];
 
@@ -88,7 +92,11 @@ export default function FunctionalButtons() {
     initiateChat();
   };
 
-  const sendRating = async (conversationRecordId: string, rating: number) => {
+  const sendRating = async (
+    conversationRecordId: string,
+    siblingRecordId: string,
+    rating: number,
+  ) => {
     setRatingButtonDisabled(true);
     setSendingRating(true);
     if (
@@ -111,6 +119,7 @@ export default function FunctionalButtons() {
       body: JSON.stringify({
         conversationRecordId: conversationRecordId,
         rating: rating,
+        siblingRecordId: siblingRecordId,
       }),
     });
 

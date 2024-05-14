@@ -24,4 +24,12 @@ export type ConversationRound = {
   prompt: string;
   completion: string;
   modifiedConversationRecordId?: string;
+  originalConversationRecordId?: string;
+};
+
+export type conversationRoundDBOutputType = {
+  prompt: string;
+  completion: string;
+  modifiedConversationRecordId: string | null;
+  originalConversationRecordId?: string | null;
 };

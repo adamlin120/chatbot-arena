@@ -15,6 +15,7 @@ const anthropic = new Anthropic({ apiKey: privateEnv.ANTHROPIC_KEY });
 async function writeStreamToDatabase(
   conversationRecordId: string,
   response: ModelResponse,
+  originalConversationRecordId?: string,
 ) {
   try {
     if (!response.completion) return;
@@ -27,6 +28,7 @@ async function writeStreamToDatabase(
           push: {
             prompt: response.prompt,
             completion: response.completion,
+            originalConversationRecordId: originalConversationRecordId,
           },
         },
       },
@@ -40,6 +42,7 @@ export default async function getStream(
   messages: Message[],
   model: string,
   conversationRecordId: string,
+  originalConversationRecordId?: string,
 ) {
   if (model.includes("gpt")) {
     const response = await openai.chat.completions.create({
@@ -56,7 +59,11 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        await writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(
+          conversationRecordId,
+          ModelResponse,
+          originalConversationRecordId,
+        );
       },
     });
     return stream;
@@ -73,7 +80,11 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        await writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(
+          conversationRecordId,
+          ModelResponse,
+          originalConversationRecordId,
+        );
       },
     });
     return stream;
@@ -103,7 +114,11 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        await writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(
+          conversationRecordId,
+          ModelResponse,
+          originalConversationRecordId,
+        );
       },
     });
     return stream;
@@ -126,7 +141,11 @@ export default async function getStream(
           completion: response,
           model_name: model,
         };
-        await writeStreamToDatabase(conversationRecordId, ModelResponse);
+        await writeStreamToDatabase(
+          conversationRecordId,
+          ModelResponse,
+          originalConversationRecordId,
+        );
       },
     });
     return stream;

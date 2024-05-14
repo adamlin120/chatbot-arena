@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 import {
-  getSiblingConversationRecord,
   checkIfRoundExists,
   editRatingByConversationRecordId,
   getModelByConversationRecordId,
@@ -27,9 +26,8 @@ export async function POST(request: NextRequest) {
     userId = user.id;
   }
 
-  const { conversationRecordId, rating } = await request.json();
-
-  //check whether conversation id is the same as the user id
+  const { conversationRecordId, rating, siblingRecordId } =
+    await request.json();
 
   const conversation = await db.conversationRecord.findFirst({
     where: {
@@ -48,13 +46,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid rating" }, { status: 400 });
   }
 
-  const siblingRecordId =
-    await getSiblingConversationRecord(conversationRecordId);
+  const siblingConversation = await db.conversationRecord.findFirst({
+    where: {
+      id: siblingRecordId,
+      conversation: {
+        contributorId: userId,
+      },
+    },
+  });
 
-  if (!siblingRecordId) {
+  if (!siblingConversation) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if the two conversation record belong to the same conversation
+
+  if (conversation.conversationId !== siblingConversation.conversationId) {
     return NextResponse.json(
-      { error: "Sibling conversation record not found" },
-      { status: 404 },
+      { error: "Two record is not a pair" },
+      { status: 400 },
     );
   }
 

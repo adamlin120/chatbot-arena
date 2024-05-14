@@ -41,8 +41,10 @@ The prevConversationRecord and nextConversationRecord part is a little be tricky
 
 ![Illustration of the schema](./public/conversation_schema_explanation.png)
 
-Once the conversation is modified, a new ConversationRecord object will be created. The modifiedConversationRecordIds indicates the different version of modifications of the conversation, which difference starts from this specific ConversationRound.
+Once the conversation is modified, a new ConversationRecord object will be created. The modifiedConversationRecordId indicates modification of the conversation, which difference starts from this specific ConversationRound. The originalConversationRecordId indicates the original version of the conversation. modifiedConversationRecordId and originalConversationRecordId should always be in a pair in order to keep the relation.
 
 The prevConversationRecordId indicates the previous version of the conversation, if the conversation is a root conversation, the prevConversationRecordId will be null. The conversation attribute of the ConversationRecord object indicates the conversation that the ConversationRecord belongs to, if the conversation is NOT a root conversation, the conversation attribute will be null.
 
-The nextConversationRecords indicates the next versions of the conversation, all ConversationRecord objects appearing in the ConversationRound.modifiedConversationRecordIds will be stored in the nextConversationRecords to keep the relationship between the ConversationRecord objects. The reason why we do not include the nextConversationRecords is because in Prisma we cannot use relation in Type object, so we need a way to work around this limitation.
+The nextConversationRecords indicates the next versions of the conversation, all ConversationRecord objects appearing in the ConversationRound.
+
+The reason why we do not include the nextConversationRecords is because in Prisma we cannot use relation in Type object, so we need a way to work around this limitation.

@@ -103,7 +103,8 @@ Request:
   "ratings": [
     {
       "conversationRecordId": "Conversation Record ID",
-      "rating": 1
+      "rating": 1,
+      "siblingRecordId": "Sibling Conversation Record ID"
     }
   ]
 }

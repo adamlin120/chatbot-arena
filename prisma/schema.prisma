@@ -52,6 +52,7 @@ type ConversationRound {
   prompt                       String
   completion                   String
   modifiedConversationRecordId String? @db.ObjectId
+  originalConversationRecordId String? @db.ObjectId
 }
 
 model Trail {
