@@ -12,39 +12,25 @@ export default function MessageSection() {
   const {
     messageA,
     messageB,
-    setMessageA,
     messageAWaiting,
     messageBWaiting,
-    setMessageAWaiting,
     conversationRecordIds,
     setConversationRecordIds,
   } = context;
 
-  const messageAEndRef = useRef<HTMLDivElement | null>(null);
-  const messageBEndRef = useRef<HTMLDivElement | null>(null);
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
   // Scroll to the bottom of the chat
   // Use block: "nearest" to get a better UX. (https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
   useEffect(() => {
-    if (messageAEndRef.current && messageA.length > 2) {
-      messageAEndRef.current.scrollIntoView({
+    if (messageEndRef.current && messageA.length > 2 && messageB.length > 2) {
+      messageEndRef.current.scrollIntoView({
         behavior: "auto",
         block: "nearest",
         inline: "nearest",
       });
     }
-  }, [messageA]);
-  useEffect(() => {
-    if (messageBEndRef.current && messageB.length > 2) {
-      messageBEndRef.current.scrollIntoView({
-        behavior: "auto",
-        block: "nearest",
-        inline: "nearest",
-      });
-    }
-  }, [messageB]);
-
-  console.log("messageA.length", messageA.length);
+  }, [messageA, messageB]);
 
   return (
     // Todo: think a better way to handle the height of the container
@@ -95,9 +81,8 @@ export default function MessageSection() {
             );
           })
         )}
+        <div ref={messageEndRef} />
       </div>
-      <div ref={messageAEndRef} />
-      <div ref={messageBEndRef} />
     </div>
   );
 }
