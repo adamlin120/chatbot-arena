@@ -80,28 +80,28 @@ export default function SideBar() {
           <div
             className={cn(
               "flex",
-              "md:flex-col md:w-full md:mt-5 md:flex-grow md:justify-center md:items-center",
+              "md:flex-col md:w-full md:mt-5 md:flex-grow md:justify-start md:items-start",
               "flex-row w-screen justify-around",
             )}
           >
             <LinkComponent
               href="/chat"
-              text="競技場"
+              text="語言模型競技場 ⚔️"
               icon={<MessageCircleMore size={28} />}
             />
             <LinkComponent
               href="/rating"
-              text="評分"
+              text="對模型評分 👍👎"
               icon={<ThumbsUp size={28} />}
             />
             <LinkComponent
               href="/dataset"
-              text="資料集"
+              text="對話資料集 📚"
               icon={<Database size={28} />}
             />
             <LinkComponent
               href="/leaderboard"
-              text="排行榜"
+              text="模型排行榜 🏆"
               icon={<Trophy size={28} />}
             />
             <div className="hidden md:block md:flex-grow"></div>
@@ -179,15 +179,11 @@ function LinkComponent({
   return (
     <Link
       href={href}
-      className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center gap-3 truncate w-full"
+      className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate w-full"
       onClick={() => setIsOpen(false)}
     >
-      <div
-        className="transition-none text-xs flex flex-col gap-2 items-center text-center"
-        title={!isOpen ? text : ""}
-      >
+      <div className="transition-none" title={!isOpen ? text : ""}>
         {icon}
-        {text}
       </div>
       {isOpen && text}
     </Link>

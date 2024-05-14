@@ -1,9 +1,9 @@
 import { useContext, useEffect, useRef } from "react";
-import MessageContainer from "./MessageContainer";
+import CompletionContainer from "./CompletionContainer";
 import { MessageContext } from "@/context/message";
-import { Message } from "@/lib/types/db";
+import { toast } from "react-toastify";
+import PromptContainer from "./PromptContainer";
 import { Bot } from "lucide-react";
-import { cn } from "@/lib/utils/shadcn";
 
 export default function MessageSection() {
   const context = useContext(MessageContext);
@@ -47,88 +47,76 @@ export default function MessageSection() {
     }
   }, [messageB]);
 
+  if (messageA.length !== messageB.length) {
+    console.error("messageA and messageB should have the same length");
+    toast.error("哎呀有地方出錯了，請重新整理頁面");
+    return null;
+  }
+  console.log("messageA.length", messageA.length);
+
   return (
     // Todo: think a better way to handle the height of the container
-    <div className="flex flex-col md:flex-row flex-grow justify-between border max-h-[62dvh] px-0.5">
-      <MessageDisplay
-        messages={messageA}
-        setMessages={setMessageA}
-        setMessagesWaiting={setMessageAWaiting}
-        messagesEndRef={messageAEndRef}
-        isCompleted={!messageAWaiting}
-        conversationRecordId={conversationRecordIds[0]}
-        conversationRecordIds={conversationRecordIds}
-        setConversationRecordIds={setConversationRecordIds}
-        className="border-r"
-      />
-      <MessageDisplay
-        messages={messageB}
-        setMessages={setMessageB}
-        setMessagesWaiting={setMessageBWaiting}
-        messagesEndRef={messageBEndRef}
-        isCompleted={!messageBWaiting}
-        conversationRecordId={conversationRecordIds[1]}
-        conversationRecordIds={conversationRecordIds}
-        setConversationRecordIds={setConversationRecordIds}
-      />
-    </div>
-  );
-}
-
-function MessageDisplay({
-  messages,
-  setMessages,
-  setMessagesWaiting,
-  messagesEndRef,
-  isCompleted,
-  conversationRecordId,
-  conversationRecordIds,
-  setConversationRecordIds,
-  className,
-}: {
-  messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>;
-  messagesEndRef: React.RefObject<HTMLDivElement>;
-  isCompleted: boolean;
-  conversationRecordId: string;
-  conversationRecordIds: string[];
-  setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex-1 flex flex-col gap-8 p-5 py-4 overflow-y-auto",
-        className,
-      )}
-    >
-      {messages.length > 2 ? (
-        messages.map((message, index) => {
-          return (
-            index >= 2 && (
-              <MessageContainer
-                key={index}
-                msgIndex={index}
-                origMessage={message.content}
-                isUser={message.role === "user"}
-                isCompleted={isCompleted}
-                conversationRecordId={conversationRecordId}
-                conversationRecordIds={conversationRecordIds}
-                messages={messages}
-                setMessages={setMessages}
-                setMessagesWaiting={setMessagesWaiting}
-                setConversationRecordIds={setConversationRecordIds}
-              />
-            )
-          );
-        })
-      ) : (
-        <div className="flex flex-col items-center justify-center h-screen gap-5 text-2xl">
-          <Bot size={45} /> 我今天要怎麼幫你呢？
-        </div>
-      )}
-      <div ref={messagesEndRef} />
+    <div className="flex flex-col flex-grow justify-between border max-h-[62dvh]">
+      <div className="flex flex-col gap-8 py-4 overflow-y-auto">
+        {messageA.length <= 2 ? (
+          <div className="flex flex-col items-center justify-center h-screen gap-5 text-2xl">
+            <Bot size={45} /> 我今天要怎麼幫你呢？
+          </div>
+        ) : (
+          messageA.map((message, index) => {
+            return (
+              index >= 2 &&
+              (message.role === "user" ? (
+                <PromptContainer
+                  key={index}
+                  msgIndex={index}
+                  origMessage={message.content}
+                  isCompleted={!messageAWaiting}
+                  conversationRecordId={conversationRecordIds[0]}
+                  conversationRecordIds={conversationRecordIds}
+                  messages={messageA}
+                  setMessages={setMessageA}
+                  setMessagesWaiting={setMessageAWaiting}
+                  setConversationRecordIds={setConversationRecordIds}
+                />
+              ) : (
+                <div className="flex flex-col gap-5 md:flex-row w-full">
+                  <CompletionContainer
+                    key={index}
+                    msgIndex={index}
+                    origMessage={message.content}
+                    isUser={false}
+                    isCompleted={!messageAWaiting}
+                    conversationRecordId={conversationRecordIds[0]}
+                    conversationRecordIds={conversationRecordIds}
+                    messages={messageA}
+                    setMessages={setMessageA}
+                    setMessagesWaiting={setMessageAWaiting}
+                    setConversationRecordIds={setConversationRecordIds}
+                    isLeft={true}
+                  />
+                  <CompletionContainer
+                    key={index}
+                    msgIndex={index}
+                    origMessage={messageB[index].content}
+                    isUser={false}
+                    isCompleted={!messageBWaiting}
+                    conversationRecordId={conversationRecordIds[1]}
+                    conversationRecordIds={conversationRecordIds}
+                    messages={messageB}
+                    setMessages={setMessageB}
+                    setMessagesWaiting={setMessageBWaiting}
+                    setConversationRecordIds={setConversationRecordIds}
+                    isLeft={false}
+                  />
+                </div>
+              ))
+            );
+          })
+        )}
+      </div>
+      <div ref={messageAEndRef} />
+      <div ref={messageBEndRef} />
     </div>
   );
 }
