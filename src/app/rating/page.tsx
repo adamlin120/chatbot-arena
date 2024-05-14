@@ -32,7 +32,20 @@ export default function RatingPage() {
   const [contributorAvatar, setContributorAvatar] = useState<
     string | undefined
   >();
+
+  const [selected,setSelected] = useState<string>();
+
   const imageSize = 30;
+
+  const handleColumnClick = (isOriginal: boolean) => {
+    if (isOriginal){
+      setSelected("original");
+    }
+    else{
+      setSelected("edited");
+    }
+  };
+
   const fetchRandomRating = async () => {
     const res = await fetch("/api/rating");
     const data = await res.json();
@@ -77,8 +90,9 @@ export default function RatingPage() {
       } else if (!session) {
         router.push("/login");
       }
+      else{
       await fetchRandomRating();
-      setLoading(false);
+      setLoading(false);}
     })();
   }, [router]);
 
@@ -98,7 +112,7 @@ export default function RatingPage() {
           setCompletionRating(undefined);
           content.classList.remove("fade-out-R");
           content.classList.remove("fade-out-L");
-        }, 500);
+        }, 700);
       }
     } else {
       const content = document.getElementById("content");
@@ -111,7 +125,7 @@ export default function RatingPage() {
           setCompletionRating(undefined);
           content.classList.remove("fade-out-R");
           content.classList.remove("fade-out-L");
-        }, 500);
+        }, 700);
       }
     }
   }
@@ -119,6 +133,7 @@ export default function RatingPage() {
   const handleSkip = async () => {
     fadeOutAndIn(0);
     toast.info("略過此問答紀錄！");
+    setSelected(undefined);
   };
 
   const handleSubmit = async () => {
@@ -127,12 +142,21 @@ export default function RatingPage() {
     //console.log(promptRating);
     //console.log(completionRating! - 5);
 
-    if (promptRating === undefined || completionRating === undefined) {
-      console.log("Please rate both prompts and completions");
-      alert("Please rate both prompts and completions");
+    if (selected === undefined) {
+      console.log("Please rate prompts & completions");
+      alert("Please rate prompts & completions");
       return;
     }
-
+    var originalScore;
+    var revisedScore;
+    if (selected=="original"){
+      originalScore = 5;
+      revisedScore = 1;
+    }
+    else if (selected=="edited"){
+      originalScore = 1;
+      revisedScore = 5;
+    }
     const res = await fetch("/api/rating", {
       method: "POST",
       headers: {
@@ -140,8 +164,8 @@ export default function RatingPage() {
       },
       body: JSON.stringify({
         rateEditingID: rateEditingID,
-        promptEditedScore: promptRating,
-        completionEditedScore: completionRating! - 5,
+        promptEditedScore: revisedScore,
+        completionEditedScore: revisedScore,
         feedback: feedbackText,
       }),
     });
@@ -152,7 +176,7 @@ export default function RatingPage() {
     }
     toast.success("回饋送出成功，感謝你的幫助！");
     fadeOutAndIn(1);
-
+    setSelected(undefined);
     await fetchRandomRating();
   };
 
@@ -196,18 +220,26 @@ export default function RatingPage() {
           </div>
           <div className="flex mt-5 gap-8 p-1">
             <Column
-              isPrompt={true}
-              original={String(originalPrompt)}
-              edited={String(editedPrompt)}
+              isOriginal={true}
+              originalPrompt={String(originalPrompt)}
+              originalCompletion={String(originalCompletion)}
+              editedPrompt={String(editedPrompt)}
+              editedCompletion={String(editedCompletion)}
               rating={promptRating}
               setRating={setPromptRating}
+              selected={handleColumnClick}
+              isClick={selected === "original"}
             />
             <Column
-              isPrompt={false}
-              original={String(originalCompletion)}
-              edited={String(editedCompletion)}
+              isOriginal={false}
+              originalPrompt={String(originalPrompt)}
+              originalCompletion={String(originalCompletion)}
+              editedPrompt={String(editedPrompt)}
+              editedCompletion={String(editedCompletion)}
               rating={completionRating}
               setRating={setCompletionRating}
+              selected={handleColumnClick}
+              isClick={selected === "edited"}
             />
           </div>
           <div className="flex flex-col gap-3 p-3 mt-10 w-full">

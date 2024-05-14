@@ -23,7 +23,7 @@ export default function LoginPage(props: Props) {
   return (
     <div className="flex h-screen overflow-y-scroll fade-in">
       <div className="w-1/2 flex justify-center items-center bg-gray-100 flyInFromTop">
-        <img src="/arena.png" alt="Arena Image" className="w-full h-full" />
+        <img src="/llama.jpg" alt="Arena Image" className="w-full h-full" />
       </div>
       <div className="w-1/2 flex justify-center items-center overflow-hidden flyInFromBottom">
         <div className="w-full max-w-xs">

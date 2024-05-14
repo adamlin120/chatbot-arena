@@ -3,47 +3,58 @@ import { useState } from "react";
 const jsDiff = require("diff");
 
 type Props = {
-  isPrompt: boolean;
-  original: string;
-  edited: string;
+  isOriginal: boolean;
+  originalPrompt: string;
+  editedPrompt: string;
+  originalCompletion: string;
+  editedCompletion: string;
   rating: number | undefined;
   setRating: React.Dispatch<React.SetStateAction<number | undefined>>;
+  selected: (value: boolean) => void;
+  isClick: boolean;
 };
 
 export default function Column({
-  isPrompt,
-  original,
-  edited,
+  isOriginal,
+  originalPrompt,
+  originalCompletion,
+  editedPrompt,
+  editedCompletion,
   rating,
   setRating,
+  selected,
+  isClick
 }: Props) {
   const feedbackDescription = [
     {
-      id: 1 + (isPrompt ? 0 : 5),
+      id: 1 + (isOriginal ? 0 : 5),
       text: "Much worse than Original",
     },
     {
-      id: 2 + (isPrompt ? 0 : 5),
+      id: 2 + (isOriginal ? 0 : 5),
       text: "Worse than Original",
     },
     {
-      id: 3 + (isPrompt ? 0 : 5),
+      id: 3 + (isOriginal ? 0 : 5),
       text: "No noticeable difference compared to the original",
     },
     {
-      id: 4 + (isPrompt ? 0 : 5),
+      id: 4 + (isOriginal ? 0 : 5),
       text: "Better than Original",
     },
     {
-      id: 5 + (isPrompt ? 0 : 5),
+      id: 5 + (isOriginal ? 0 : 5),
       text: "Much better than Original",
     },
   ];
 
-  const [toggle, setToggle] = useState(false);
+  const [togglePrompt, setTogglePrompt] = useState(false);
+  const [toggleCompletion, setToggleCompletion] = useState(false);
 
-  const type = isPrompt ? "Prompts" : "Completions";
-
+  const type = isOriginal ? "Prompts" : "Completions";
+  const handleClick = () => {
+    selected(isOriginal);
+  };
   function editDistance(str1: string, str2: string): number {
     const m: number = str1.length;
     const n: number = str2.length;
@@ -72,83 +83,136 @@ export default function Column({
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+      .replace(/'/g, "&#39;")
+      .replace(/\n/g, "<br>");
   }
-
+  
   function highlightDifferences(original: string, modified: string): string {
-    const diffResult = jsDiff.diffChars(
-      disableHTML(original),
-      disableHTML(modified),
-    );
+    const diffResult = jsDiff.diffChars(original, modified);
     let highlightedText = "";
-
+  
     diffResult.forEach(
       (part: { added?: boolean; removed?: boolean; value: string }) => {
         if (part.added) {
-          highlightedText += `<span style="color: green;">${part.value}</span>`;
+          highlightedText += `<span style="color: green;">${disableHTML(part.value)}</span>`;
         } else if (part.removed) {
-          highlightedText += `<span style="color: red;">${part.value}</span>`;
+          highlightedText += `<span style="color: red;">${disableHTML(part.value)}</span>`;
         } else {
-          highlightedText += part.value;
+          highlightedText += disableHTML(part.value);
         }
-      },
+      }
     );
-
+  
     return highlightedText;
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border border-white">
+    <div className={`flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border ${isClick ? 'border-sky-500 border-4' : 'border-white border-4'}`} 
+      onClick={handleClick}
+    >
       <div className="bg-[rgb(31,41,55)] text-center font-bold text-2xl rounded-xl p-3 mx-auto mt-4 whitespace-nowrap">
-        Step {isPrompt ? `1: ${type}` : `2: ${type}`}
+        {isOriginal ? `Original Conversation` : `Revised Conversation`}
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
-        <div className="font-semibold text-xl">Original {type}</div>
-        <textarea
-          className="p-3 rounded-lg text-black resize-none overflow-auto h-32"
-          value={original}
+      <div className="font-semibold text-xl flex justify-between">
+          <span>{isOriginal ? `Original Prompt` : `Revised Prompt`}</span>
+          {!isOriginal&&<label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="checkbox"
+              value=""
+              checked={togglePrompt}
+              onChange={() => setTogglePrompt(!togglePrompt)}
+              className="sr-only peer"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-400"></div>
+            <span className="ms-3 text-lg dark:text-gray-300">Show Edits</span>
+  </label>}
+        </div>
+        {!isOriginal && togglePrompt && (
+          <div
+            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32"
+            dangerouslySetInnerHTML={{
+              __html: highlightDifferences(originalPrompt, editedPrompt),
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
+        {!isOriginal && !togglePrompt && (
+          <textarea
+          className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
+          value={editedPrompt}
           readOnly
+          onClick={(e) => e.stopPropagation()}
         />
+        )}
+        {isOriginal && (
+          <textarea
+            className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
+            value={originalPrompt}
+            readOnly
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
+        {!isOriginal && <div className="text-l">
+          Edit Distance: {editDistance(editedPrompt, originalPrompt)}
+        </div>}
+        {isOriginal && <div className="text-l">
+          &nbsp;
+        </div>}
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
         <div className="font-semibold text-xl flex justify-between">
-          <span>Edited {type}</span>
-          <label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none">
+          <span>{isOriginal ? `Original Completion` : `Revised Completion`}</span>
+          {!isOriginal&&<label className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none" onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
               value=""
-              checked={toggle}
-              onChange={() => setToggle(!toggle)}
+              checked={toggleCompletion}
+              onChange={() => setToggleCompletion(!toggleCompletion)}
               className="sr-only peer"
             />
             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-400"></div>
             <span className="ms-3 text-lg dark:text-gray-300">Show Edits</span>
-          </label>
+  </label>}
         </div>
-        {toggle && (
+        {!isOriginal && toggleCompletion &&(
           <div
             className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32"
             dangerouslySetInnerHTML={{
-              __html: highlightDifferences(original, edited),
+              __html: highlightDifferences(originalCompletion, editedCompletion),
             }}
+            onClick={(e) => e.stopPropagation()}
           />
         )}
-        {!toggle && (
+        {!isOriginal && !toggleCompletion &&(
           <textarea
-            className="p-3 rounded-lg text-black resize-none overflow-auto h-32"
-            value={edited}
+          className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
+          value={editedCompletion}
+          readOnly
+          onClick={(e) => e.stopPropagation()}
+        />
+        )}
+        {isOriginal && (
+          <textarea
+            className="p-3 rounded-lg text-black resize-none overflow-auto h-32 focus:outline-none cursor-auto"
+            value={originalCompletion}
             readOnly
+            onClick={(e) => e.stopPropagation()}
           />
         )}
-        <div className="text-l">
-          Edit Distance: {editDistance(edited, original)}
-        </div>
+        {!isOriginal && <div className="text-l">
+          Edit Distance: {editDistance(editedCompletion, originalCompletion)}
+        </div>}
+        {isOriginal && <div className="text-l">
+          &nbsp;
+        </div>}
       </div>
 
       <div className="text-left flex flex-col gap-2 px-4">
-        <div className="font-semibold">
+        {/*<div className="font-semibold">
           <span className="text-m text-red-400 font-normal">*必填</span> <br />
           <p className="text-l">
             Is the edited {type.toLowerCase().slice(0, -1)} an improvement over
@@ -168,11 +232,11 @@ export default function Column({
                 }}
               />
               <label htmlFor={feedback.id.toString()}>
-                {feedback.id - (isPrompt ? 0 : 5)} - {feedback.text}
+                {feedback.id - (isOriginal ? 0 : 5)} - {feedback.text}
               </label>
             </div>
-          ))}
-        </div>
+          ))
+        </div>*/}
         <div></div>
         <div></div>
       </div>
