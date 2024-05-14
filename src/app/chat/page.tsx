@@ -9,6 +9,7 @@ import MessageSection from "./_components/MessageSection";
 import PromptInput from "./_components/PromptInput";
 import FunctionalButtons from "./_components/FunctionalButtons";
 import { MessageContext } from "@/context/message";
+import ip_test from "./_components/ip_test";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -17,29 +18,7 @@ export default function ChatPage() {
   useEffect(() => {
     const checkAuth = async () => {
       if (!session || !session.user) {
-        const response = await fetch("https://api.ipify.org?format=json");
-
-        const data = await response.json();
-        const { ip } = data;
-        try {
-          const response = await fetch("/api/chat/trail", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ip: ip }),
-          });
-          if (!response.ok) {
-            throw new Error("Failed to store IP address");
-          }
-          const responseData = await response.json();
-          const { quota } = responseData;
-          if (quota >= 3) {
-            router.push("/login");
-          }
-        } catch (error) {
-          console.error("Error storing IP address:", error);
-        }
+        ip_test(router);
       }
     };
     checkAuth();
