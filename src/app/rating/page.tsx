@@ -115,8 +115,8 @@ export default function RatingPage() {
   }
 
   function fadeOutAndIn(direction: number): void {
+    const content = document.getElementById("content");
     if (direction == 1) {
-      const content = document.getElementById("content");
       if (content) {
         content.classList.add("fade-out-R");
         content.classList.remove("fade-in")
@@ -125,7 +125,6 @@ export default function RatingPage() {
         }, 1000);
       }
     } else {
-      const content = document.getElementById("content");
       if (content) {
         content.classList.add("fade-out-L");
         content.classList.remove("fade-in")
@@ -183,7 +182,6 @@ export default function RatingPage() {
     toast.success("回饋送出成功，感謝你的幫助！");
     fadeOutAndIn(1);
     setSelected(undefined);
-    await fetchRandomRating();
   };
 
   return (
