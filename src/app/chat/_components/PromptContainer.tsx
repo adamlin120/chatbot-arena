@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   Pencil,
   User,
@@ -21,23 +21,18 @@ const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
 
 export default function PromptContainer({
-  // origPrompt,
   msgIndex,
   isCompleted,
 }: {
-  origPrompt: string;
   msgIndex: number;
   isCompleted: boolean;
 }) {
-  // console.log("PromptContainer Rerendered");
-  // console.log("MessageContent: ", origPrompt);
   const router = useRouter();
   const { data: session } = useSession();
   const imageUrl = session?.user?.image;
   const imageSize = 30;
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  // const [prompt, setPrompt] = useState<string>(origPrompt);
   const promptTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const [isComposing, setIsComposing] = useState(false);
@@ -70,21 +65,6 @@ export default function PromptContainer({
   ]);
   const [childMessageIndex, setChildMessageIndex] = useState<number>(0);
 
-  // console.log("childAMessages: ", childAMessages);
-  // console.log("isCompleted: ", isCompleted);
-
-  useEffect(() => {
-    // Todo
-    if (promptTextAreaRef.current) {
-      promptTextAreaRef.current.style.height = "auto";
-      promptTextAreaRef.current.style.height = `${promptTextAreaRef.current.scrollHeight}px`;
-    }
-  }, [/*prompt, */ isEditing]);
-
-  // useEffect(() => {
-  //   setPrompt(origPrompt);
-  // }, [origPrompt]);
-
   const processChildMessages = (
     newPrompt: string = messageA[msgIndex].content,
   ) => {
@@ -108,7 +88,7 @@ export default function PromptContainer({
     setChildMessageIndex(n);
   };
 
-  // TODO: 切之前要把現在的訊息存起來
+  // We need to save the current child messages before shifting to another child
   const saveCurrentChild = () => {
     setChildAMessages(
       childAMessages.map((m, index) => {
@@ -301,24 +281,6 @@ export default function PromptContainer({
       content: newPrompt,
     });
 
-    // setMessageA([
-    //   ...messageA.slice(0, msgIndex),
-    //   {
-    //     role: "user",
-    //     content: newPrompt,
-    //   },
-    // ]);
-    // setMessageB([
-    //   ...messageB.slice(0, msgIndex),
-    //   {
-    //     role: "user",
-    //     content: newPrompt,
-    //   },
-    // ]);
-    // messageA[msgIndex].content = prompt;
-    // messageB[msgIndex].content = prompt;
-    // router.refresh();
-
     await Promise.all([
       handleRegenerate(
         setMessageAWaiting,
@@ -333,7 +295,7 @@ export default function PromptContainer({
         conversationRecordIds[1],
       ),
     ]);
-    setChildConversationIds([...childConversationIds, conversationRecordIds]); // Needs to be checked
+    setChildConversationIds([...childConversationIds, conversationRecordIds]); // Todo: Needs to be checked
   };
 
   return (
@@ -377,8 +339,11 @@ export default function PromptContainer({
                 e.target.selectionStart = e.target.value.length;
                 e.target.selectionEnd = e.target.value.length;
               }}
-              // onChange={(e) => setPrompt(e.target.value)}
-              // value={prompt}
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto";
+                target.style.height = `${target.scrollHeight}px`;
+              }}
               defaultValue={messageA[msgIndex].content}
             />
           ) : (

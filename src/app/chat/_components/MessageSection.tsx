@@ -22,14 +22,19 @@ export default function MessageSection() {
   // Scroll to the bottom of the chat
   // Use block: "nearest" to get a better UX. (https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
   useEffect(() => {
-    if (messageEndRef.current && messageA.length > 2 && messageB.length > 2) {
+    if (
+      messageEndRef.current &&
+      messageA.length > 2 &&
+      messageB.length > 2 &&
+      (messageAWaiting || messageBWaiting)
+    ) {
       messageEndRef.current.scrollIntoView({
         behavior: "auto",
         block: "nearest",
         inline: "nearest",
       });
     }
-  }, [messageA, messageB]);
+  }, [messageA, messageB, messageAWaiting, messageBWaiting]);
 
   return (
     // Todo: think a better way to handle the height of the container
@@ -47,7 +52,6 @@ export default function MessageSection() {
                 <PromptContainer
                   key={index}
                   msgIndex={index}
-                  origPrompt={message.content}
                   isCompleted={!messageAWaiting && !messageBWaiting}
                 />
               ) : (
