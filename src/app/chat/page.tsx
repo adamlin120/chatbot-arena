@@ -30,7 +30,7 @@ export default function ChatPage() {
   if (!context) {
     throw new Error("MessageContext is not provided");
   }
-  const { initiateChat } = context;
+  const { initiateChat, messageA, messageB } = context;
 
   useEffect(() => {
     initiateChat();

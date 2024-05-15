@@ -15,7 +15,6 @@ export default function MessageSection() {
     messageAWaiting,
     messageBWaiting,
     conversationRecordIds,
-    setConversationRecordIds,
   } = context;
 
   const messageEndRef = useRef<HTMLDivElement | null>(null);
@@ -46,18 +45,17 @@ export default function MessageSection() {
               index >= 2 &&
               (message.role === "user" ? (
                 <PromptContainer
-                  key={index + "prompt"}
+                  key={index}
                   msgIndex={index}
-                  origMessage={message.content}
-                  isCompleted={!messageAWaiting}
-                  conversationRecordId={conversationRecordIds[0]}
-                  conversationRecordIds={conversationRecordIds}
-                  setConversationRecordIds={setConversationRecordIds}
+                  origPrompt={message.content}
+                  isCompleted={!messageAWaiting && !messageBWaiting}
                 />
               ) : (
-                <div className="flex flex-col gap-5 md:flex-row w-full">
+                <div
+                  className="flex flex-col gap-5 md:flex-row w-full"
+                  key={index}
+                >
                   <CompletionContainer
-                    key={index + "completion"}
                     msgIndex={index}
                     origMessage={message.content}
                     isUser={false}

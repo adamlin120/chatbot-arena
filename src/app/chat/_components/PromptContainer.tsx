@@ -21,31 +21,24 @@ const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
 
 export default function PromptContainer({
-  origMessage,
+  // origPrompt,
   msgIndex,
   isCompleted,
-  conversationRecordId,
-  conversationRecordIds,
-  setConversationRecordIds,
 }: {
-  origMessage: string;
+  origPrompt: string;
   msgIndex: number;
   isCompleted: boolean;
-  conversationRecordId: string;
-  conversationRecordIds: string[];
-  setConversationRecordIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
+  // console.log("PromptContainer Rerendered");
+  // console.log("MessageContent: ", origPrompt);
   const router = useRouter();
   const { data: session } = useSession();
   const imageUrl = session?.user?.image;
-  const userEmail = session?.user?.email;
   const imageSize = 30;
 
-  const [justCopied, setJustCopied] = useState(false);
-
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>(origMessage);
-  const messageTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  // const [prompt, setPrompt] = useState<string>(origPrompt);
+  const promptTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const [isComposing, setIsComposing] = useState(false);
 
@@ -62,54 +55,115 @@ export default function PromptContainer({
     setMessageB,
     setMessageAWaiting,
     setMessageBWaiting,
+    conversationRecordIds,
+    setConversationRecordIds,
   } = context;
 
+  const [childConversationIds, setChildConversationIds] = useState<string[][]>([
+    conversationRecordIds,
+  ]);
   const [childAMessages, setChildAMessages] = useState<Message[][]>([
-    messageA.slice(msgIndex + 1),
+    messageA.slice(msgIndex),
   ]);
   const [childBMessages, setChildBMessages] = useState<Message[][]>([
-    messageB.slice(msgIndex + 1),
+    messageB.slice(msgIndex),
   ]);
   const [childMessageIndex, setChildMessageIndex] = useState<number>(0);
 
+  // console.log("childAMessages: ", childAMessages);
+  // console.log("isCompleted: ", isCompleted);
+
   useEffect(() => {
-    if (messageTextAreaRef.current) {
-      messageTextAreaRef.current.style.height = "auto";
-      messageTextAreaRef.current.style.height = `${messageTextAreaRef.current.scrollHeight}px`;
+    // Todo
+    if (promptTextAreaRef.current) {
+      promptTextAreaRef.current.style.height = "auto";
+      promptTextAreaRef.current.style.height = `${promptTextAreaRef.current.scrollHeight}px`;
     }
-  }, [message, isEditing]);
+  }, [/*prompt, */ isEditing]);
 
-  useEffect(() => {
-    setMessage(origMessage);
-  }, [origMessage]);
+  // useEffect(() => {
+  //   setPrompt(origPrompt);
+  // }, [origPrompt]);
 
-  const processChildMessages = () => {
-    setChildAMessages([...childAMessages, messageA.slice(0, msgIndex + 1)]);
-    setChildBMessages([...childBMessages, messageB.slice(0, msgIndex + 1)]);
-    setChildMessageIndex(childMessageIndex + 1);
-    console.log("childAMessages.length: ", childAMessages.length);
+  const processChildMessages = (
+    newPrompt: string = messageA[msgIndex].content,
+  ) => {
+    // Add a new branch here
+    const n = childAMessages.length;
+
+    const newChildAMessages = [...childAMessages];
+    newChildAMessages[childMessageIndex] = messageA.slice(msgIndex);
+    setChildAMessages([
+      ...newChildAMessages,
+      [{ role: "user", content: newPrompt }],
+    ]);
+
+    const newChildBMessages = [...childBMessages];
+    newChildBMessages[childMessageIndex] = messageB.slice(msgIndex);
+    setChildBMessages([
+      ...newChildBMessages,
+      [{ role: "user", content: newPrompt }],
+    ]);
+
+    setChildMessageIndex(n);
+  };
+
+  // TODO: 切之前要把現在的訊息存起來
+  const saveCurrentChild = () => {
+    setChildAMessages(
+      childAMessages.map((m, index) => {
+        if (index === childMessageIndex) {
+          return messageA.slice(msgIndex);
+        }
+        return m;
+      }),
+    );
+    setChildBMessages(
+      childBMessages.map((m, index) => {
+        if (index === childMessageIndex) {
+          return messageB.slice(msgIndex);
+        }
+        return m;
+      }),
+    );
   };
 
   const handleLeftShift = () => {
     if (childMessageIndex === 0) return;
+
+    saveCurrentChild();
+    setMessageA(
+      messageA.slice(0, msgIndex).concat(childAMessages[childMessageIndex - 1]),
+    );
+    setMessageB(
+      messageB.slice(0, msgIndex).concat(childBMessages[childMessageIndex - 1]),
+    );
+
     setChildMessageIndex(childMessageIndex - 1);
-    // setMessageA(messageA.slice(0, msgIndex + 1).concat(childAMessages[childMessageIndex]));
-    // setMessageB(messageB.slice(0, msgIndex + 1).concat(childBMessages[childMessageIndex]));
+    router.refresh();
   };
+
   const handleRightShift = () => {
     if (childMessageIndex === childAMessages.length - 1) return;
+
+    saveCurrentChild();
+    setMessageA(
+      messageA.slice(0, msgIndex).concat(childAMessages[childMessageIndex + 1]),
+    );
+    setMessageB(
+      messageB.slice(0, msgIndex).concat(childBMessages[childMessageIndex + 1]),
+    );
+
     setChildMessageIndex(childMessageIndex + 1);
-    // setMessageA(messageA.slice(0, msgIndex + 1).concat(childAMessages[childMessageIndex]));
-    // setMessageB(messageB.slice(0, msgIndex + 1).concat(childBMessages[childMessageIndex]));
   };
 
   const handleRegenerate = async (
     setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>,
     messages: Message[],
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    conversationRecordId: string,
   ) => {
     setMessagesWaiting(true);
-    console.log("regen messages: ", messages);
 
     const oldMessages: Message[] = messages;
     const newMessages: Message[] = [
@@ -119,7 +173,6 @@ export default function PromptContainer({
         content: "思考中...",
       },
     ];
-    console.log("newMessages: ", newMessages);
     setMessages(newMessages);
 
     // Get the new conversation record ID for regenerated conversation
@@ -229,78 +282,58 @@ export default function PromptContainer({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleEdit = async () => {
+    const newPrompt = promptTextAreaRef.current?.value;
+    if (!newPrompt) return;
+
     setIsEditing(false);
-    if (message === origMessage) return;
 
-    processChildMessages();
+    processChildMessages(newPrompt);
 
-    setMessageA([
-      ...messageA.slice(0, msgIndex),
-      {
-        role: "user",
-        content: message,
-      },
-      {
-        role: "assistant",
-        content: "思考中...",
-      },
+    const oldMessageA = messageA.slice(0, msgIndex);
+    const oldMessageB = messageB.slice(0, msgIndex);
+    oldMessageA.push({
+      role: "user",
+      content: newPrompt,
+    });
+    oldMessageB.push({
+      role: "user",
+      content: newPrompt,
+    });
+
+    // setMessageA([
+    //   ...messageA.slice(0, msgIndex),
+    //   {
+    //     role: "user",
+    //     content: newPrompt,
+    //   },
+    // ]);
+    // setMessageB([
+    //   ...messageB.slice(0, msgIndex),
+    //   {
+    //     role: "user",
+    //     content: newPrompt,
+    //   },
+    // ]);
+    // messageA[msgIndex].content = prompt;
+    // messageB[msgIndex].content = prompt;
+    // router.refresh();
+
+    await Promise.all([
+      handleRegenerate(
+        setMessageAWaiting,
+        oldMessageA,
+        setMessageA,
+        conversationRecordIds[0],
+      ),
+      handleRegenerate(
+        setMessageBWaiting,
+        oldMessageB,
+        setMessageB,
+        conversationRecordIds[1],
+      ),
     ]);
-    setMessageB([
-      ...messageB.slice(0, msgIndex),
-      {
-        role: "user",
-        content: message,
-      },
-      {
-        role: "assistant",
-        content: "思考中...",
-      },
-    ]);
-    messageA[msgIndex].content = message;
-    messageB[msgIndex].content = message;
-    router.refresh();
-
-    handleRegenerate(setMessageAWaiting, messageA, setMessageA);
-    handleRegenerate(setMessageBWaiting, messageB, setMessageB);
-  };
-
-  // Todo: edit the prompt
-  const handleEditPrompt = async () => {
-    let originalCompletion, editedCompletion;
-    const index = msgIndex + 1;
-    originalCompletion = messageA[index];
-    editedCompletion = originalCompletion;
-    try {
-      const response = await fetch("/api/chat/editing", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          msgIndex: msgIndex,
-          contributorEmail: userEmail,
-          originalPrompt: origMessage,
-          editedPrompt: message,
-          originalCompletion: originalCompletion.content,
-          editedCompletion: editedCompletion.content,
-          conversationRecordId: conversationRecordId,
-        }),
-      });
-      if (response.ok)
-        // After saving the new prompt, you can show a toast message to indicate the success
-        toast.success("輸入提示已更新，請稍後", {
-          autoClose: 1000,
-        });
-      else
-        toast.error("輸入提示更新失敗，請再試一次", {
-          autoClose: 1000,
-        });
-    } catch (error) {
-      toast.error("輸入提示更新失敗，請再試一次", {
-        autoClose: 1000,
-      });
-    }
+    setChildConversationIds([...childConversationIds, conversationRecordIds]); // Needs to be checked
   };
 
   return (
@@ -330,104 +363,102 @@ export default function PromptContainer({
               onCompositionEnd={() => {
                 setIsComposing(false);
               }}
-              ref={messageTextAreaRef}
+              ref={promptTextAreaRef}
               onKeyDown={async (
                 e: React.KeyboardEvent<HTMLTextAreaElement>,
               ) => {
                 if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                   e.preventDefault();
-                  e.currentTarget.blur(); // will trigger handleSubmit
+                  e.currentTarget.blur(); // will trigger handleEdit
                 }
               }}
-              onBlur={handleSubmit}
+              onBlur={handleEdit}
               onFocus={(e) => {
                 e.target.selectionStart = e.target.value.length;
                 e.target.selectionEnd = e.target.value.length;
               }}
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-            ></textarea>
+              // onChange={(e) => setPrompt(e.target.value)}
+              // value={prompt}
+              defaultValue={messageA[msgIndex].content}
+            />
           ) : (
             <div
               className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
             ${isEditing && "border-b border-solid"} focus:outline-none`}
             >
-              {message} <br />
+              {messageA[msgIndex].content}
             </div>
           )}
           <div className="inline-flex items-center pb-5 pt-3 self-start px-4 h-10 whitespace-nowrap w-full">
             {!isEditing && isCompleted && (
               <>
                 <div>
-                  <button
-                    className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                    onClick={() => {
-                      navigator.clipboard.writeText(message);
-                      setJustCopied(true);
-                      setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
-                    }}
-                    title={"複製"}
-                    disabled={isEditing}
-                  >
-                    {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
-                  </button>
+                  <CopyToClipBoard
+                    content={messageA[msgIndex].content}
+                    isEditing={isEditing}
+                  />
                   {!ratingButtonDisabled && (
-                    <button
-                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                      onClick={async () => {
-                        processChildMessages();
-                        handleRegenerate(
-                          setMessageAWaiting,
-                          messageA,
-                          setMessageA,
-                        );
-                        handleRegenerate(
-                          setMessageBWaiting,
-                          messageB,
-                          setMessageB,
-                        );
-                      }}
-                      title={"重新生成模型輸出"}
-                      disabled={isEditing}
-                    >
-                      <IterationCw size={20} />
-                    </button>
-                  )}
-                  {!ratingButtonDisabled && (
-                    <button
-                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                      onClick={() => {
-                        setIsEditing(true);
-                      }}
-                      title={"點擊以修改訊息"}
-                      disabled={isEditing}
-                    >
-                      <Pencil color="white" size={20} />
-                    </button>
+                    <>
+                      <button
+                        className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                        onClick={async () => {
+                          processChildMessages();
+                          handleRegenerate(
+                            setMessageAWaiting,
+                            messageA,
+                            setMessageA,
+                            conversationRecordIds[0],
+                          );
+                          handleRegenerate(
+                            setMessageBWaiting,
+                            messageB,
+                            setMessageB,
+                            conversationRecordIds[1],
+                          );
+                        }}
+                        title={"重新生成模型輸出"}
+                        disabled={isEditing}
+                      >
+                        <IterationCw size={20} />
+                      </button>
+                      <button
+                        className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                        onClick={() => {
+                          setIsEditing(true);
+                        }}
+                        title={"點擊以修改訊息"}
+                        disabled={isEditing}
+                      >
+                        <Pencil color="white" size={20} />
+                      </button>
+                    </>
                   )}
                 </div>
-                {childAMessages.length > 1 && (
-                  <div className="inline-flex items-center justify-center ml-auto">
-                    <button
-                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                      onClick={handleLeftShift}
-                      disabled={childMessageIndex === 0}
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <span className="p-0.5 opacity-0 group-hover:opacity-100 self-end">
-                      {childMessageIndex + 1}/{childAMessages.length}
-                    </span>
-                    <button
-                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                      onClick={handleRightShift}
-                      disabled={childMessageIndex === childAMessages.length - 1}
-                    >
-                      <ChevronRight size={20} />
-                    </button>
-                  </div>
-                )}
               </>
+            )}
+            {!isEditing && childAMessages.length > 1 && (
+              <div className="inline-flex items-center justify-center ml-auto">
+                <button
+                  className="p-1 self-end"
+                  onClick={handleLeftShift}
+                  disabled={childMessageIndex === 0 || !isCompleted}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <span className="p-0.5 self-end">
+                  {childMessageIndex + 1}&nbsp;/&nbsp;{childAMessages.length}
+                </span>
+                <button
+                  className="p-1 self-end"
+                  onClick={handleRightShift}
+                  disabled={
+                    childMessageIndex === childAMessages.length - 1 ||
+                    !isCompleted
+                  }
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -435,3 +466,65 @@ export default function PromptContainer({
     </div>
   );
 }
+
+function CopyToClipBoard({
+  content,
+  isEditing,
+}: {
+  content: string;
+  isEditing: boolean;
+}) {
+  const [justCopied, setJustCopied] = useState(false);
+  return (
+    <button
+      className="p-1 opacity-0 group-hover:opacity-100 self-end"
+      onClick={() => {
+        navigator.clipboard.writeText(content);
+        setJustCopied(true);
+        setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
+      }}
+      title={"複製"}
+      disabled={isEditing}
+    >
+      {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
+    </button>
+  );
+}
+
+// Todo: edit the prompt
+// const handleEditPrompt = async () => {
+//   let originalCompletion, editedCompletion;
+//   const index = msgIndex + 1;
+//   originalCompletion = messageA[index];
+//   editedCompletion = originalCompletion;
+//   try {
+//     const response = await fetch("/api/chat/editing", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         msgIndex: msgIndex,
+//         contributorEmail: userEmail,
+//         originalPrompt: origPrompt,
+//         editedPrompt: prompt,
+//         originalCompletion: originalCompletion.content,
+//         editedCompletion: editedCompletion.content,
+//         conversationRecordId: conversationRecordId,
+//       }),
+//     });
+//     if (response.ok)
+//       // After saving the new prompt, you can show a toast message to indicate the success
+//       toast.success("輸入提示已更新，請稍後", {
+//         autoClose: 1000,
+//       });
+//     else
+//       toast.error("輸入提示更新失敗，請再試一次", {
+//         autoClose: 1000,
+//       });
+//   } catch (error) {
+//     toast.error("輸入提示更新失敗，請再試一次", {
+//       autoClose: 1000,
+//     });
+//   }
+// };
