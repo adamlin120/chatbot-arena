@@ -375,3 +375,11 @@ body {
     transform: scale(1) translateX(100%);
   }
 }
+
+.hidden-scrollbar {
+  overflow-y: scroll;
+}
+
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none;
+}
