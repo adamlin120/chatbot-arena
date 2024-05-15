@@ -3,5 +3,5 @@ export default function RatingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main>{children}</main>;
+  return <main className="hidden-scrollbar">{children}</main>;
 }

@@ -33,22 +33,35 @@ export default function RatingPage() {
     string | undefined
   >();
 
-  const [selected,setSelected] = useState<string>();
+  const [selected, setSelected] = useState<string>();
 
   const imageSize = 30;
 
   const handleColumnClick = (isOriginal: boolean) => {
-    if (isOriginal){
+    if (isOriginal) {
       setSelected("original");
     }
-    else{
+    else {
       setSelected("edited");
     }
   };
 
   const fetchRandomRating = async () => {
+    const content = document.getElementById("content");
+    if (content) {
+      content.classList.add("hidden");
+    }
     const res = await fetch("/api/rating");
     const data = await res.json();
+    setFeedbackText("");
+    setPromptRating(undefined);
+    setCompletionRating(undefined);
+    if (content) {
+      content.classList.remove("fade-out-R");
+      content.classList.remove("fade-out-L");
+      content.classList.remove("hidden");
+      content.classList.add("fade-in");
+    }
 
     if (res.status == 404) {
       toast.info(
@@ -90,9 +103,10 @@ export default function RatingPage() {
       } else if (!session) {
         router.push("/login");
       }
-      else{
-      await fetchRandomRating();
-      setLoading(false);}
+      else {
+        await fetchRandomRating();
+        setLoading(false);
+      }
     })();
   }, [router]);
 
@@ -105,27 +119,19 @@ export default function RatingPage() {
       const content = document.getElementById("content");
       if (content) {
         content.classList.add("fade-out-R");
-        setTimeout(async () => {
-          await fetchRandomRating();
-          setFeedbackText("");
-          setPromptRating(undefined);
-          setCompletionRating(undefined);
-          content.classList.remove("fade-out-R");
-          content.classList.remove("fade-out-L");
-        }, 700);
+        content.classList.remove("fade-in")
+        setTimeout(() => {
+          fetchRandomRating();
+        }, 1000);
       }
     } else {
       const content = document.getElementById("content");
       if (content) {
         content.classList.add("fade-out-L");
-        setTimeout(async () => {
-          await fetchRandomRating();
-          setFeedbackText("");
-          setPromptRating(undefined);
-          setCompletionRating(undefined);
-          content.classList.remove("fade-out-R");
-          content.classList.remove("fade-out-L");
-        }, 700);
+        content.classList.remove("fade-in")
+        setTimeout(() => {
+          fetchRandomRating();
+        }, 1000);
       }
     }
   }
@@ -149,11 +155,11 @@ export default function RatingPage() {
     }
     var originalScore;
     var revisedScore;
-    if (selected=="original"){
+    if (selected == "original") {
       originalScore = 5;
       revisedScore = 1;
     }
-    else if (selected=="edited"){
+    else if (selected == "edited") {
       originalScore = 1;
       revisedScore = 5;
     }
@@ -181,7 +187,7 @@ export default function RatingPage() {
   };
 
   return (
-    <main>
+    <main className="hidden-scrollbar">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -193,8 +199,9 @@ export default function RatingPage() {
         draggable
         pauseOnHover
         theme="light"
+        className="hidden-scrollbar"
       />
-      <div id="content" className="p-5 px-44 fade-in">
+      <div id="content" className="p-5 px-44 fade-in hidden-scrollbar">
         <div className="flex flex-col gap-3">
           <div className="text-3xl font-bold">Review Feedback</div>
           <div className="text-xl">
