@@ -43,8 +43,24 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       role: "assistant",
       content: "No problem, I can do my best to assist you",
     },
+    {
+      role: "user",
+      content: "You are a helpful chatbot that aims to assist human.",
+    },
+    {
+      role: "assistant",
+      content: "No problem, I can do my best to assist you",
+    },
   ]);
   const [messageB, setMessageB] = useState<Message[]>([
+    {
+      role: "user",
+      content: "You are a helpful chatbot that aims to assist human.",
+    },
+    {
+      role: "assistant",
+      content: "No problem, I can do my best to assist you",
+    },
     {
       role: "user",
       content: "You are a helpful chatbot that aims to assist human.",

@@ -13,16 +13,16 @@ import ip_test from "./_components/ip_test";
 
 export default function ChatPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (!session || !session.user) {
+      if (status === "unauthenticated") {
         ip_test(router);
       }
     };
     checkAuth();
-  }, []);
+  }, [status]);
   // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
   // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
 

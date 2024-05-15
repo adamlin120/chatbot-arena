@@ -1,6 +1,14 @@
 "use client";
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { Pencil, User, IterationCw, Clipboard, Check } from "lucide-react";
+import {
+  Pencil,
+  User,
+  IterationCw,
+  Clipboard,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
@@ -56,6 +64,14 @@ export default function PromptContainer({
     setMessageBWaiting,
   } = context;
 
+  const [childAMessages, setChildAMessages] = useState<Message[][]>([
+    messageA.slice(msgIndex + 1),
+  ]);
+  const [childBMessages, setChildBMessages] = useState<Message[][]>([
+    messageB.slice(msgIndex + 1),
+  ]);
+  const [childMessageIndex, setChildMessageIndex] = useState<number>(0);
+
   useEffect(() => {
     if (messageTextAreaRef.current) {
       messageTextAreaRef.current.style.height = "auto";
@@ -67,12 +83,33 @@ export default function PromptContainer({
     setMessage(origMessage);
   }, [origMessage]);
 
+  const processChildMessages = () => {
+    setChildAMessages([...childAMessages, messageA.slice(0, msgIndex + 1)]);
+    setChildBMessages([...childBMessages, messageB.slice(0, msgIndex + 1)]);
+    setChildMessageIndex(childMessageIndex + 1);
+    console.log("childAMessages.length: ", childAMessages.length);
+  };
+
+  const handleLeftShift = () => {
+    if (childMessageIndex === 0) return;
+    setChildMessageIndex(childMessageIndex - 1);
+    // setMessageA(messageA.slice(0, msgIndex + 1).concat(childAMessages[childMessageIndex]));
+    // setMessageB(messageB.slice(0, msgIndex + 1).concat(childBMessages[childMessageIndex]));
+  };
+  const handleRightShift = () => {
+    if (childMessageIndex === childAMessages.length - 1) return;
+    setChildMessageIndex(childMessageIndex + 1);
+    // setMessageA(messageA.slice(0, msgIndex + 1).concat(childAMessages[childMessageIndex]));
+    // setMessageB(messageB.slice(0, msgIndex + 1).concat(childBMessages[childMessageIndex]));
+  };
+
   const handleRegenerate = async (
     setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>,
     messages: Message[],
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   ) => {
     setMessagesWaiting(true);
+    console.log("regen messages: ", messages);
 
     const oldMessages: Message[] = messages;
     const newMessages: Message[] = [
@@ -196,6 +233,8 @@ export default function PromptContainer({
     setIsEditing(false);
     if (message === origMessage) return;
 
+    processChildMessages();
+
     setMessageA([
       ...messageA.slice(0, msgIndex),
       {
@@ -313,57 +352,80 @@ export default function PromptContainer({
               className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
             ${isEditing && "border-b border-solid"} focus:outline-none`}
             >
-              {message}
+              {message} <br />
             </div>
           )}
-          <div className="self-start px-5 h-10">
+          <div className="inline-flex items-center pb-5 pt-3 self-start px-4 h-10 whitespace-nowrap w-full">
             {!isEditing && isCompleted && (
               <>
-                <button
-                  className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                  onClick={() => {
-                    navigator.clipboard.writeText(message);
-                    setJustCopied(true);
-                    setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
-                  }}
-                  title={"複製"}
-                  disabled={isEditing}
-                >
-                  {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
-                </button>
-                {!ratingButtonDisabled && (
-                  <button
-                    className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                    onClick={async () => {
-                      handleRegenerate(
-                        setMessageAWaiting,
-                        messageA,
-                        setMessageA,
-                      );
-                      handleRegenerate(
-                        setMessageBWaiting,
-                        messageB,
-                        setMessageB,
-                      );
-                    }}
-                    title={"重新生成模型輸出"}
-                    disabled={isEditing}
-                  >
-                    <IterationCw size={20} />
-                  </button>
-                )}
-                {!ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
-                  // there are some bugs here, I will fix them later
+                <div>
                   <button
                     className="p-1 opacity-0 group-hover:opacity-100 self-end"
                     onClick={() => {
-                      setIsEditing(true);
+                      navigator.clipboard.writeText(message);
+                      setJustCopied(true);
+                      setTimeout(() => setJustCopied(false), 2000); // Reset after 3 seconds
                     }}
-                    title={"點擊以修改訊息"}
+                    title={"複製"}
                     disabled={isEditing}
                   >
-                    <Pencil color="white" size={20} />
+                    {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
                   </button>
+                  {!ratingButtonDisabled && (
+                    <button
+                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                      onClick={async () => {
+                        processChildMessages();
+                        handleRegenerate(
+                          setMessageAWaiting,
+                          messageA,
+                          setMessageA,
+                        );
+                        handleRegenerate(
+                          setMessageBWaiting,
+                          messageB,
+                          setMessageB,
+                        );
+                      }}
+                      title={"重新生成模型輸出"}
+                      disabled={isEditing}
+                    >
+                      <IterationCw size={20} />
+                    </button>
+                  )}
+                  {!ratingButtonDisabled && (
+                    <button
+                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                      onClick={() => {
+                        setIsEditing(true);
+                      }}
+                      title={"點擊以修改訊息"}
+                      disabled={isEditing}
+                    >
+                      <Pencil color="white" size={20} />
+                    </button>
+                  )}
+                </div>
+                {childAMessages.length > 1 && (
+                  <div className="inline-flex items-center justify-center ml-auto">
+                    <button
+                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                      onClick={handleLeftShift}
+                      disabled={childMessageIndex === 0}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <span className="p-0.5 opacity-0 group-hover:opacity-100 self-end">
+                      {childMessageIndex + 1}/{childAMessages.length}
+                    </span>
+                    <button
+                      className="p-1 opacity-0 group-hover:opacity-100 self-end"
+                      onClick={handleRightShift}
+                      disabled={childMessageIndex === childAMessages.length - 1}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
                 )}
               </>
             )}
