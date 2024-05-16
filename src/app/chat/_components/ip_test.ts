@@ -6,7 +6,6 @@ export default async function ip_test(router: AppRouterInstance) {
   const response = await fetch("https://api.ipify.org?format=json");
   const data = await response.json();
   const { ip } = data;
-  console.log("IP address:", ip);
   try {
     const response = await fetch("/api/chat/trail/send", {
       method: "POST",
