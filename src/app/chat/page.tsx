@@ -13,7 +13,7 @@ import ip_test from "./_components/ip_test";
 
 export default function ChatPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -30,7 +30,7 @@ export default function ChatPage() {
   if (!context) {
     throw new Error("MessageContext is not provided");
   }
-  const { initiateChat, messageA, messageB } = context;
+  const { initiateChat } = context;
 
   useEffect(() => {
     initiateChat();

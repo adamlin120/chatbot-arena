@@ -65,29 +65,6 @@ export default function PromptContainer({
   ]);
   const [childMessageIndex, setChildMessageIndex] = useState<number>(0);
 
-  const processChildMessages = (
-    newPrompt: string = messageA[msgIndex].content,
-  ) => {
-    // Add a new branch here
-    const n = childAMessages.length;
-
-    const newChildAMessages = [...childAMessages];
-    newChildAMessages[childMessageIndex] = messageA.slice(msgIndex);
-    setChildAMessages([
-      ...newChildAMessages,
-      [{ role: "user", content: newPrompt }],
-    ]);
-
-    const newChildBMessages = [...childBMessages];
-    newChildBMessages[childMessageIndex] = messageB.slice(msgIndex);
-    setChildBMessages([
-      ...newChildBMessages,
-      [{ role: "user", content: newPrompt }],
-    ]);
-
-    setChildMessageIndex(n);
-  };
-
   // We need to save the current child messages before shifting to another child
   const saveCurrentChild = () => {
     setChildAMessages(
@@ -108,194 +85,218 @@ export default function PromptContainer({
     );
   };
 
-  const handleLeftShift = () => {
-    if (childMessageIndex === 0) return;
+  const handleShift = (newChildIndex: number) => {
+    if (newChildIndex < 0 || newChildIndex >= childAMessages.length) return;
 
     saveCurrentChild();
     setMessageA(
-      messageA.slice(0, msgIndex).concat(childAMessages[childMessageIndex - 1]),
+      messageA.slice(0, msgIndex).concat(childAMessages[newChildIndex]),
     );
     setMessageB(
-      messageB.slice(0, msgIndex).concat(childBMessages[childMessageIndex - 1]),
+      messageB.slice(0, msgIndex).concat(childBMessages[newChildIndex]),
     );
 
-    setChildMessageIndex(childMessageIndex - 1);
-    router.refresh();
+    console.log(
+      "new conversationRecordIds: ",
+      childConversationIds[newChildIndex],
+    );
+    setConversationRecordIds(childConversationIds[newChildIndex]);
+    setChildMessageIndex(newChildIndex);
   };
 
-  const handleRightShift = () => {
-    if (childMessageIndex === childAMessages.length - 1) return;
+  const handleEdit = async (isRegen: boolean = false) => {
+    const oldMessageA = messageA.slice(0, isRegen ? msgIndex + 1 : msgIndex);
+    const oldMessageB = messageB.slice(0, isRegen ? msgIndex + 1 : msgIndex);
 
-    saveCurrentChild();
-    setMessageA(
-      messageA.slice(0, msgIndex).concat(childAMessages[childMessageIndex + 1]),
-    );
-    setMessageB(
-      messageB.slice(0, msgIndex).concat(childBMessages[childMessageIndex + 1]),
-    );
+    const processChildMessages = (
+      newPrompt: string = messageA[msgIndex].content,
+    ) => {
+      // Add a new branch here
+      const n = childAMessages.length;
 
-    setChildMessageIndex(childMessageIndex + 1);
-  };
+      const newChildAMessages = [...childAMessages];
+      newChildAMessages[childMessageIndex] = messageA.slice(msgIndex);
+      setChildAMessages([
+        ...newChildAMessages,
+        [{ role: "user", content: newPrompt }],
+      ]);
 
-  const handleRegenerate = async (
-    setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>,
-    messages: Message[],
-    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-    conversationRecordId: string,
-  ) => {
-    setMessagesWaiting(true);
+      const newChildBMessages = [...childBMessages];
+      newChildBMessages[childMessageIndex] = messageB.slice(msgIndex);
+      setChildBMessages([
+        ...newChildBMessages,
+        [{ role: "user", content: newPrompt }],
+      ]);
 
-    const oldMessages: Message[] = messages;
-    const newMessages: Message[] = [
-      ...messages.slice(0, msgIndex + 1),
-      {
-        role: "assistant",
-        content: "思考中...",
-      },
-    ];
-    setMessages(newMessages);
+      setChildMessageIndex(n);
+    };
 
-    // Get the new conversation record ID for regenerated conversation
-    let newConversationRecordId: string;
-    try {
-      const response = await fetch("/api/chat/regenerate/initiate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    if (!isRegen) {
+      // edit
+      const newPrompt = promptTextAreaRef.current?.value;
+      if (!newPrompt) return;
+
+      setIsEditing(false);
+      processChildMessages(newPrompt);
+
+      oldMessageA.push({
+        role: "user",
+        content: newPrompt,
+      });
+      oldMessageB.push({
+        role: "user",
+        content: newPrompt,
+      });
+    } else {
+      processChildMessages();
+    }
+
+    const handleRegenerate = async (
+      setMessagesWaiting: React.Dispatch<React.SetStateAction<boolean>>,
+      messages: Message[],
+      setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+      // conversationRecordId: string,
+      conversationRecordIdIndex: number,
+      newConversationRecordIds: string[],
+    ) => {
+      setMessagesWaiting(true);
+      const conversationRecordId =
+        conversationRecordIds[conversationRecordIdIndex];
+
+      const oldMessages: Message[] = messages;
+      const newMessages: Message[] = [
+        ...messages.slice(0, msgIndex + 1),
+        {
+          role: "assistant",
+          content: "思考中...",
         },
-        body: JSON.stringify({ conversationRecordId }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to get new conversation record ID");
-      }
-      const responseData = await response.json();
-      newConversationRecordId = responseData.conversationRecordId;
-    } catch (error) {
-      console.error("Error getting new conversation record ID:", error);
-      toast.error(serverErrorMessage);
-      setMessagesWaiting(false);
-      setMessages(oldMessages);
-      return;
-    }
+      ];
+      setMessages(newMessages);
 
-    // Abort the request if it takes too long (currently 10 second)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-    const response = await fetch("/api/chat/regenerate", {
-      method: "POST",
-      body: JSON.stringify({
-        messages: newMessages.slice(0, newMessages.length - 1),
-        conversationRecordId: newConversationRecordId,
-      }),
-      signal: controller.signal,
-    })
-      .catch((error) => {
-        if (error.name === "AbortError") {
-          // This may due to llm api error
-          console.error("Request timed out");
-          toast.error("伺服器沒有回應，請稍後再試");
-          setMessagesWaiting(false);
-          setMessages(oldMessages);
-        } else {
-          console.error("Error processing messages:", error);
-          toast.error(serverErrorMessage);
-        }
-        return;
-      })
-      .finally(() => clearTimeout(timeoutId));
-
-    if (!response || !response.body) {
-      return;
-    } else if (response.status !== 200) {
-      toast.error(serverErrorMessage);
-      return;
-    }
-
-    function fluent(ms: number | undefined) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
-    function replaceConversationRecordId(
-      oldConversationRecordId: string,
-      newConversationRecordId: string,
-      conversationRecordIds: string[],
-    ) {
-      const index = conversationRecordIds.indexOf(oldConversationRecordId);
-      if (index !== -1) {
-        conversationRecordIds[index] = newConversationRecordId;
-      }
-      setConversationRecordIds(conversationRecordIds);
-    }
-    const reader = response.body!.getReader();
-    const decoder = new TextDecoder();
-    let count = 0;
-    let buffer = "";
-    setRatingButtonDisabled(true);
-    while (count < MAX_TOKENS) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      const text = decoder.decode(value);
-      buffer += text;
-
-      setMessages((messages) => {
-        return [
-          ...messages.slice(0, messages.length - 1),
-          {
-            ...messages[messages.length - 1],
-            content: buffer,
+      // Get the new conversation record ID for regenerated conversation
+      let newConversationRecordId: string;
+      try {
+        const response = await fetch("/api/chat/regenerate/initiate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        ];
-      });
-      count++;
-      await fluent(50);
-    }
-    replaceConversationRecordId(
-      conversationRecordId,
-      newConversationRecordId,
-      conversationRecordIds,
-    );
-    setRatingButtonDisabled(false);
-    setMessagesWaiting(false);
+          body: JSON.stringify({ conversationRecordId }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to get new conversation record ID");
+        }
+        const responseData = await response.json();
+        newConversationRecordId = responseData.conversationRecordId;
+      } catch (error) {
+        console.error("Error getting new conversation record ID:", error);
+        toast.error(serverErrorMessage);
+        setMessagesWaiting(false);
+        setMessages(oldMessages);
+        return;
+      }
 
-    if (!session || !session.user) {
-      ip_test(router);
-    }
-  };
+      // Abort the request if it takes too long (currently 10 second)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const response = await fetch("/api/chat/regenerate", {
+        method: "POST",
+        body: JSON.stringify({
+          messages: newMessages.slice(0, newMessages.length - 1),
+          conversationRecordId: newConversationRecordId,
+        }),
+        signal: controller.signal,
+      })
+        .catch((error) => {
+          if (error.name === "AbortError") {
+            // This may due to llm api error
+            console.error("Request timed out");
+            toast.error("伺服器沒有回應，請稍後再試");
+            setMessagesWaiting(false);
+            setMessages(oldMessages);
+          } else {
+            console.error("Error processing messages:", error);
+            toast.error(serverErrorMessage);
+          }
+          return;
+        })
+        .finally(() => clearTimeout(timeoutId));
 
-  const handleEdit = async () => {
-    const newPrompt = promptTextAreaRef.current?.value;
-    if (!newPrompt) return;
+      if (!response || !response.body) {
+        return;
+      } else if (response.status !== 200) {
+        toast.error(serverErrorMessage);
+        return;
+      }
 
-    setIsEditing(false);
+      function fluent(ms: number | undefined) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
-    processChildMessages(newPrompt);
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let count = 0;
+      let buffer = "";
+      setRatingButtonDisabled(true);
+      while (count < MAX_TOKENS) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const text = decoder.decode(value);
+        buffer += text;
 
-    const oldMessageA = messageA.slice(0, msgIndex);
-    const oldMessageB = messageB.slice(0, msgIndex);
-    oldMessageA.push({
-      role: "user",
-      content: newPrompt,
-    });
-    oldMessageB.push({
-      role: "user",
-      content: newPrompt,
-    });
+        setMessages((messages) => {
+          return [
+            ...messages.slice(0, messages.length - 1),
+            {
+              ...messages[messages.length - 1],
+              content: buffer,
+            },
+          ];
+        });
+        count++;
+        await fluent(50);
+      }
 
+      console.log("newConversationRecordId: ", newConversationRecordId);
+      newConversationRecordIds[conversationRecordIdIndex] =
+        newConversationRecordId;
+
+      setRatingButtonDisabled(false);
+      setMessagesWaiting(false);
+
+      if (!session || !session.user) {
+        ip_test(router);
+      }
+    };
+
+    const newConversationRecordIds: string[] = ["", ""];
     await Promise.all([
       handleRegenerate(
         setMessageAWaiting,
         oldMessageA,
         setMessageA,
-        conversationRecordIds[0],
+        0,
+        newConversationRecordIds,
       ),
       handleRegenerate(
         setMessageBWaiting,
         oldMessageB,
         setMessageB,
-        conversationRecordIds[1],
+        1,
+        newConversationRecordIds,
       ),
     ]);
-    setChildConversationIds([...childConversationIds, conversationRecordIds]); // Todo: Needs to be checked
+
+    console.log("old childConversationIds: ", childConversationIds);
+    console.log("new childConversationIds: ", [
+      ...childConversationIds,
+      newConversationRecordIds,
+    ]);
+    setChildConversationIds([
+      ...childConversationIds,
+      newConversationRecordIds,
+    ]); // Todo: Needs to be checked
+    setConversationRecordIds(newConversationRecordIds);
   };
 
   return (
@@ -319,12 +320,8 @@ export default function PromptContainer({
             <textarea
               className="bg-transparent p-5 mx-5 px-0 text-white pb-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
               autoFocus
-              onCompositionStart={() => {
-                setIsComposing(true);
-              }}
-              onCompositionEnd={() => {
-                setIsComposing(false);
-              }}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
               ref={promptTextAreaRef}
               onKeyDown={async (
                 e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -334,7 +331,7 @@ export default function PromptContainer({
                   e.currentTarget.blur(); // will trigger handleEdit
                 }
               }}
-              onBlur={handleEdit}
+              onBlur={async () => await handleEdit(false)}
               onFocus={(e) => {
                 e.target.selectionStart = e.target.value.length;
                 e.target.selectionEnd = e.target.value.length;
@@ -366,21 +363,7 @@ export default function PromptContainer({
                     <>
                       <button
                         className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                        onClick={async () => {
-                          processChildMessages();
-                          handleRegenerate(
-                            setMessageAWaiting,
-                            messageA,
-                            setMessageA,
-                            conversationRecordIds[0],
-                          );
-                          handleRegenerate(
-                            setMessageBWaiting,
-                            messageB,
-                            setMessageB,
-                            conversationRecordIds[1],
-                          );
-                        }}
+                        onClick={async () => await handleEdit(true)}
                         title={"重新生成模型輸出"}
                         disabled={isEditing}
                       >
@@ -388,9 +371,7 @@ export default function PromptContainer({
                       </button>
                       <button
                         className="p-1 opacity-0 group-hover:opacity-100 self-end"
-                        onClick={() => {
-                          setIsEditing(true);
-                        }}
+                        onClick={() => setIsEditing(true)}
                         title={"點擊以修改訊息"}
                         disabled={isEditing}
                       >
@@ -405,7 +386,7 @@ export default function PromptContainer({
               <div className="inline-flex items-center justify-center ml-auto">
                 <button
                   className="p-1 self-end"
-                  onClick={handleLeftShift}
+                  onClick={() => handleShift(childMessageIndex - 1)}
                   disabled={childMessageIndex === 0 || !isCompleted}
                 >
                   <ChevronLeft size={20} />
@@ -415,7 +396,7 @@ export default function PromptContainer({
                 </span>
                 <button
                   className="p-1 self-end"
-                  onClick={handleRightShift}
+                  onClick={() => handleShift(childMessageIndex + 1)}
                   disabled={
                     childMessageIndex === childAMessages.length - 1 ||
                     !isCompleted

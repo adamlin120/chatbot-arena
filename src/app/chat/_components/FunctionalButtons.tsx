@@ -125,8 +125,12 @@ export default function FunctionalButtons() {
 
     setSendingRating(false);
     if (response.status === 200) {
-      // Use a pop up to show the message that the rating has been submitted, do not use toast
-      toast.success("您的回饋已經送出，謝謝！");
+      toast.success(
+        "您的回饋已經送出，謝謝！\n歡迎修改模型輸出，讓我們的模型有機會做得更好",
+        {
+          className: "whitespace-pre-line",
+        },
+      );
       setRated(true);
       // read the model names from the response
       const responseData = await response.json();
