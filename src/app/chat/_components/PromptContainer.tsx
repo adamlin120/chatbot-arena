@@ -96,10 +96,6 @@ export default function PromptContainer({
       messageB.slice(0, msgIndex).concat(childBMessages[newChildIndex]),
     );
 
-    console.log(
-      "new conversationRecordIds: ",
-      childConversationIds[newChildIndex],
-    );
     setConversationRecordIds(childConversationIds[newChildIndex]);
     setChildMessageIndex(newChildIndex);
   };
@@ -257,7 +253,6 @@ export default function PromptContainer({
         await fluent(50);
       }
 
-      console.log("newConversationRecordId: ", newConversationRecordId);
       newConversationRecordIds[conversationRecordIdIndex] =
         newConversationRecordId;
 
@@ -287,11 +282,6 @@ export default function PromptContainer({
       ),
     ]);
 
-    console.log("old childConversationIds: ", childConversationIds);
-    console.log("new childConversationIds: ", [
-      ...childConversationIds,
-      newConversationRecordIds,
-    ]);
     setChildConversationIds([
       ...childConversationIds,
       newConversationRecordIds,
