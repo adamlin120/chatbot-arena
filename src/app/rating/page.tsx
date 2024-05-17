@@ -147,7 +147,7 @@ export default function RatingPage() {
 
     if (selected === undefined) {
       console.log("Please rate prompts & completions");
-      alert("Please rate prompts & completions");
+      toast.error("請選取何者較佳");
       return;
     }
     var originalScore;

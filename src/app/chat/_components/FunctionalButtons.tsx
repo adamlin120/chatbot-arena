@@ -61,7 +61,6 @@ export default function FunctionalButtons() {
     setRated(false);
     setRatingButtonDisabled(false);
     if (messageA.length <= 2 && messageB.length <= 2) {
-      console.log("Useless action, you have already restarted the chat.");
       return;
     }
     setMessageA([
@@ -148,7 +147,6 @@ export default function FunctionalButtons() {
       if (modelB) {
         setModelBName(modelB.model);
       }
-      console.log("Rating submitted successfully");
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);

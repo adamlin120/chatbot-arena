@@ -80,8 +80,6 @@ export default function CompletionContainer({
       return;
     }
 
-    console.log("newMessage: ", message);
-
     await saveEditedModelOutput();
     messages[msgIndex].content = message;
     router.refresh();
