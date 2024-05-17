@@ -6,6 +6,7 @@ import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { Message } from "@/lib/types/db";
+import ip_test from "./ip_test";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
@@ -175,32 +176,7 @@ export default function PromptInput() {
     promptInputRef.current.style.height = "auto";
 
     if (!session || !session.user) {
-      const response = await fetch("https://api.ipify.org?format=json");
-      const data = await response.json();
-      const { ip } = data;
-      try {
-        const response = await fetch("/api/chat/trail/send", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ip: ip }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to store IP address");
-        }
-        const responseData = await response.json();
-        const { quota } = responseData;
-        if (quota >= 3) {
-          toast.info("喜歡這個GPT測試嗎？立刻註冊！");
-          setTimeout(() => {
-            router.push("/login");
-          }, 3000);
-          return;
-        }
-      } catch (error) {
-        console.error("Error storing IP address:", error);
-      }
+      ip_test(router);
     }
   };
 

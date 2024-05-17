@@ -40,8 +40,7 @@ export default function RatingPage() {
   const handleColumnClick = (isOriginal: boolean) => {
     if (isOriginal) {
       setSelected("original");
-    }
-    else {
+    } else {
       setSelected("edited");
     }
   };
@@ -102,8 +101,7 @@ export default function RatingPage() {
         router.push("/login");
       } else if (!session) {
         router.push("/login");
-      }
-      else {
+      } else {
         await fetchRandomRating();
         setLoading(false);
       }
@@ -119,7 +117,7 @@ export default function RatingPage() {
     if (direction == 1) {
       if (content) {
         content.classList.add("fade-out-R");
-        content.classList.remove("fade-in")
+        content.classList.remove("fade-in");
         setTimeout(() => {
           fetchRandomRating();
         }, 1000);
@@ -127,7 +125,7 @@ export default function RatingPage() {
     } else {
       if (content) {
         content.classList.add("fade-out-L");
-        content.classList.remove("fade-in")
+        content.classList.remove("fade-in");
         setTimeout(() => {
           fetchRandomRating();
         }, 1000);
@@ -157,8 +155,7 @@ export default function RatingPage() {
     if (selected == "original") {
       originalScore = 5;
       revisedScore = 1;
-    }
-    else if (selected == "edited") {
+    } else if (selected == "edited") {
       originalScore = 1;
       revisedScore = 5;
     }

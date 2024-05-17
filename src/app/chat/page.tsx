@@ -9,41 +9,20 @@ import MessageSection from "./_components/MessageSection";
 import PromptInput from "./_components/PromptInput";
 import FunctionalButtons from "./_components/FunctionalButtons";
 import { MessageContext } from "@/context/message";
+import ip_test from "./_components/ip_test";
 
 export default function ChatPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { status } = useSession();
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (!session || !session.user) {
-        const response = await fetch("https://api.ipify.org?format=json");
-
-        const data = await response.json();
-        const { ip } = data;
-        try {
-          const response = await fetch("/api/chat/trail", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ip: ip }),
-          });
-          if (!response.ok) {
-            throw new Error("Failed to store IP address");
-          }
-          const responseData = await response.json();
-          const { quota } = responseData;
-          if (quota >= 3) {
-            router.push("/login");
-          }
-        } catch (error) {
-          console.error("Error storing IP address:", error);
-        }
+      if (status === "unauthenticated") {
+        ip_test(router);
       }
     };
     checkAuth();
-  }, []);
+  }, [status]);
   // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
   // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
 
@@ -61,7 +40,7 @@ export default function ChatPage() {
   return (
     // Todo: think a better way to handle the height of the main container
     // If min-h-[100dvh] is used, it will be too high
-    <main className="pt-3 px-10 md:min-h-[90dvh] md:max-h-[90dvh] flex flex-col fade-in">
+    <main className="pt-3 px-10 mb-3 md:min-h-[90dvh] md:max-h-[90dvh] flex flex-col fade-in">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -82,7 +61,7 @@ export default function ChatPage() {
           <h3>🤖 模型 B: {context.modelBName}</h3>
         </div>
       </div>
-      <div className="flex flex-col flex-grow h-full">
+      <div className="flex flex-col flex-grow h-full pb-5">
         <MessageSection />
         <PromptInput />
         <FunctionalButtons />

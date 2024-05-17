@@ -17,7 +17,6 @@
   }
 }
 
-
 /* Todo: support light mode */
 /* :root {
   --foreground-rgb: 0, 0, 0;
@@ -53,6 +52,7 @@ body {
 /* for scroll bar */
 ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
