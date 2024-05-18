@@ -5,17 +5,11 @@ import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.redirect("/login");
-  }
-  const user = await getUserByEmail(session.user.email);
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export async function GET(request: NextRequest) {
+  const headers = new Headers(request.headers);
+  const userId: string = headers.get("userId") || ANONYMOUS_USER_ID;
 
-  const randomRatings = await getRandomRatings(1, user.id);
+  const randomRatings = await getRandomRatings(1, userId);
 
   if (randomRatings.length === 0) {
     return NextResponse.json(
@@ -40,17 +34,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const session = await auth();
-  var userId;
-  if (!session || !session.user) {
-    userId = ANONYMOUS_USER_ID;
-  } else {
-    const user = await getUserByEmail(session.user.email);
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    userId = user.id;
-  }
+  const headers = new Headers(req.headers);
+  const userId: string = headers.get("userId") || ANONYMOUS_USER_ID;
   const data = await req.json();
   const { rateEditingID, promptEditedScore, completionEditedScore, feedback } =
     data;

@@ -7,21 +7,6 @@ import { db } from "../../../_base";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  //Read user id from nextauth session
-  let id;
-  const session = await auth();
-  if (!session || !session.user) {
-    id = ANONYMOUS_USER_ID;
-  } else {
-    const user = await getUserByEmail(session.user.email);
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    id = user.id;
-  }
-
   const { conversationRecordId } = await request.json();
 
   if (!conversationRecordId) {
