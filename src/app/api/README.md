@@ -138,11 +138,11 @@ Response:
 {
     {
       "modelName": "Model A Name",
-      "score": 0.6
+      "eloRating": 0.6
     },
     {
       "modelName": "Model B Name",
-      "score": 0.4
+      "eloRating": 0.4
     }
 }
 ```

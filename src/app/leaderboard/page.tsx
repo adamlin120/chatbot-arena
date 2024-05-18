@@ -23,14 +23,14 @@ export default function LeaderboardPage() {
         </thead>
         <tbody>
           {leaderboard.map(
-            (model: { modelName: string; score: number }, index) => (
+            (model: { modelName: string; eloRating: number }, index) => (
               <tr
                 key={model.modelName}
                 className="border-b border-gray-200 hover:bg-gray-700"
               >
                 <td className="px-6 py-4">{index + 1}</td>
                 <td className="px-6 py-4">{model.modelName}</td>
-                <td className="px-6 py-4">{model.score}</td>
+                <td className="px-6 py-4">{model.eloRating}</td>
               </tr>
             ),
           )}
