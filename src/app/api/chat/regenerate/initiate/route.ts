@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 import { db } from "../../../_base";
+import { checkIp, quotaExceedResponse } from "@/lib/auth/ipCheck";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,9 @@ export async function POST(request: NextRequest) {
   let id;
   const session = await auth();
   if (!session || !session.user) {
+    if ((await checkIp(request)) === false) {
+      return quotaExceedResponse();
+    }
     id = ANONYMOUS_USER_ID;
   } else {
     const user = await getUserByEmail(session.user.email);

@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 import { ANONYMOUS_USER_ID } from "@/lib/auth";
 import { db } from "../../_base";
+import { checkIp, quotaExceedResponse } from "@/lib/auth/ipCheck";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,9 @@ export async function POST(request: NextRequest) {
   let conversation;
   const session = await auth();
   if (!session || !session.user) {
-    //return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if ((await checkIp(request)) === false) {
+      return quotaExceedResponse();
+    }
     conversation = await db.conversation.create({
       data: {
         contributorId: ANONYMOUS_USER_ID,

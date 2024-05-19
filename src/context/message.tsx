@@ -2,6 +2,7 @@
 import { Message } from "@/lib/types/db";
 import { createContext, useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const DEFAULT_MODEL_NAME = "評分後即可揭曉";
@@ -33,6 +34,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [conversationRecordIds, setConversationRecordIds] = useState<string[]>(
     [],
   );
+  const router = useRouter();
 
   const [messageA, setMessageA] = useState<Message[]>([
     {
@@ -69,6 +71,12 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (!response.body) {
+      return;
+    } else if (response.status === 429) {
+      toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
