@@ -55,7 +55,7 @@ type ConversationRound {
   originalConversationRecordId String? @db.ObjectId
 }
 
-model Trail {
+model Trial {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   ip    String @unique
   quota Int

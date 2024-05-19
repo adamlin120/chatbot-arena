@@ -9,20 +9,11 @@ import MessageSection from "./_components/MessageSection";
 import PromptInput from "./_components/PromptInput";
 import FunctionalButtons from "./_components/FunctionalButtons";
 import { MessageContext } from "@/context/message";
-import ip_test from "./_components/ip_test";
 
 export default function ChatPage() {
   const router = useRouter();
   const { status } = useSession();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (status === "unauthenticated") {
-        ip_test(router);
-      }
-    };
-    checkAuth();
-  }, [status]);
   // Todo: React Hook useEffect has missing dependencies: 'router' and 'session'. Either include them or remove the dependency array.
   // If this is intentional, add a // eslint-disable-next-line react-hooks/exhaustive-deps comment before the line of dependency array.
 

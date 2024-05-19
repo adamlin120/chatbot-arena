@@ -15,7 +15,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
-import ip_test from "./ip_test";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 const MAX_TOKENS = 2048;
@@ -179,6 +178,14 @@ export default function PromptContainer({
           },
           body: JSON.stringify({ conversationRecordId }),
         });
+        // if response code is 429, it means the user has exceeded the quota
+        if (response.status === 429) {
+          toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+          setTimeout(() => {
+            router.push("/login");
+          }, 3000);
+          return;
+        }
         if (!response.ok) {
           throw new Error("Failed to get new conversation record ID");
         }
@@ -220,6 +227,12 @@ export default function PromptContainer({
 
       if (!response || !response.body) {
         return;
+      } else if (response.status === 429) {
+        toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
+        return;
       } else if (response.status !== 200) {
         toast.error(serverErrorMessage);
         return;
@@ -258,10 +271,6 @@ export default function PromptContainer({
 
       setRatingButtonDisabled(false);
       setMessagesWaiting(false);
-
-      if (!session || !session.user) {
-        ip_test(router);
-      }
     };
 
     const newConversationRecordIds: string[] = ["", ""];

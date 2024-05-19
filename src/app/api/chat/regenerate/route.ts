@@ -12,11 +12,20 @@ import {
   conversationRoundDBOutputType,
   ConversationRound,
 } from "@/lib/types/db";
+import { increaseQuotaAndCheck, quotaExceedResponse } from "@/lib/auth/ipCheck";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 250;
 
 export async function POST(request: NextRequest) {
+  const session = await auth();
+  if (!session || !session.user) {
+    if ((await increaseQuotaAndCheck(request)) === false) {
+      return quotaExceedResponse();
+    }
+  }
+
   const { messages, conversationRecordId } = await request.json();
 
   if (!messages || !conversationRecordId) {

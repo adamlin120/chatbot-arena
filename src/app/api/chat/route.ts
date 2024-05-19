@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { StreamingTextResponse } from "ai";
 import getStream from "@/lib/chat/stream";
 import { getModelByConversationRecordId } from "@/data/conversation";
-
+import { increaseQuotaAndCheck, quotaExceedResponse } from "@/lib/auth/ipCheck";
+import { auth } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 export const maxDuration = 250;
 
@@ -11,7 +12,12 @@ export async function POST(request: NextRequest) {
   try {
     // This is to test frontend time out
     // await new Promise(resolve => setTimeout(resolve, 7000));
-
+    const session = await auth();
+    if (!session || !session.user) {
+      if ((await increaseQuotaAndCheck(request)) === false) {
+        return quotaExceedResponse();
+      }
+    }
     // Get the message from the request query
     const requestBody = await request.json();
     // Please use a validator in production

@@ -6,7 +6,6 @@ import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { Message } from "@/lib/types/db";
-import ip_test from "./ip_test";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
 
@@ -30,10 +29,9 @@ export default function PromptInput() {
     rated,
     initiateChat,
   } = context;
-
+  const router = useRouter();
   const MAX_TOKENS = 2048;
   const { data: session } = useSession();
-  const router = useRouter();
 
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -100,6 +98,12 @@ export default function PromptInput() {
       .finally(() => clearTimeout(timeoutId));
 
     if (!response || !response.body) {
+      return;
+    } else if (response.status === 429) {
+      toast.info("喜歡這個GPT測試嗎？立刻註冊！");
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
       return;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
@@ -174,10 +178,6 @@ export default function PromptInput() {
     );
     promptInputRef.current.value = "";
     promptInputRef.current.style.height = "auto";
-
-    if (!session || !session.user) {
-      ip_test(router);
-    }
   };
 
   return (
