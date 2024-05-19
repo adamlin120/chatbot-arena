@@ -1,9 +1,14 @@
-import { PrismaClient } from "@/prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
+import { PrismaClient } from '@prisma/client'
 
-// ref: https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections#prevent-hot-reloading-from-creating-new-instances-of-prismaclient
+const prismaClientSingleton = () => {
+  return new PrismaClient().$extends(withAccelerate())
+}
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+declare global {
+  var prisma: undefined | ReturnType<typeof prismaClientSingleton>
+}
 
-export const db = globalForPrisma.prisma || new PrismaClient();
+export const db = globalThis.prisma ?? prismaClientSingleton()
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = db
