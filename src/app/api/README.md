@@ -127,52 +127,27 @@ If the request rating is 1, it means the completion is better than the other com
 
 This API will also lead to the revelation of the model name that the user has rated, and after rating, the user will not be able to rate again in this session.
 
-### Get Average Rating By Model
+### Get Leaderboard
 
-Endpoint: /api/rating/model/average
-Method: GET
-
-Request:
-
-```json
-{
-  "model_name": "Model Name"
-}
-```
-
-Response:
-
-```json
-{
-  "average_rating": 0.6
-}
-```
-
-The average rating is calculated by the proportion that a model is rated better than the other model. For example, if 10 ratings are submitted, and 6 of them are rated better than the other model, the average rating is 0.6.
-
-### Get Ratings Ranking of All Models
-
-Endpoint: /api/rating/ranking
+Endpoint: /api/leaderboard
 Method: GET
 
 Response:
 
 ```json
 {
-  "rankings": [
     {
-      "model_name": "Model A Name",
-      "average_rating": 0.6
+      "modelName": "Model A Name",
+      "eloRating": 0.6
     },
     {
-      "model_name": "Model B Name",
-      "average_rating": 0.4
+      "modelName": "Model B Name",
+      "eloRating": 0.4
     }
-  ]
 }
 ```
 
-The ranking is sorted by the average rating in descending order.
+The ranking is sorted by the average rating in descending order. The score is calculated using Elo.
 
 ## Conversation Record API
 

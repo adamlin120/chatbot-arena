@@ -8,6 +8,8 @@ import {
   editRatingByConversationRecordId,
   getModelByConversationRecordId,
 } from "@/data/conversation";
+import { updateEloRating, computeElo } from "@/data/elo";
+import { Battle, EloRating } from "@/lib/types/elo";
 import { db } from "../../_base";
 
 export const maxDuration = 30;
@@ -77,6 +79,13 @@ export async function POST(request: NextRequest) {
 
   var conversationRoundRating = 0;
   var siblingConversationRoundRating = 0;
+  var modelA = await getModelByConversationRecordId(conversationRecordId);
+  var modelB = await getModelByConversationRecordId(siblingRecordId);
+  var battle: Battle = {
+    modelA: modelA ? modelA : "",
+    modelB: modelB ? modelB : "",
+    winner: "Tie",
+  };
 
   switch (rating) {
     case 0:
@@ -86,6 +95,7 @@ export async function POST(request: NextRequest) {
     case 1:
       conversationRoundRating = 1;
       siblingConversationRoundRating = -1;
+      battle.winner = "A";
       break;
     case 2:
       conversationRoundRating = 0;
@@ -102,14 +112,25 @@ export async function POST(request: NextRequest) {
     siblingConversationRoundRating,
   );
 
+  const originalEloRating: EloRating[] = await db.eloLeaderboard.findMany({
+    select: {
+      modelName: true,
+      eloRating: true,
+    },
+  });
+
+  const newEloRating: EloRating[] = await computeElo(originalEloRating, battle);
+
+  await updateEloRating(newEloRating);
+
   return NextResponse.json([
     {
       conversationRecordId,
-      model: await getModelByConversationRecordId(conversationRecordId),
+      model: modelA,
     },
     {
       conversationRecordId: siblingRecordId,
-      model: await getModelByConversationRecordId(siblingRecordId),
+      model: modelB,
     },
   ]);
 }

@@ -84,3 +84,8 @@ type Score {
   raterId               String  @db.ObjectId
   feedback              String?
 }
+
+model eloLeaderboard {
+  modelName String @id @map("_id")
+  eloRating Float
+}
