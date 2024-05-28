@@ -51,6 +51,9 @@ export default function RatingPage() {
       content.classList.add("hidden");
     }
     const res = await fetch("/api/rating");
+    if (!res.ok) {
+      return;
+    }
     const data = await res.json();
     setFeedbackText("");
     setPromptRating(undefined);
@@ -199,8 +202,11 @@ export default function RatingPage() {
       <div id="content" className="p-5 px-44 fade-in hidden-scrollbar">
         <div className="flex flex-col gap-3">
           <div className="text-3xl font-bold">Review Feedback</div>
-          <div className="text-xl">
+          <div className="text-s">
             對其他使用者編輯後的prompts和completions進行評分
+          </div>
+          <div className="text-xl">
+            請點選表現較好的conversation：
           </div>
         </div>
         <div className="flex flex-col mt-10">

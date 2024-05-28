@@ -91,67 +91,82 @@ const ProfilePage = () => {
     setNewBio(profile.bio); // Reset newBio to the current bio
   };
   return (
-    <div className="bg-[rgb(31,41,55,0.3)] rounded-lg p-6 fade-in">
-      <h1 className="text-3xl font-bold mb-6 text-white">個人檔案/Profile</h1>
-      <div className="max-w-md mx-auto">
-        <div className="flex items-center mb-6">
-          <h2 className="text-xl font-semibold text-white mr-4">
-            使用者名稱/Username
-          </h2>
-          <Image
-            src={profile.image}
-            alt="Profile Image"
-            width={48}
-            height={48}
-            className="rounded-full"
-          />
-        </div>
-        <p className="text-lg text-white mb-6">{profile.username}</p>
-
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-white">金幣/Coins</h2>
-          <p className="text-lg text-white">{profile.coins}</p>
-        </div>
-
+    <div className="bg-[rgb(31,41,55,0.3)] p-5 px-44 fade-in hidden-scrollbar rounded-lg">
+      <div className="flex flex-col gap-3">
+        <div className="text-3xl font-bold">Profile</div>
+      <div className="text-s">使用者個人檔案管理</div>
+      </div>
+      <div className="mx-auto">
+        <table className="w-full text-left text-white">
+          <tbody>
+            <tr className="border-b border-gray-600" style={{ userSelect: 'none' }}>
+              <td className="text-l font-semibold py-2" style={{ width: '240px' }}>使用者名稱/Username</td>
+              <td className="flex items-center py-2">
+              &nbsp;&nbsp;
+                <Image
+                  src={profile.image}
+                  alt="Profile Image"
+                  width={48}
+                  height={48}
+                  className="rounded-full mr-4"
+                />
+                <span className="text-lg">{profile.username}</span>
+              </td>
+            </tr>
+            <tr className="border-b border-gray-600" style={{ userSelect: 'none' }}>
+              <td className="text-l font-semibold py-2">金幣/Coins</td>
+              <td className="text-lg py-2">&nbsp;&nbsp;{profile.coins}</td>
+            </tr>
+            <tr>
+              <td className="text-l font-semibold py-2" style={{ userSelect: 'none' }}>自介/Bio</td>
+              <td className="py-2">
+                <div className={`w-full h-48 border ${isEditing ? 'border-white' : 'border-none'} rounded-md p-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}>
+                  {isEditing ? (
+                    <textarea
+                      className="w-full h-full border-none resize-none outline-none bg-[rgb(31,41,55)] text-white text-lg" // Added text-lg class here
+                      style={{ width: 'calc(100% - 1rem)' }}
+                      value={newBio}
+                      onChange={(e) => setNewBio(e.target.value)}
+                    />
+                  ) : (
+                    <p className="w-full h-full text-lg mb-4 overflow-auto border-none">{profile.bio}</p> // Added text-lg class here
+                  )}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         {isEditing ? (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white">自介/Bio</h2>
-            <textarea
-              className="w-full border border-gray-300 rounded-md p-3 text-black leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={newBio}
-              onChange={(e) => setNewBio(e.target.value)}
-            />
-            <div className="flex justify-end mt-4 space-x-4">
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
-                onClick={handleSaveBio}
-              >
-                儲存/Save
-              </button>
-              <button
-                className="bg-gray-300 hover:bg-gray-400 text-white font-semibold px-6 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
-                onClick={handleCancelEdit}
-              >
-                取消/Cancel
-              </button>
-            </div>
+          <div className="flex justify-end mt-4 space-x-4">
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+              onClick={handleSaveBio}
+            >
+              儲存/Save
+            </button>
+            <button
+              className="bg-gray-300 hover:bg-gray-400 text-white font-semibold px-6 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
+              onClick={handleCancelEdit}
+            >
+              取消/Cancel
+            </button>
           </div>
         ) : (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white">自介/Bio</h2>
-            <p className="text-lg text-white mb-4">{profile.bio}</p>
-            {profile.email === session?.user?.email && (
+
+          profile.email === session?.user?.email && (
+            <div className="flex justify-end mt-4 space-x-4">
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
                 onClick={handleEditBio}
               >
                 編輯/Edit Bio
               </button>
-            )}
-          </div>
+            </div>
+          )
         )}
       </div>
     </div>
+
   );
 };
 
