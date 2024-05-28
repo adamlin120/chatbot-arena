@@ -108,7 +108,7 @@ export default function Column({
 
   return (
     <div
-      className={`flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border ${isClick ? "border-sky-500 border-4" : "border-white border-4"}`}
+      className={`cursor-pointer flex-1 flex flex-col justify-center gap-10 p-3 bg-[rgb(31,41,55)] rounded-lg border ${isClick ? "border-sky-500 border-4" : "border-white border-4"}`}
       onClick={handleClick}
     >
       <div className="bg-[rgb(31,41,55)] text-center font-bold text-2xl rounded-xl p-3 mx-auto mt-4 whitespace-nowrap">
@@ -120,7 +120,7 @@ export default function Column({
           <span>{isOriginal ? `Original Prompt` : `Revised Prompt`}</span>
           {!isOriginal && (
             <label
-              className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none"
+              className="ml-3 inline-flex align-middle items-center cursor-grabbing focus:outline-none"
               onClick={(e) => e.stopPropagation()}
             >
               <input
@@ -178,7 +178,7 @@ export default function Column({
           </span>
           {!isOriginal && (
             <label
-              className="ml-3 inline-flex align-middle items-center cursor-pointer focus:outline-none"
+              className="ml-3 inline-flex align-middle items-center cursor-grabbing focus:outline-none"
               onClick={(e) => e.stopPropagation()}
             >
               <input

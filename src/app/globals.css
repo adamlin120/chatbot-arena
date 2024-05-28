@@ -383,3 +383,8 @@ body {
 .hidden-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.json-container {
+  height: 200px;
+  overflow: auto;
+}
