@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import CircularProgress from '@mui/material/CircularProgress';
 import Loading from "./Loading";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export default function DatasetPage() {
   const router = useRouter();
