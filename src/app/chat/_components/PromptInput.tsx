@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useContext, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
 import { Message } from "@/lib/types/db";
 
 const serverErrorMessage = "伺服器端錯誤，請稍後再試";
@@ -31,7 +30,6 @@ export default function PromptInput() {
   } = context;
   const router = useRouter();
   const MAX_TOKENS = 2048;
-  const { data: session } = useSession();
 
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -186,6 +184,7 @@ export default function PromptInput() {
         <div className="flex-grow overflow-y-auto max-h-60 px-2 pr-5">
           <textarea
             className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
+            autoFocus
             onCompositionStart={handleComposingStart}
             onCompositionEnd={handleComposingEnd}
             onInput={handleInput}
