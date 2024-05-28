@@ -36,27 +36,20 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   );
   const router = useRouter();
 
-  const [messageA, setMessageA] = useState<Message[]>([
+  const origMessage: Message[] = [
     {
       role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
+      content:
+        "你是一個繁體中文人工智能助理，必須根據我的輸入做出適當的回覆以解決我的需求。",
     },
     {
       role: "assistant",
-      content: "No problem, I can do my best to assist you",
+      content: "沒問題，我會竭盡所能地協助您。",
     },
-  ]);
-  const [messageB, setMessageB] = useState<Message[]>([
-    {
-      role: "user",
-      content: "You are a helpful chatbot that aims to assist human.",
-    },
-    {
-      role: "assistant",
-      content: "No problem, I can do my best to assist you",
-    },
-  ]);
+  ];
 
+  const [messageA, setMessageA] = useState<Message[]>(origMessage);
+  const [messageB, setMessageB] = useState<Message[]>(origMessage);
   const [modelAName, setModelAName] = useState<string>(DEFAULT_MODEL_NAME);
   const [modelBName, setModelBName] = useState<string>(DEFAULT_MODEL_NAME);
   const [rated, setRated] = useState<boolean>(false);
