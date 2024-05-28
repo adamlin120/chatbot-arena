@@ -1,5 +1,6 @@
 import { db } from "@/app/api/_base";
 import { RateEditing } from "@/prisma/client";
+export const maxDuration = 60;
 
 function selectNumbers(m: number, n: number): number[] | null {
   if (m > n) {
