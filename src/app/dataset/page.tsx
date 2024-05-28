@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CircularProgress from '@mui/material/CircularProgress';
 import Loading from "./Loading";
-import { green } from "@mui/material/colors";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default function DatasetPage() {
   const router = useRouter();
