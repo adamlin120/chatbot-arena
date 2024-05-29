@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { getRandomChats } from "@/data/chat";
 import { getUserByEmail } from "@/data/user";
 export const dynamic = "force-dynamic";
-
+export const maxDuration = 300;
 export async function GET(req: any) {
   const amount = req.nextUrl.searchParams.get("amount");
   const session = await auth();
