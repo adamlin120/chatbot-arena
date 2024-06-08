@@ -15,8 +15,8 @@ html {
 }
 
 body {
-    width: 350px;
-    height: 300px;
+    width: 600px;
+    height: 600px;
 }
 
 .app {
@@ -26,7 +26,7 @@ body {
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    padding: 20px;
+    padding: 0px;
 }
 
 .title {
