@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Chatbot Arena",
+  "$schema": "https://json.schemastore.org/chrome-manifest.json",
+  "version": "0.1.0",
+  "description": "Chrome Extension for Chatbot Arena Conversations",
+  "icons": {
+    "16": "icons/icon_16.jpeg",
+    "32": "icons/icon_32.jpeg",
+    "48": "icons/icon_48.jpeg",
+    "128": "icons/icon_128.jpeg"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Chatbot Arena",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_idle",
+      "js": [
+        "contentScript.js"
+      ]
+    }
+  ]
+}
