@@ -25,13 +25,7 @@ export default function RootLayout({
         <body className={inter.className + "flex flex-col"}>
           {/* <Header /> */}
           <div className="flex flex-col md:min-h-screen flex-grow">
-            <Link
-              href="/"
-              className="text-2xl ml-[4rem] mt-6 font-semibold text-nowrap w-fit"
-            >
-              LLM Arena
               <HeaderSubtitle />
-            </Link>
             <div className="md:h-full mt-5 mb-16 md:mb-0 md:ml-16">
               {children}
             </div>

@@ -23,7 +23,7 @@ const SideBarContext = createContext<{
 
 export default function SideBar() {
 
-  if (useSearchParams().get("disableSidebar")) {
+  if (useSearchParams().get("chromeExtension")) {
     return null;
   }
 
