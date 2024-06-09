@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import { Suspense } from "react";
 //import AuthInput from "./AuthInput";
 import "react-toastify/dist/ReactToastify.css";
+import { useSearchParams } from "next/navigation";
 //import { toast } from "react-toastify";
 type Props = {
   error?: string;
@@ -122,6 +124,15 @@ function AuthForm(props: Props) {
                  {props.error=="CredentialsSignin"&&!isSignUp&&<p className="bg-red-100 text-red-600 text-center p-2">帳密錯誤或已被註冊，請重試！</p>}
                  {props.error=="NotVerified"&&!isSignUp&&<p className="bg-green-100 text-green-600 text-center p-2">Email驗證信已寄出！</p>}
             </form>*/}
+      {/* If ?chromeExtension=true, Display a text says Hello */}
+      <Suspense>
+        {useSearchParams().get("chromeExtension") ===
+          "true" && (
+          <div className="bg-blue-100 text-blue-600 text-center p-2">
+            請先登入！登入後，重新打開 Chrome 擴充功能即可使用！
+          </div>
+        )}
+      </Suspense>
       <div className="mt-6">
         <button
           type="button"
