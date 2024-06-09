@@ -2,7 +2,7 @@
 
 import './popup.css';
 
-const url = "http://localhost:3000";
+const url = "https://chatbot-arena-woad.vercel.app";
 
 function openIFrame() {
   const app = document.querySelector('.app');

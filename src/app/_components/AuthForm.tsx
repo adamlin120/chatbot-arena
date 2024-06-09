@@ -45,6 +45,20 @@ function AuthForm(props: Props) {
     });
   };
 
+  const handleGoogleSignInChromeExtension = () => {
+    signIn("google", {
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/close`,
+    });
+  }
+
+  const handleGithubSignInChromeExtension = () => {
+    signIn("github", {
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/close`,
+    });
+  }
+
+  const isChromeExtension = useSearchParams().get("chromeExtension") === "true";
+
   return (
     <div className="min-w-[300px] bg-white rounded-lg shadow-lg p-6">
       <div className="flex justify-end"></div>
@@ -126,34 +140,33 @@ function AuthForm(props: Props) {
             </form>*/}
       {/* If ?chromeExtension=true, Display a text says Hello */}
       <Suspense>
-        {useSearchParams().get("chromeExtension") ===
-          "true" && (
+        {isChromeExtension && (
           <div className="bg-blue-100 text-blue-600 text-center p-2">
             請先登入！登入後，重新打開 Chrome 擴充功能即可使用！
           </div>
         )}
-      </Suspense>
-      <div className="mt-6">
-        <button
-          type="button"
-          className="w-full flex items-center justify-center bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
-          onClick={handleGoogleSignIn}
-        >
-          <FaGoogle className="h-10 w-10" />
-          &nbsp; 使用 Google 帳號登入
-        </button>
-      </div>
+        <div className="mt-6">
+          <button
+            type="button"
+            className="w-full flex items-center justify-center bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
+            onClick={isChromeExtension ? handleGoogleSignInChromeExtension : handleGoogleSignIn}
+          >
+            <FaGoogle className="h-10 w-10" />
+            &nbsp; 使用 Google 帳號登入
+          </button>
+        </div>
 
-      <div className="mt-6">
-        <button
-          type="button"
-          className="w-full flex items-center justify-center bg-gray-700 hover:bg-gray-800 text-white py-2 rounded-md"
-          onClick={handleGithubSignIn}
-        >
-          <FaGithub className="h-10 w-10" />
-          &nbsp; 使用 Github 帳號登入
-        </button>
-      </div>
+        <div className="mt-6">
+          <button
+            type="button"
+            className="w-full flex items-center justify-center bg-gray-700 hover:bg-gray-800 text-white py-2 rounded-md"
+            onClick={isChromeExtension ? handleGithubSignInChromeExtension : handleGithubSignIn}
+          >
+            <FaGithub className="h-10 w-10" />
+            &nbsp; 使用 Github 帳號登入
+          </button>
+        </div>
+      </Suspense>
     </div>
   );
 }
