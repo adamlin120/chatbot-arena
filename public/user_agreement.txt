@@ -1,0 +1,82 @@
+1. Introduction
+
+Welcome to TWLLM Chatbot Arena ("the Website"). By accessing or using our Website, you agree to comply with and be bound by the following User Agreement ("Agreement"). Please read this Agreement carefully. If you do not agree with any part of this Agreement, you must not use the Website.
+
+2. Eligibility
+
+You must be at least 12 years old to use the Website. By using the Website, you represent and warrant that you meet this age requirement.
+
+3. Account Registration
+
+3.1 Account Creation: To access certain features of the Website, you may be required to register for an account. You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete.
+
+3.2 Account Security: You are responsible for maintaining the confidentiality of your account information, including your password, and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account or any other breach of security.
+
+4. Use of the Website
+
+4.1 Permitted Use: You agree to use the Website only for lawful purposes and in accordance with this Agreement. You will not use the Website in any way that could damage, disable, overburden, or impair the Website or interfere with any other party's use and enjoyment of the Website.
+
+4.2 Prohibited Activities: You agree not to engage in any of the following activities:
+
+Using any automated system, such as robots, spiders, or offline readers, to access the Website in a manner that sends more request messages to the Website's servers than a human can reasonably produce in the same period by using a conventional web browser.
+Attempting to interfere with, compromise the system integrity or security, or decipher any transmissions to or from the servers running the Website.
+Taking any action that imposes, or may impose at our sole discretion, an unreasonable or disproportionately large load on our infrastructure.
+Uploading invalid data, viruses, worms, or other software agents through the Website.
+Collecting or harvesting any personally identifiable information, including account names, from the Website.
+Using the Website for any commercial solicitation purposes.
+Impersonating another person or otherwise misrepresenting your affiliation with a person or entity, conducting fraud, hiding or attempting to hide your identity.
+5. Intellectual Property
+
+5.1 Ownership: The Website and its original content, features, and functionality are and will remain the exclusive property of TWLLM Chatbot Arena and its licensors. The Website is protected by copyright, trademark, and other laws of both the United States and foreign countries.
+
+5.2 Restrictions: You are not permitted to use any data, content, or other materials from the Website for any purpose without obtaining our explicit written permission.
+
+6. Data Collection and Privacy
+
+Please refer to our privacy agreement.
+
+7. Disclaimer of Warranties
+
+The Website is provided on an "as is" and "as available" basis. We do not warrant that the Website will be uninterrupted, timely, secure, or error-free. We do not warrant that the results that may be obtained from the use of the Website will be accurate or reliable.
+
+8. Limitation of Liability
+
+To the fullest extent permitted by law, TWLLM Chatbot Arena shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the Website, even if we have been advised of the possibility of such damages.
+
+9. Responsibility-Free Declaration for TWLLM Chatbot Arena
+
+9.1. No Guarantee of Security
+
+While we implement robust security measures to protect the integrity and confidentiality of the data on our Website, the development team does not guarantee that the Website will be free from cyberattacks, unauthorized access, or other security breaches. We are not liable for any loss, damage, or inconvenience resulting from such incidents.
+
+9.2. No Warranty of Availability and Functionality
+
+The development team does not guarantee the continuous availability or functionality of the Website. There may be interruptions, delays, or errors in the Website's operation due to maintenance, updates, or unforeseen technical issues. We are not responsible for any loss or inconvenience caused by these disruptions.
+
+9.9. No Liability for User-Generated Content
+
+The Website allows users to generate and share content. The development team is not responsible for the content created or shared by users, and we do not endorse or guarantee the accuracy, completeness, or reliability of any user-generated content. Users are solely responsible for the content they generate and share on the Website.
+
+9.4. Limitation of Liability
+
+To the fullest extent permitted by law, the development team shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the Website, even if we have been advised of the possibility of such damages. This includes, but is not limited to, damages for loss of profits, goodwill, use, data, or other intangible losses.
+
+9.5. Unforeseen Circumstances
+
+The development team does not guarantee performance or assume responsibility for situations beyond our control, including but not limited to natural disasters, war, acts of terrorism, civil disturbances, governmental actions, or any other events that were not anticipated at the time of the Website's creation.
+
+9.6. Changes to this Declaration
+
+We may update this Responsibility-Free Declaration from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new declaration on the Website and updating the effective date.
+
+10. Changes to this Agreement
+
+We may update this Agreement from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new Agreement on the Website and updating the effective date.
+
+11. Contact Us
+
+If you have any questions or concerns about this Agreement, please contact us at:
+
+Email: arena.maintain@twllm.com
+
+By using the Website, you acknowledge that you have read and understood this User Agreement and agree to its terms.
