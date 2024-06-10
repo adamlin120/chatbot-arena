@@ -186,6 +186,7 @@ function AuthForm(props: Props) {
                 用戶同意書
               </a>
             </span>
+          </div>
         </div>
       </Suspense>
     </div>
