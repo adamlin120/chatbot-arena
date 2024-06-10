@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Chatbot Arena",
+  "version": "0.1.0",
+  "description": "Chrome Extension for Chatbot Arena Conversations",
+  "icons": {
+    "16": "icons/icon16.jpeg",
+    "32": "icons/icon32.jpeg",
+    "48": "icons/icon48.jpeg",
+    "128": "icons/icon128.jpeg"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Chatbot Arena",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://chatbot-arena-woad.vercel.app/",
+    "http://localhost:3000/"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_idle",
+      "js": [
+        "contentScript.js"
+      ]
+    }
+  ]
+}

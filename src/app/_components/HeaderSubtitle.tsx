@@ -1,7 +1,12 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function HeaderSubtitle() {
+  if (useSearchParams().get("chromeExtension")) {
+    return null;
+  }
   const pathNames = usePathname().split("/");
   const currentPath = pathNames[1];
   const subtitle: { [key: string]: string } = {
@@ -12,10 +17,16 @@ export default function HeaderSubtitle() {
     profile: "個人頁面",
   };
   return (
+      <Link
+        href="/"
+        className="text-2xl ml-[4rem] mt-6 font-semibold text-nowrap w-fit"
+      >
+        LLM Arena
     <span className="text-xl">
       {currentPath && subtitle[currentPath]
         ? ` - ${subtitle[currentPath]}`
         : ""}
     </span>
+    </Link>
   );
 }

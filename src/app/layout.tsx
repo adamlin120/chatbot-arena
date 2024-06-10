@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { SessionProvider } from "next-auth/react";
 import SideBar from "./_components/SideBar";
-import Link from "next/link";
+import { Suspense } from 'react'
 import HeaderSubtitle from "./_components/HeaderSubtitle";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,18 +25,16 @@ export default function RootLayout({
         <body className={inter.className + "flex flex-col"}>
           {/* <Header /> */}
           <div className="flex flex-col md:min-h-screen flex-grow">
-            <Link
-              href="/"
-              className="text-2xl ml-[4rem] mt-6 font-semibold text-nowrap w-fit"
-            >
-              LLM Arena
-              <HeaderSubtitle />
-            </Link>
+              <Suspense>
+                <HeaderSubtitle />
+              </Suspense>
             <div className="md:h-full mt-5 mb-16 md:mb-0 md:ml-16">
               {children}
             </div>
           </div>
-          <SideBar />
+          <Suspense>
+            <SideBar />
+          </Suspense>
           {/* <Footer /> */}
         </body>
       </SessionProvider>
