@@ -9,9 +9,6 @@
     "48": "icons/icon48.jpeg",
     "128": "icons/icon128.jpeg"
   },
-  "background": {
-    "service_worker": "background.js"
-  },
   "action": {
     "default_title": "Chatbot Arena",
     "default_popup": "popup.html"

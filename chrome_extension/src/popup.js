@@ -4,6 +4,11 @@ import './popup.css';
 
 const url = "https://chatbot-arena-woad.vercel.app";
 
+function login() {
+  window.open(url + '/login?chromeExtension=true', '_blank');
+  return;
+}
+
 function openIFrame() {
   const app = document.querySelector('.app');
   // Remove all child elements of app
@@ -17,6 +22,10 @@ function openIFrame() {
 }
 
 (function() {
+  document.querySelector('.privacy').addEventListener('click', () => {
+    window.open(url + '/privacy.txt', '_blank');
+  });
+  document.querySelector('.login').addEventListener('click', login);
   chrome.cookies.get(
     {
       url: url,
@@ -31,15 +40,15 @@ function openIFrame() {
             name: 'authjs.session-token',
           },
           (cookie2) => {
-            if (!cookie2) {
-              window.open(url + '/login?chromeExtension=true');
-              return;
+            if (cookie2) {
+              openIFrame();
             }
-            openIFrame();
           }
         );
       }
-      openIFrame();
+      if (cookie) {
+        openIFrame();
+      }
     }
   );
 })();
