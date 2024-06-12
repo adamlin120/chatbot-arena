@@ -17,6 +17,7 @@ html {
 body {
     width: 600px;
     height: 600px;
+    background-color: rgb(31, 41, 55);
 }
 
 .app {
@@ -89,4 +90,10 @@ code {
     width: 50px;
     border: .5px dashed #000;
     opacity: .1;
+}
+
+.text {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #fff;
 }

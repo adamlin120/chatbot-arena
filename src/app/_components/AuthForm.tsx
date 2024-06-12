@@ -165,6 +165,28 @@ function AuthForm(props: Props) {
             <FaGithub className="h-10 w-10" />
             &nbsp; 使用 Github 帳號登入
           </button>
+          <div className="mt-6 text-sm text-gray-500">
+            <span>
+              登入即表示您同意我們的{" "}
+              <a
+                href="/privacy.txt"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                隱私權政策
+              </a>
+              以及我們的{" "}
+              <a
+                href="/user_agreement.txt"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                用戶同意書
+              </a>
+            </span>
+          </div>
         </div>
       </Suspense>
     </div>

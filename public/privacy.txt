@@ -1,0 +1,43 @@
+1. Introduction
+
+Welcome to TWLLM Chatbot Arena ("the Website"). We value your privacy and are committed to protecting your personal information. This Privacy Agreement outlines the types of information we collect, how we use it, and the measures we take to ensure your information remains confidential.
+
+2. Information We Collect
+
+2.1 Conversations and Activities
+
+We collect and store all user conversations and activities on the Website. This data is collected for academic and research purposes. While the conversation records may be published, any personal information will be anonymized to ensure your privacy.
+
+2.2 Email Address
+
+We collect your email address for the purpose of login authentication. Your email address will be stored securely and will not be disclosed to any third parties other than our development team.
+
+2.3 IP Address
+
+We collect your IP address to implement rate limiting and ensure the proper functioning of the Website. Your IP address will be kept confidential and will not be disclosed to any third parties other than our development team.
+
+3. Use of Collected Information
+
+The information we collect is used for the following purposes:
+
+To improve and optimize the performance and functionality of the Website.
+To conduct academic and research activities.
+To ensure the security and integrity of the Website.
+To provide user support and communicate with users regarding their account or the Website's services.
+To use the information collected as a sponsored project by g0v, a Taiwanese NGO for digital society.
+
+4. Data Security
+
+We implement appropriate technical and organizational measures to protect the personal information we collect and store. Access to your personal information is restricted to authorized personnel only, including our developers. 
+
+5. Changes to this Privacy Agreement
+
+We may update this Privacy Agreement from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new Privacy Agreement on the Website and updating the effective date.
+
+6. Contact Us
+
+If you have any questions or concerns about this Privacy Agreement or our data practices, please contact us at:
+
+Email: arena.maintain@twllm.com
+
+By using the Website, you acknowledge that you have read and understood this Privacy Agreement and agree to the collection and use of your personal information as described herein.
