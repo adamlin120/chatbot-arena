@@ -118,7 +118,7 @@ export default function DatasetPage() {
   }
 
   return (
-    <div id="dataset" className="p-5 px-44 fade-in hidden-scrollbar">
+    <div id="dataset" className="p-5 px-10 md:px-44 fade-in hidden-scrollbar">
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Dataset</div>
         <div className="text-s">
