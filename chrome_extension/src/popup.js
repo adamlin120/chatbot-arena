@@ -1,35 +1,35 @@
-'use strict';
+"use strict";
 
-import './popup.css';
+import "./popup.css";
 
 const url = "https://chatbot-arena-woad.vercel.app";
 
 function login() {
-  window.open(url + '/login?chromeExtension=true', '_blank');
+  window.open(url + "/login?chromeExtension=true", "_blank");
   return;
 }
 
 function openIFrame() {
-  const app = document.querySelector('.app');
+  const app = document.querySelector(".app");
   // Remove all child elements of app
-  app.innerHTML = '';
-  const iframe = document.createElement('iframe');
-  iframe.src = url + '/chat?chromeExtension=true';
-  iframe.width = '100%';
-  iframe.height = '100%';
-  iframe.frameBorder = '0';
+  app.innerHTML = "";
+  const iframe = document.createElement("iframe");
+  iframe.src = url + "/chat?chromeExtension=true";
+  iframe.width = "100%";
+  iframe.height = "100%";
+  iframe.frameBorder = "0";
   app.appendChild(iframe);
 }
 
-(function() {
-  document.querySelector('.privacy').addEventListener('click', () => {
-    window.open(url + '/privacy.txt', '_blank');
+(function () {
+  document.querySelector(".privacy").addEventListener("click", () => {
+    window.open(url + "/privacy.txt", "_blank");
   });
-  document.querySelector('.login').addEventListener('click', login);
+  document.querySelector(".login").addEventListener("click", login);
   chrome.cookies.get(
     {
       url: url,
-      name: '__Secure-authjs.session-token',
+      name: "__Secure-authjs.session-token",
     },
     (cookie) => {
       // If cookie is not found, open login page
@@ -37,18 +37,18 @@ function openIFrame() {
         chrome.cookies.get(
           {
             url: url,
-            name: 'authjs.session-token',
+            name: "authjs.session-token",
           },
           (cookie2) => {
             if (cookie2) {
               openIFrame();
             }
-          }
+          },
         );
       }
       if (cookie) {
         openIFrame();
       }
-    }
+    },
   );
 })();

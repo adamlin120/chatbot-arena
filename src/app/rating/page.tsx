@@ -205,9 +205,7 @@ export default function RatingPage() {
           <div className="text-s">
             對其他使用者編輯後的prompts和completions進行評分
           </div>
-          <div className="text-xl">
-            請點選表現較好的conversation：
-          </div>
+          <div className="text-xl">請點選表現較好的conversation：</div>
         </div>
         <div className="flex flex-col mt-10">
           <div className="flex items-center">

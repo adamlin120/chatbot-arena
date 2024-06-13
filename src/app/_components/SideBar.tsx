@@ -22,11 +22,6 @@ const SideBarContext = createContext<{
 } | null>(null);
 
 export default function SideBar() {
-
-  if (useSearchParams().get("chromeExtension")) {
-    return null;
-  }
-
   const [userId, setUserId] = useState(null);
   const { data: session, status } = useSession();
   const username = session?.user?.name;
@@ -113,11 +108,11 @@ export default function SideBar() {
             />
             <div className="hidden md:block md:flex-grow"></div>
             {status === "authenticated" ? (
-              <div className="flex w-full">
+              <div className="flex w-full p-4">
                 {session?.user?.image && userId && (
                   <Link
                     href={`/profile/${userId}`}
-                    className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate flex-grow "
+                    className=" hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate flex-grow flex-shrink-0"
                     onClick={() => setIsOpen(false)}
                   >
                     <div
@@ -128,7 +123,7 @@ export default function SideBar() {
                         src={avatarUrl || ""}
                         width={28}
                         height={28}
-                        className="rounded-full transition-none"
+                        className="rounded-full transition-none flex-shrink-0"
                         alt="profile-pic"
                       />
                     </div>

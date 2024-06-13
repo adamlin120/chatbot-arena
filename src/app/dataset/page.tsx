@@ -1,9 +1,9 @@
 "use client";
 import { getSession } from "next-auth/react";
-import { JSONTree } from 'react-json-tree';
+import { JSONTree } from "react-json-tree";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 import Loading from "./Loading";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -24,15 +24,15 @@ export default function DatasetPage() {
     if (res.ok) {
       return res.json();
     }
-    throw new Error('Failed to fetch random ratings');
-  }
+    throw new Error("Failed to fetch random ratings");
+  };
 
   const fetchRandomChat = async (amount: Number) => {
     const res = await fetch(`/api/dataset/chat?amount=${amount}`);
     if (res.ok) {
       return res.json();
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,8 +60,7 @@ export default function DatasetPage() {
     if (type == "rating") {
       setDownloadingRating(true);
       data = await fetchRandomRating(-1);
-    }
-    else {
+    } else {
       setDownloadingChat(true);
       data = await fetchRandomChat(-1);
     }
@@ -76,8 +75,7 @@ export default function DatasetPage() {
     document.body.removeChild(link);
     if (type == "rating") {
       setDownloadingRating(false);
-    }
-    else {
+    } else {
       setDownloadingChat(false);
     }
   };
@@ -90,22 +88,29 @@ export default function DatasetPage() {
   // Calculate display for chat data
   const indexOfLastItemChat = currentPageChat * itemsPerPage;
   const indexOfFirstItemChat = indexOfLastItemChat - itemsPerPage;
-  const currentItemsChat = chatdata.slice(indexOfFirstItemChat, indexOfLastItemChat);
+  const currentItemsChat = chatdata.slice(
+    indexOfFirstItemChat,
+    indexOfLastItemChat,
+  );
 
   // Navigate for rating data
   const goToPreviousPage = () => {
-    setCurrentPage(currentPage => Math.max(1, currentPage - 1));
+    setCurrentPage((currentPage) => Math.max(1, currentPage - 1));
   };
   const goToNextPage = () => {
-    setCurrentPage(currentPage => Math.min(ratingdata.length, currentPage + 1));
+    setCurrentPage((currentPage) =>
+      Math.min(ratingdata.length, currentPage + 1),
+    );
   };
 
   // Navigate for chat data
   const goToPreviousPageChat = () => {
-    setCurrentPageChat(currentPageChat => Math.max(1, currentPageChat - 1));
+    setCurrentPageChat((currentPageChat) => Math.max(1, currentPageChat - 1));
   };
   const goToNextPageChat = () => {
-    setCurrentPageChat(currentPageChat => Math.min(chatdata.length, currentPageChat + 1));
+    setCurrentPageChat((currentPageChat) =>
+      Math.min(chatdata.length, currentPageChat + 1),
+    );
   };
 
   if (loading) {
@@ -127,27 +132,29 @@ export default function DatasetPage() {
             </div>
           ))}
           <div className="flex justify-center items-center mt-4 space-x-4">
-            <button onClick={goToPreviousPage} className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md">
+            <button
+              onClick={goToPreviousPage}
+              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+            >
               &lt; Prev
             </button>
             <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
               {currentPage}/{ratingdata.length}
             </span>
-            <button onClick={goToNextPage} className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md">
+            <button
+              onClick={goToNextPage}
+              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+            >
               Next &gt;
             </button>
             <button
               onClick={() => downloadJSON("rating", "rating_data.json")}
-              className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingRating ? 'bg-gray-500 cursor-wait' : 'bg-blue-500 hover:bg-blue-600'}`}
+              className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingRating ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
               disabled={downloadingRating}
             >
               Download Rating JSON
             </button>
-            {downloadingRating && (
-              <CircularProgress
-                size={24}
-              />
-            )}
+            {downloadingRating && <CircularProgress size={24} />}
           </div>
         </div>
         <div className="text-xl">2. Chat資料預覽：（至多顯示100筆）</div>
@@ -158,27 +165,29 @@ export default function DatasetPage() {
             </div>
           ))}
           <div className="flex justify-center items-center mt-4 space-x-4">
-            <button onClick={goToPreviousPageChat} className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md">
+            <button
+              onClick={goToPreviousPageChat}
+              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+            >
               &lt; Prev
             </button>
             <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
               {currentPageChat}/{chatdata.length}
             </span>
-            <button onClick={goToNextPageChat} className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md">
+            <button
+              onClick={goToNextPageChat}
+              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+            >
               Next &gt;
             </button>
             <button
               onClick={() => downloadJSON("chat", "chat_data.json")}
-              className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingChat ? 'bg-gray-500 cursor-wait' : 'bg-blue-500 hover:bg-blue-600'}`}
+              className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingChat ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
               disabled={downloadingChat}
             >
               Download Chat JSON
             </button>
-            {downloadingChat && (
-              <CircularProgress
-                size={24}
-              />
-            )}
+            {downloadingChat && <CircularProgress size={24} />}
           </div>
         </div>
       </div>

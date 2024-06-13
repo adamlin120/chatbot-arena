@@ -3,7 +3,9 @@ import { RateEditing } from "@/prisma/client";
 
 function selectNumbers(m: number, n: number): number[] | null {
   if (m > n) {
-    console.error("Error: selected number should be less or equal than database size.");
+    console.error(
+      "Error: selected number should be less or equal than database size.",
+    );
     return null;
   }
 
@@ -74,18 +76,17 @@ export const getRandomRatings = async (count: number, userId?: string) => {
       result.push(pickedRating);
     }
     return result;
-  }
-  else{
+  } else {
     const rateEditingCount = await db.rateEditing.count();
     if (rateEditingCount === 0) {
       return [];
     }
     if (count > rateEditingCount || count == -1) {
-      count = rateEditingCount
+      count = rateEditingCount;
     }
     var result: any[] = [];
-    const selected_index = selectNumbers(count, rateEditingCount)
-    if (selected_index == null){
+    const selected_index = selectNumbers(count, rateEditingCount);
+    if (selected_index == null) {
       throw new Error(
         "Count is bigger than the number of products in the database",
       );
