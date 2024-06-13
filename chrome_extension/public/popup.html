@@ -1,36 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-tw">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Chatbot Arena</title>
     <link rel="stylesheet" href="popup.css" />
-</head>
-<body>
-  <div class="app">
-    <div class="loading">
-      <div class="spinner"></div>
-      <div class="text">
-      <h1> By continue to use our website, you agree to our privacy agreement. Since you have not logged in yet, click the following button for login. </h1>
+  </head>
+  <body>
+    <div class="app">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="text">
+          <h1>
+            By continue to use our website, you agree to our privacy agreement.
+            Since you have not logged in yet, click the following button for
+            login.
+          </h1>
+        </div>
+        <div class="text">
+          <h1>使用我們的網站代表您同意我們的隱私政策。點擊以下按鈕登入。</h1>
+        </div>
       </div>
       <div class="text">
-        <h1> 使用我們的網站代表您同意我們的隱私政策。點擊以下按鈕登入。</h1>
-        </div>
+        <button class="button login">Login 登入</button>
+      </div>
+      <div class="text">
+        <button class="privacy button">
+          See our privacy policy 查看隱私權政策
+        </button>
+      </div>
     </div>
-    <div class="text">
-      <button class="button login">Login 登入</button>
-    </div>
-    <div class="text">
-      <button class="privacy button"> See our privacy policy 查看隱私權政策</button>
-    </div>
-  </div>
 
-  <script src="popup.js"></script>
+    <script src="popup.js"></script>
 
-  <!--
+    <!--
     This HTML file opens when you click on icon from the toolbar.
 
     To begin the development, run `npm run watch`.
     To create a production bundle, use `npm run build`.
-  -->
-</body>
+  --></body>
 </html>

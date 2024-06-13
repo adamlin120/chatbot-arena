@@ -21,12 +21,12 @@ export default function LoginPage(props: Props) {
     });
   }, []);
   return (
-    <div className="flex h-screen overflow-y-scroll fade-in">
-      <div className="w-1/2 flex justify-center items-center bg-gray-100 flyInFromTop">
+    <div className="flex md:h-[90dvh] md:overflow-y-scroll fade-in">
+      <div className="hidden w-1/2 md:flex justify-center items-center bg-gray-100 flyInFromTop">
         <img src="/llama.jpg" alt="Arena Image" className="w-full h-full" />
       </div>
-      <div className="w-1/2 flex justify-center items-center overflow-hidden flyInFromBottom">
-        <div className="w-full max-w-xs">
+      <div className="md:w-1/2 w-full flex justify-center items-center overflow-hidden flyInFromBottom">
+        <div className="w-full max-w-xs items-center">
           <AuthForm error={props.searchParams?.error} />
         </div>
       </div>

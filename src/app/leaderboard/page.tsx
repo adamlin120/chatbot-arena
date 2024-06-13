@@ -12,15 +12,15 @@ export default function LeaderboardPage() {
     fetchLeaderboard();
   }, []);
   return (
-    <div id="leaderboard" className="p-5 px-44 fade-in hidden-scrollbar">
-        <div className="flex flex-col gap-3">
-          <div className="text-3xl font-bold">Leaderboard</div>
-          <div className="text-s">
-            模型分數越高代表根據統計回答越令人滿意
-          </div>
-          <div>
-          </div>
-        </div>
+    <div
+      id="leaderboard"
+      className="p-5 px-10 md:px-44 fade-in hidden-scrollbar"
+    >
+      <div className="flex flex-col gap-3">
+        <div className="text-3xl font-bold">Leaderboard</div>
+        <div className="text-s">模型分數越高代表根據統計回答越令人滿意</div>
+        <div></div>
+      </div>
       <table className="table-auto w-full rounded-lg shadow">
         <thead>
           <tr className="bg-gray-100 text-left text-gray-600 font-bold">
@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
               >
                 <td className="px-6 py-4">{index + 1}</td>
                 <td className="px-6 py-4">{model.modelName}</td>
-                <td className="px-6 py-4">{model.eloRating}</td>
+                <td className="px-6 py-4">{model.eloRating.toFixed(2)}</td>
               </tr>
             ),
           )}

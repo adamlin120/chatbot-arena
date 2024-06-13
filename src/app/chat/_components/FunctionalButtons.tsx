@@ -157,8 +157,8 @@ export default function FunctionalButtons() {
   };
 
   return (
-    <div className="flex w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 w-full gap-2 justify-start items-center border-b border-l rounded-bl-lg border-gray-300 p-4">
+    <div className="flex flex-col md:flex-row w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 w-full gap-2 justify-start items-center border-b border-l border-r md:border-r-0 md:rounded-bl-lg border-gray-300 p-4">
         {ratingButtonAttributes.map((buttonAttribute, index) => (
           <Button
             key={index}
@@ -179,7 +179,7 @@ export default function FunctionalButtons() {
         </h4>
         {showRule && <RuleDialog setShowRule={setShowRule} />}
       </div>
-      <div className="w-fit gap-2 justify-center items-center border-r border-b border-l border-gray-300 rounded-br-lg p-4">
+      <div className="md:w-fit rounded-bl-lg md:rounded-bl-none flex gap-2 justify-center items-center border-r border-b border-l border-gray-300 rounded-br-lg p-4">
         <Button
           text="🔁 重新開始對話"
           onClick={restartChat}

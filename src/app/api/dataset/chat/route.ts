@@ -27,7 +27,7 @@ export async function GET(req: any) {
   }
 
   // Process the randomChats array to extract necessary information
-  const responseData = randomChats.map(chat => ({
+  const responseData = randomChats.map((chat) => ({
     id: chat.id,
     conversationId: chat.conversationId,
     modelName: chat.modelName,

@@ -49,13 +49,13 @@ function AuthForm(props: Props) {
     signIn("google", {
       callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/close`,
     });
-  }
+  };
 
   const handleGithubSignInChromeExtension = () => {
     signIn("github", {
       callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/close`,
     });
-  }
+  };
 
   const isChromeExtension = useSearchParams().get("chromeExtension") === "true";
 
@@ -149,7 +149,11 @@ function AuthForm(props: Props) {
           <button
             type="button"
             className="w-full flex items-center justify-center bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
-            onClick={isChromeExtension ? handleGoogleSignInChromeExtension : handleGoogleSignIn}
+            onClick={
+              isChromeExtension
+                ? handleGoogleSignInChromeExtension
+                : handleGoogleSignIn
+            }
           >
             <FaGoogle className="h-10 w-10" />
             &nbsp; 使用 Google 帳號登入
@@ -160,7 +164,11 @@ function AuthForm(props: Props) {
           <button
             type="button"
             className="w-full flex items-center justify-center bg-gray-700 hover:bg-gray-800 text-white py-2 rounded-md"
-            onClick={isChromeExtension ? handleGithubSignInChromeExtension : handleGithubSignIn}
+            onClick={
+              isChromeExtension
+                ? handleGithubSignInChromeExtension
+                : handleGithubSignIn
+            }
           >
             <FaGithub className="h-10 w-10" />
             &nbsp; 使用 Github 帳號登入

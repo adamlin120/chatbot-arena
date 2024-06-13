@@ -13,10 +13,6 @@
     "default_title": "Chatbot Arena",
     "default_popup": "popup.html"
   },
-  "permissions": [
-    "cookies"
-  ],
-  "host_permissions": [
-    "https://chatbot-arena-woad.vercel.app/"
-  ]
+  "permissions": ["cookies"],
+  "host_permissions": ["https://chatbot-arena-woad.vercel.app/"]
 }

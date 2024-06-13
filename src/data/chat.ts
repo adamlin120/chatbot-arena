@@ -4,7 +4,9 @@ export const maxDuration = 300;
 
 function selectNumbers(m: number, n: number): number[] | null {
   if (m > n) {
-    console.error("Error: selected number should be less or equal than database size.");
+    console.error(
+      "Error: selected number should be less or equal than database size.",
+    );
     return null;
   }
 
@@ -24,31 +26,31 @@ function selectNumbers(m: number, n: number): number[] | null {
 }
 
 export const getRandomChats = async (count: number, userId?: string) => {
-    const conversationCount = await db.conversationRecord.count();
-    if (conversationCount === 0) {
-      return [];
-    }
-    if (count > conversationCount || count == -1) {
-      count = conversationCount
-    }
-    var result: any[] = [];
-    const selected_index = selectNumbers(count, conversationCount)
-    if (selected_index == null){
-      throw new Error(
-        "Count is bigger than the number of products in the database",
-      );
-    }
-    for (var i = 0; i < count; i++) {
-        const pickedConversation = await db.conversationRecord.findFirst({
-          skip: selected_index[i],
-          select: {
-            id: true,
-            conversationId: true,
-            modelName: true,
-            rounds: true,
-          },
-        });
-        result.push(pickedConversation);
-      }
-      return result;
-}
+  const conversationCount = await db.conversationRecord.count();
+  if (conversationCount === 0) {
+    return [];
+  }
+  if (count > conversationCount || count == -1) {
+    count = conversationCount;
+  }
+  var result: any[] = [];
+  const selected_index = selectNumbers(count, conversationCount);
+  if (selected_index == null) {
+    throw new Error(
+      "Count is bigger than the number of products in the database",
+    );
+  }
+  for (var i = 0; i < count; i++) {
+    const pickedConversation = await db.conversationRecord.findFirst({
+      skip: selected_index[i],
+      select: {
+        id: true,
+        conversationId: true,
+        modelName: true,
+        rounds: true,
+      },
+    });
+    result.push(pickedConversation);
+  }
+  return result;
+};
