@@ -14,7 +14,6 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils/shadcn";
 import { useSearchParams } from "next/navigation";
-import { SearchParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 
 const SideBarContext = createContext<{
   isOpen: boolean;
@@ -46,6 +45,10 @@ export default function SideBar() {
 
     fetchUserId();
   }, [session]);
+
+  if (useSearchParams().get("chromeExtension")) {
+    return null;
+  }
 
   return (
     <>
