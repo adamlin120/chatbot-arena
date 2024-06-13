@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/_components/Loading";
@@ -91,7 +91,7 @@ const ProfilePage = () => {
     setNewBio(profile.bio); // Reset newBio to the current bio
   };
   return (
-    <div className="bg-[rgb(31,41,55,0.3)] p-5 px-44 fade-in hidden-scrollbar rounded-lg">
+    <div className="bg-[rgb(31,41,55,0.3)] p-5 px-10 md:px-44 fade-in hidden-scrollbar rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Profile</div>
         <div className="text-s">使用者個人檔案管理</div>
@@ -103,10 +103,7 @@ const ProfilePage = () => {
               className="border-b border-gray-600"
               style={{ userSelect: "none" }}
             >
-              <td
-                className="text-l font-semibold py-2"
-                style={{ width: "240px" }}
-              >
+              <td className="text-l font-semibold py-2 md:w-48">
                 使用者名稱/Username
               </td>
               <td className="flex items-center py-2">
@@ -179,6 +176,13 @@ const ProfilePage = () => {
                 onClick={handleEditBio}
               >
                 編輯/Edit Bio
+              </button>
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+                title="登出"
+                onClick={() => signOut()}
+              >
+                登出
               </button>
             </div>
           )
