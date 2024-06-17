@@ -1,16 +1,15 @@
-"use client";
-import { useEffect, useState } from "react";
+import { getLeaderboard } from "./_components/action";
+
 export const dynamic = "force-dynamic";
-export default function LeaderboardPage() {
-  const [leaderboard, setLeaderboard] = useState([]);
-  useEffect(() => {
-    const fetchLeaderboard = async () => {
-      const res = await fetch("/api/leaderboard");
-      const data = await res.json();
-      setLeaderboard(data);
-    };
-    fetchLeaderboard();
-  }, []);
+
+export default async function LeaderboardPage() {
+  const leaderboard = await getLeaderboard();
+  if (!leaderboard)
+    return (
+      <div className="text-center h-[90%dvh] text-xl mt-10">
+        目前排行榜出了點問題，請稍後再試。
+      </div>
+    );
   return (
     <div
       id="leaderboard"
