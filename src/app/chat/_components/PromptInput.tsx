@@ -75,6 +75,20 @@ export default function PromptInput() {
       }),
       signal: controller.signal,
     })
+      .then((res) => {
+        if (!res.ok) {
+          toast.error("伺服器沒有回應，請稍後再試");
+          setMessageWaiting(false);
+          setMessages((messages) => {
+            return messages.slice(0, messages.length - 2);
+          });
+          if (promptInputRef.current) {
+            promptInputRef.current.value = currPrompt;
+          }
+          return;
+        }
+        return res;
+      })
       .catch((error) => {
         if (error.name === "AbortError") {
           // This may due to llm api error

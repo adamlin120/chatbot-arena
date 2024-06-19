@@ -18,6 +18,7 @@ export default function MessageSection() {
   } = context;
 
   const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Scroll to the bottom of the chat
   // Use block: "nearest" to get a better UX. (https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
@@ -26,20 +27,33 @@ export default function MessageSection() {
       messageEndRef.current &&
       messageA.length > 2 &&
       messageB.length > 2 &&
-      (messageAWaiting || messageBWaiting)
+      (messageAWaiting || messageBWaiting) &&
+      messageContainerRef.current
     ) {
-      messageEndRef.current.scrollIntoView({
-        behavior: "auto",
-        block: "nearest",
-        inline: "nearest",
-      });
+      const h =
+        messageContainerRef.current?.scrollHeight -
+        messageContainerRef.current?.scrollTop -
+        messageContainerRef.current?.clientHeight;
+
+      console.log("h: ", h);
+
+      if (h < 100) {
+        messageEndRef.current.scrollIntoView({
+          behavior: "auto",
+          block: "nearest",
+          inline: "nearest",
+        });
+      }
     }
   }, [messageA, messageB, messageAWaiting, messageBWaiting]);
 
   return (
     // Todo: think a better way to handle the height of the container
     <div className="flex flex-col flex-grow justify-between border max-h-[62dvh]">
-      <div className="flex flex-col gap-8 py-4 overflow-y-auto">
+      <div
+        className="flex flex-col gap-8 py-4 overflow-y-auto"
+        ref={messageContainerRef}
+      >
         {messageA.length <= 2 ? (
           <div className="flex flex-col items-center justify-center h-screen gap-5 text-2xl">
             <Bot size={45} /> 我今天要怎麼幫你呢？
