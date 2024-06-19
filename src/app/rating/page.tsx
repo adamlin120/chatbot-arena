@@ -201,7 +201,10 @@ export default function RatingPage() {
         theme="light"
         className="hidden-scrollbar"
       />
-      <div id="content" className="p-5 px-10 md:px-44 fade-in hidden-scrollbar">
+      <div
+        id="content"
+        className="p-5 px-10 md:px-12 lg:px-36 fade-in hidden-scrollbar"
+      >
         <div className="flex flex-col gap-3">
           <div className="text-3xl font-bold">Review Feedback</div>
           <div className="text-s">
