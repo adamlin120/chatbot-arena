@@ -18,6 +18,8 @@ export const MessageContext = createContext<{
   setMessageAWaiting: React.Dispatch<React.SetStateAction<boolean>>;
   messageBWaiting: boolean;
   setMessageBWaiting: React.Dispatch<React.SetStateAction<boolean>>;
+  justSent: boolean;
+  setJustSent: React.Dispatch<React.SetStateAction<boolean>>;
   ratingButtonDisabled: boolean;
   setRatingButtonDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   modelAName: String;
@@ -55,6 +57,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [rated, setRated] = useState<boolean>(false);
   const [messageAWaiting, setMessageAWaiting] = useState<boolean>(false);
   const [messageBWaiting, setMessageBWaiting] = useState<boolean>(false);
+  const [justSent, setJustSent] = useState<boolean>(false);
   const [ratingButtonDisabled, setRatingButtonDisabled] =
     useState<boolean>(false);
 
@@ -97,6 +100,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         setMessageAWaiting,
         messageBWaiting,
         setMessageBWaiting,
+        justSent,
+        setJustSent,
         ratingButtonDisabled,
         setRatingButtonDisabled,
         initiateChat,

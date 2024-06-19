@@ -23,6 +23,7 @@ export default function PromptInput() {
     setMessageAWaiting,
     messageBWaiting,
     setMessageBWaiting,
+    setJustSent,
     ratingButtonDisabled,
     setRatingButtonDisabled,
     rated,
@@ -174,6 +175,7 @@ export default function PromptInput() {
     }
     promptInputRef.current.value = promptInputRef.current.value.trim();
 
+    setJustSent(true);
     processMessages(
       promptInputRef.current?.value.trim(),
       messageA,

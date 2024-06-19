@@ -14,6 +14,8 @@ export default function MessageSection() {
     messageB,
     messageAWaiting,
     messageBWaiting,
+    justSent,
+    setJustSent,
     conversationRecordIds,
   } = context;
 
@@ -35,9 +37,11 @@ export default function MessageSection() {
         messageContainerRef.current?.scrollTop -
         messageContainerRef.current?.clientHeight;
 
-      console.log("h: ", h);
-
-      if (h < 100) {
+      if (h < 100 || justSent) {
+        // 300 is experimentally determined.
+        if (justSent) {
+          setJustSent(false);
+        }
         messageEndRef.current.scrollIntoView({
           behavior: "auto",
           block: "nearest",
@@ -45,7 +49,8 @@ export default function MessageSection() {
         });
       }
     }
-  }, [messageA, messageB, messageAWaiting, messageBWaiting]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messageA, messageB, messageAWaiting, messageBWaiting, justSent]);
 
   return (
     // Todo: think a better way to handle the height of the container
