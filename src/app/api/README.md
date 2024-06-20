@@ -130,7 +130,8 @@ This API will also lead to the revelation of the model name that the user has ra
 ### Get Leaderboard
 
 Endpoint: /api/leaderboard
-Method: GET
+Method: GET  
+_Note that this API is removed as the leaderboard now uses server component._
 
 Response:
 
