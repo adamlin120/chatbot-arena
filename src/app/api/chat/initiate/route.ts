@@ -43,7 +43,8 @@ export async function POST(request: NextRequest) {
     "mistral-small-latest",
     //"gpt-4",
     //"gpt-3.5-turbo",
-    //"Taiwan-Llama-3-8B-Instruct",
+    "Llama-3-Taiwan-8B-Instruct",
+    "Llama-3-Taiwan-70B-Instruct",
   ];
 
   const modelA = model_list[Math.floor(Math.random() * model_list.length)];

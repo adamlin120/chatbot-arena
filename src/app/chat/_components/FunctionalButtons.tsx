@@ -172,7 +172,7 @@ export default function FunctionalButtons() {
         ))}
         {/* <div className="flex-grow"></div> */}
         <h4
-          className="underline cursor-help ml-5"
+          className="underline cursor-help ml-5 w-fit"
           onClick={() => setShowRule(true)}
         >
           ⓘ&nbsp;規則

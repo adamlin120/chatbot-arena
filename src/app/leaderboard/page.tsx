@@ -1,20 +1,19 @@
-"use client";
-import { useEffect, useState } from "react";
+import { getLeaderboard } from "./_components/action";
+
 export const dynamic = "force-dynamic";
-export default function LeaderboardPage() {
-  const [leaderboard, setLeaderboard] = useState([]);
-  useEffect(() => {
-    const fetchLeaderboard = async () => {
-      const res = await fetch("/api/leaderboard");
-      const data = await res.json();
-      setLeaderboard(data);
-    };
-    fetchLeaderboard();
-  }, []);
+
+export default async function LeaderboardPage() {
+  const leaderboard = await getLeaderboard();
+  if (!leaderboard)
+    return (
+      <div className="text-center h-[90%dvh] text-xl mt-10">
+        目前排行榜出了點問題，請稍後再試。
+      </div>
+    );
   return (
     <div
       id="leaderboard"
-      className="p-5 px-10 md:px-44 fade-in hidden-scrollbar"
+      className="py-5 mx-8 md:mx-24 lg:mx-44 fade-in overflow-x-auto"
     >
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Leaderboard</div>
@@ -24,9 +23,9 @@ export default function LeaderboardPage() {
       <table className="table-auto w-full rounded-lg shadow">
         <thead>
           <tr className="bg-gray-100 text-left text-gray-600 font-bold">
-            <th className="px-6 py-3">Rank</th>
-            <th className="px-6 py-3">Model</th>
-            <th className="px-6 py-3">Score</th>
+            <th className="px-6 py-1">排名 Rank</th>
+            <th className="px-6 py-3">語言模型 Model</th>
+            <th className="px-6 py-3">目前分數 Score</th>
           </tr>
         </thead>
         <tbody>
@@ -36,7 +35,7 @@ export default function LeaderboardPage() {
                 key={model.modelName}
                 className="border-b border-gray-200 hover:bg-gray-700"
               >
-                <td className="px-6 py-4">{index + 1}</td>
+                <td className="px-6 py-1">{index + 1}</td>
                 <td className="px-6 py-4">{model.modelName}</td>
                 <td className="px-6 py-4">{model.eloRating.toFixed(2)}</td>
               </tr>
