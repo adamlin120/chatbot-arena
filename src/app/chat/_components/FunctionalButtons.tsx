@@ -66,21 +66,23 @@ export default function FunctionalButtons() {
     setMessageA([
       {
         role: "user",
-        content: "You are a helpful chatbot that aims to assist human.",
+        content:
+          "你是一個繁體中文人工智能助理，必須根據我的輸入做出適當的回覆以解決我的需求。",
       },
       {
         role: "assistant",
-        content: "No problem, I can do my best to assist you",
+        content: "沒問題，我會竭盡所能地協助您。",
       },
     ]);
     setMessageB([
       {
         role: "user",
-        content: "You are a helpful chatbot that aims to assist human.",
+        content:
+          "你是一個繁體中文人工智能助理，必須根據我的輸入做出適當的回覆以解決我的需求。",
       },
       {
         role: "assistant",
-        content: "No problem, I can do my best to assist you",
+        content: "沒問題，我會竭盡所能地協助您。",
       },
     ]);
     setModelAName(DEFAULT_MODEL_NAME);
