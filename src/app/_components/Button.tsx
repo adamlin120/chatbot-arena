@@ -10,7 +10,7 @@ export default function Button({
 }: {
   text: string | JSX.Element;
   onClick: () => void;
-  disableCond: boolean;
+  disableCond?: boolean;
   className?: string;
 }) {
   return (
