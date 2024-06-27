@@ -32,6 +32,20 @@ export async function POST(request: NextRequest) {
         contributorId: user.id,
       },
     });
+
+    await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        conversations: {
+          connect: {
+            id: conversation.id,
+          },
+        },
+      },
+    });
+      
   }
 
   const model_list = [
@@ -75,11 +89,14 @@ export async function POST(request: NextRequest) {
 
     const conversationRecordId = conversationRecords.map((record) => record.id);
 
+    
     await db.conversation.update({
-      where: { id: conversation.id },
+      where: {
+        id: conversation.id,
+      },
       data: {
         records: {
-          set: conversationRecords,
+          connect: conversationRecordId.map((id) => ({ id })),
         },
       },
     });

@@ -18,7 +18,7 @@ model User {
   avatarUrl      String?
   bio            String?
   verified       Boolean
-  conversations  Conversation[]
+  conversations  Conversation[] @relation("conversations")
   rateEditings   RateEditing[]
 }
 
@@ -30,15 +30,15 @@ model Verification {
 
 model Conversation {
   id            String               @id @default(auto()) @map("_id") @db.ObjectId
-  contributor   User?                @relation(fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  contributor   User?                @relation("conversations", fields: [contributorId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   contributorId String               @db.ObjectId
-  records       ConversationRecord[]
+  records       ConversationRecord[] @relation("records")
 }
 
 model ConversationRecord {
   id                       String               @id @default(auto()) @map("_id") @db.ObjectId
   rounds                   ConversationRound[]
-  conversation             Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  conversation             Conversation         @relation("records", fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   conversationId           String               @db.ObjectId
   prevConversationRecordId String?              @db.ObjectId
   prevConversationRecord   ConversationRecord?  @relation("conversationTree", fields: [prevConversationRecordId], references: [id], onDelete: NoAction, onUpdate: NoAction)
