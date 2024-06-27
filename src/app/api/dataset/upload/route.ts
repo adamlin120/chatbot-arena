@@ -94,7 +94,6 @@ export async function POST(req: any) {
 
   // unzip the file using unzipper
   const zip = await unzipper.Open.buffer(Buffer.from(await file.arrayBuffer()));
-  // Find the chat.html file object from the zip
   const conversationJsonFile = zip.files.find(
     (f) => f.path === "conversations.json",
   );
@@ -103,10 +102,32 @@ export async function POST(req: any) {
     return NextResponse.json({ error: "Invalid zip file" }, { status: 400 });
   }
 
+  // Create a new ReadableStream for SSE
+  const stream = new ReadableStream({
+    start(controller) {
+      processFile(conversationJsonFile, controller);
+    },
+  });
+
+  // Return the stream as the response
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
+  });
+}
+
+async function processFile(
+  conversationJsonFile: unzipper.File,
+  controller: ReadableStreamDefaultController,
+) {
   try {
     const fileContent = await conversationJsonFile.buffer();
     const conversationJson = JSON.parse(fileContent.toString("utf-8"));
-    for (let i = 0; i < conversationJson.length; i++) {
+    const totalConversations = conversationJson.length;
+    for (let i = 0; i < totalConversations; i++) {
       const conversation = conversationJson[i];
       const messages = getConversationMessages(conversation);
 
@@ -133,21 +154,28 @@ export async function POST(req: any) {
             //contributorId: user.id,
           },
         });
+        // Send progress update
+        const progress = Math.round(((i + 1) / totalConversations) * 100);
+        controller.enqueue(`data: ${JSON.stringify({ progress })}\n\n`);
       } catch (e) {
         console.error(e);
-        return NextResponse.json(
-          { error: "Failed to save conversation" },
-          { status: 500 },
+        controller.enqueue(
+          `data: ${JSON.stringify({ error: "Failed to save conversation" })}\n\n`,
         );
+        controller.close();
+        return;
       }
     }
 
-    return NextResponse.json({ success: true });
+    controller.enqueue(
+      `data: ${JSON.stringify({ progress: 100, complete: true })}\n\n`,
+    );
+    controller.close();
   } catch (e) {
     console.error(e);
-    return NextResponse.json(
-      { error: "Invalid file content" },
-      { status: 400 },
+    controller.enqueue(
+      `data: ${JSON.stringify({ error: "Invalid file content" })}\n\n`,
     );
+    controller.close();
   }
 }
