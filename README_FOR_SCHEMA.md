@@ -48,3 +48,26 @@ The prevConversationRecordId indicates the previous version of the conversation,
 The nextConversationRecords indicates the next versions of the conversation, all ConversationRecord objects appearing in the ConversationRound.
 
 The reason why we do not include the nextConversationRecords is because in Prisma we cannot use relation in Type object, so we need a way to work around this limitation.
+
+## Note on Conversation.records and other one-to-many relations' storage in the database
+
+Since prisma will store the data in a normalized manner, so we will not see Conversation.records in the database. We will only see ConversationRecord objects having a conversationId attribute. If we want to see the conversation records of a conversation, we need to run the following query:
+
+```=javascript
+    var conversationRecordIdsTest = await db.conversation.findUnique({
+      where: {
+        id: conversation.id,
+      },
+      select: {
+        records: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+```
+
+This will return the conversation record ids of the conversation.
+
+This is also applicable to other one-to-many relations in the schema.
