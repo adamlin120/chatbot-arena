@@ -32,6 +32,20 @@ export async function POST(request: NextRequest) {
         contributorId: user.id,
       },
     });
+
+    await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        conversations: {
+          connect: {
+            id: conversation.id,
+          },
+        },
+      },
+    });
+      
   }
 
   const model_list = [
@@ -75,6 +89,18 @@ export async function POST(request: NextRequest) {
     ]);
 
     const conversationRecordId = conversationRecords.map((record) => record.id);
+
+    
+    await db.conversation.update({
+      where: {
+        id: conversation.id,
+      },
+      data: {
+        records: {
+          connect: conversationRecordId.map((id) => ({ id })),
+        },
+      },
+    });
 
     return NextResponse.json({ conversationRecordId });
   } catch (error) {
