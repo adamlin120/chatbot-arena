@@ -17,7 +17,7 @@ export default async function LeaderboardPage() {
     >
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Leaderboard</div>
-        <div className="text-s">模型分數越高代表根據統計回答越令人滿意</div>
+        <div className="text-md">模型分數越高代表根據統計回答越令人滿意</div>
         <div></div>
       </div>
       <table className="table-auto w-full rounded-lg shadow">

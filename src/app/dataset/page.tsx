@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
 import Loading from "./Loading";
+import Link from "next/link";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
@@ -113,83 +114,91 @@ export default function DatasetPage() {
     );
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
     <div id="dataset" className="p-5 px-10 md:px-44 fade-in hidden-scrollbar">
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Dataset</div>
-        <div className="text-s">
+        <div className="text-md">
           開源資料集下載區（下載資料集可能需要一些時間，請耐心等待）
+          <br />
+          想要上傳自己的資料集？請點擊
+          <Link href="/dataset/upload" className="underline text-blue-400">
+            這裡
+          </Link>
+          。
         </div>
-        <div className="text-xl">1. Rating資料預覽：（至多顯示100筆）</div>
-        <div>
-          {currentItems.map((item, index) => (
-            <div key={index} className="json-container">
-              <JSONTree data={item} theme="flat" />
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <div className="text-xl">1. Rating資料預覽：（至多顯示100筆）</div>
+            <div>
+              {currentItems.map((item, index) => (
+                <div key={index} className="json-container">
+                  <JSONTree data={item} theme="flat" />
+                </div>
+              ))}
+              <div className="flex justify-center items-center mt-4 space-x-4">
+                <button
+                  onClick={goToPreviousPage}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+                >
+                  &lt; Prev
+                </button>
+                <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
+                  {currentPage}/{ratingdata.length}
+                </span>
+                <button
+                  onClick={goToNextPage}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+                >
+                  Next &gt;
+                </button>
+                <button
+                  onClick={() => downloadJSON("rating", "rating_data.json")}
+                  className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingRating ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
+                  disabled={downloadingRating}
+                >
+                  Download Rating JSON
+                </button>
+                {downloadingRating && <CircularProgress size={24} />}
+              </div>
             </div>
-          ))}
-          <div className="flex justify-center items-center mt-4 space-x-4">
-            <button
-              onClick={goToPreviousPage}
-              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-            >
-              &lt; Prev
-            </button>
-            <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
-              {currentPage}/{ratingdata.length}
-            </span>
-            <button
-              onClick={goToNextPage}
-              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-            >
-              Next &gt;
-            </button>
-            <button
-              onClick={() => downloadJSON("rating", "rating_data.json")}
-              className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingRating ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
-              disabled={downloadingRating}
-            >
-              Download Rating JSON
-            </button>
-            {downloadingRating && <CircularProgress size={24} />}
-          </div>
-        </div>
-        <div className="text-xl">2. Chat資料預覽：（至多顯示100筆）</div>
-        <div>
-          {currentItemsChat.map((item, index) => (
-            <div key={index} className="json-container">
-              <JSONTree data={item} theme="flat" />
+            <div className="text-xl">2. Chat資料預覽：（至多顯示100筆）</div>
+            <div>
+              {currentItemsChat.map((item, index) => (
+                <div key={index} className="json-container">
+                  <JSONTree data={item} theme="flat" />
+                </div>
+              ))}
+              <div className="flex justify-center items-center mt-4 space-x-4">
+                <button
+                  onClick={goToPreviousPageChat}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+                >
+                  &lt; Prev
+                </button>
+                <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
+                  {currentPageChat}/{chatdata.length}
+                </span>
+                <button
+                  onClick={goToNextPageChat}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
+                >
+                  Next &gt;
+                </button>
+                <button
+                  onClick={() => downloadJSON("chat", "chat_data.json")}
+                  className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingChat ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
+                  disabled={downloadingChat}
+                >
+                  Download Chat JSON
+                </button>
+                {downloadingChat && <CircularProgress size={24} />}
+              </div>
             </div>
-          ))}
-          <div className="flex justify-center items-center mt-4 space-x-4">
-            <button
-              onClick={goToPreviousPageChat}
-              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-            >
-              &lt; Prev
-            </button>
-            <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
-              {currentPageChat}/{chatdata.length}
-            </span>
-            <button
-              onClick={goToNextPageChat}
-              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-            >
-              Next &gt;
-            </button>
-            <button
-              onClick={() => downloadJSON("chat", "chat_data.json")}
-              className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingChat ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
-              disabled={downloadingChat}
-            >
-              Download Chat JSON
-            </button>
-            {downloadingChat && <CircularProgress size={24} />}
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
