@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const ANONYMOUS_MODEL_NAME = "ChatGPT-From-User-Upload";
-const ANONYMOUS_CONVERSATION_ID = "0".repeat(24);
+// const ANONYMOUS_CONVERSATION_ID = "0".repeat(24);
 
 interface Conversation {
   current_node: string | null;
@@ -71,14 +71,124 @@ const getConversationMessages = (
   return messages.reverse();
 };
 
+const processFile = async (
+  conversationJsonFile: unzipper.File,
+  controller: ReadableStreamDefaultController,
+) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    controller.enqueue(
+      `data: ${JSON.stringify({ error: "Unauthorized" })}\n\n`,
+    );
+    controller.close();
+    return;
+  }
+  const user = await getUserByEmail(session.user.email);
+  if (!user) {
+    controller.enqueue(
+      `data: ${JSON.stringify({ error: "Unauthorized" })}\n\n`,
+    );
+    controller.close();
+    return;
+  }
+
+  const fileContent = await conversationJsonFile.buffer();
+  const conversationJson: [] = JSON.parse(fileContent.toString("utf-8"));
+  const totalConversations = conversationJson.length;
+  let currentFinished = 0;
+
+  const processConversation = async (
+    conversation: Conversation,
+    userId: string,
+    controller: ReadableStreamDefaultController,
+    totalConversations: number,
+  ) => {
+    const messages = getConversationMessages(conversation);
+    const rounds = [];
+    for (let j = 0; j < messages.length; j += 2) {
+      rounds.push({
+        prompt: messages[j].text,
+        completion: messages[j + 1]?.text || "",
+        modifiedConversationRecordId: null,
+        originalConversationRecordId: null,
+      });
+    }
+
+    currentFinished += 0.05;
+    controller.enqueue(
+      `data: ${JSON.stringify({ progress: Math.round((currentFinished / totalConversations) * 100) })}\n\n`,
+    );
+
+    try {
+      const dbConversation = await db.conversation.create({
+        data: {
+          contributorId: userId,
+        },
+      });
+      currentFinished += 0.25;
+      controller.enqueue(
+        `data: ${JSON.stringify({ progress: Math.round((currentFinished / totalConversations) * 100) })}\n\n`,
+      );
+
+      const dbConversationRecord = await db.conversationRecord.create({
+        data: {
+          rounds: rounds,
+          conversationId: dbConversation.id,
+          modelName: ANONYMOUS_MODEL_NAME,
+        },
+      });
+      currentFinished += 0.25;
+      controller.enqueue(
+        `data: ${JSON.stringify({ progress: Math.round((currentFinished / totalConversations) * 100) })}\n\n`,
+      );
+
+      await Promise.all([
+        db.user.update({
+          where: { id: userId },
+          data: { conversations: { connect: { id: dbConversation.id } } },
+        }),
+        db.conversation.update({
+          where: { id: dbConversation.id },
+          data: { records: { connect: { id: dbConversationRecord.id } } },
+        }),
+      ]);
+
+      currentFinished += 0.45;
+      controller.enqueue(
+        `data: ${JSON.stringify({ progress: Math.round((currentFinished / totalConversations) * 100) })}\n\n`,
+      );
+    } catch (e) {
+      console.error(e);
+      controller.enqueue(
+        `data: ${JSON.stringify({ error: "Failed to save conversation" })}\n\n`,
+      );
+    }
+  };
+
+  const promises = conversationJson.map((conversation) =>
+    processConversation(conversation, user.id, controller, totalConversations),
+  );
+
+  Promise.all(promises)
+    .then(() => {
+      controller.enqueue(
+        `data: ${JSON.stringify({ progress: 100, complete: true })}\n\n`,
+      );
+      controller.close();
+    })
+    .catch((e) => {
+      console.error(e);
+      controller.enqueue(
+        `data: ${JSON.stringify({ error: "Invalid file content" })}\n\n`,
+      );
+      controller.close();
+    });
+};
+
 export async function POST(req: any) {
   const session = await auth();
   if (!session || !session.user) {
     return NextResponse.redirect("/login");
-  }
-  const user = await getUserByEmail(session.user.email);
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const formData = await req.formData();
@@ -117,65 +227,4 @@ export async function POST(req: any) {
       Connection: "keep-alive",
     },
   });
-}
-
-async function processFile(
-  conversationJsonFile: unzipper.File,
-  controller: ReadableStreamDefaultController,
-) {
-  try {
-    const fileContent = await conversationJsonFile.buffer();
-    const conversationJson = JSON.parse(fileContent.toString("utf-8"));
-    const totalConversations = conversationJson.length;
-    for (let i = 0; i < totalConversations; i++) {
-      const conversation = conversationJson[i];
-      const messages = getConversationMessages(conversation);
-
-      // Title: conversation.title
-      // Author: messages[j].author (User/ChatGPT)
-      // Text: messages[j].text
-      const rounds = [];
-      for (let j = 0; j < messages.length; j += 2) {
-        rounds.push({
-          prompt: messages[j].text,
-          completion: messages[j + 1]?.text || "",
-          modifiedConversationRecordId: null,
-          originalConversationRecordId: null,
-        });
-      }
-
-      // Save the conversation record to the database
-      try {
-        await db.conversationRecord.create({
-          data: {
-            rounds: rounds,
-            conversationId: ANONYMOUS_CONVERSATION_ID,
-            modelName: ANONYMOUS_MODEL_NAME,
-            //contributorId: user.id,
-          },
-        });
-        // Send progress update
-        const progress = Math.round(((i + 1) / totalConversations) * 100);
-        controller.enqueue(`data: ${JSON.stringify({ progress })}\n\n`);
-      } catch (e) {
-        console.error(e);
-        controller.enqueue(
-          `data: ${JSON.stringify({ error: "Failed to save conversation" })}\n\n`,
-        );
-        controller.close();
-        return;
-      }
-    }
-
-    controller.enqueue(
-      `data: ${JSON.stringify({ progress: 100, complete: true })}\n\n`,
-    );
-    controller.close();
-  } catch (e) {
-    console.error(e);
-    controller.enqueue(
-      `data: ${JSON.stringify({ error: "Invalid file content" })}\n\n`,
-    );
-    controller.close();
-  }
 }

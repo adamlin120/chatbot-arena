@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function UploadPage() {
+  const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
@@ -68,6 +70,9 @@ export default function UploadPage() {
               toast.error(clientError);
             } else if (event.error === "Failed to save conversation") {
               toast.error(serverDBError);
+            } else if (event.error === "Unauthorized") {
+              toast.error("請先登入!");
+              router.push("/login");
             } else {
               toast.error(serverUnknownError);
             }
@@ -76,9 +81,9 @@ export default function UploadPage() {
           }
 
           if (event.complete) {
+            toast.success(successMessage);
             setIsLoading(false);
             setProgress(0);
-            toast.success(successMessage);
             if (fileRef.current) {
               fileRef.current.value = "";
             }
