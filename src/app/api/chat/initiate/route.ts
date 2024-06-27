@@ -75,6 +75,15 @@ export async function POST(request: NextRequest) {
 
     const conversationRecordId = conversationRecords.map((record) => record.id);
 
+    await db.conversation.update({
+      where: { id: conversation.id },
+      data: {
+        records: {
+          set: conversationRecordId,
+        },
+      },
+    });
+
     return NextResponse.json({ conversationRecordId });
   } catch (error) {
     console.error(error);
