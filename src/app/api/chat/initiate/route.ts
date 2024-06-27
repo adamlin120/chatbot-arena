@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       where: { id: conversation.id },
       data: {
         records: {
-          set: conversationRecordId,
+          set: conversationRecords,
         },
       },
     });
