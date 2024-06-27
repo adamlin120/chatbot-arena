@@ -23,7 +23,6 @@ export default function RootLayout({
     <html lang="en">
       <SessionProvider>
         <body className={inter.className + "flex flex-col"}>
-          {/* <Header /> */}
           <div className="flex flex-col md:min-h-screen flex-grow">
             <Suspense>
               <HeaderSubtitle />
