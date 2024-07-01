@@ -13,7 +13,8 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "prettier --write"
+      "prettier --write",
+      "next lint"
     ]
   },
   "dependencies": {
