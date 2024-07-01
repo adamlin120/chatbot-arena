@@ -6,11 +6,10 @@ import {
   MessageCircleMore,
   ThumbsUp,
   LogIn,
-  LogOut,
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils/shadcn";
 import { useSearchParams } from "next/navigation";
@@ -26,6 +25,16 @@ export default function SideBar() {
   const username = session?.user?.name;
   const avatarUrl = session?.user?.image;
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Close sidebar on resize to prevent layout issues
+    const handleResize = () => {
+      setIsOpen(false);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -111,38 +120,24 @@ export default function SideBar() {
             />
             <div className="hidden md:block md:flex-grow"></div>
             {status === "authenticated" ? (
-              <div className="flex w-full p-4">
-                {session?.user?.image && userId && (
-                  <Link
+              <>
+                {session?.user?.image && userId && username && (
+                  <LinkComponent
                     href={`/profile/${userId}`}
-                    className=" hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate flex-grow flex-shrink-0"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <div
-                      className={`transition-none min-w-fit`}
-                      title={!isOpen ? "個人頁面" : ""}
-                    >
+                    text={username}
+                    icon={
                       <Image
                         src={avatarUrl || ""}
                         width={28}
                         height={28}
-                        className="rounded-full transition-none flex-shrink-0"
+                        className="rounded-full transition-none flex-shrink-0 w-full h-full"
                         alt="profile-pic"
                       />
-                    </div>
-                    {isOpen && <div className="truncate">{username}</div>}
-                  </Link>
+                    }
+                    title="個人頁面"
+                  />
                 )}
-                {isOpen && (
-                  <button
-                    className="hover:bg-gray-700 px-3"
-                    title="登出"
-                    onClick={() => signOut()}
-                  >
-                    <LogOut size={28} />
-                  </button>
-                )}
-              </div>
+              </>
             ) : (
               status === "unauthenticated" && (
                 <LinkComponent
@@ -170,10 +165,12 @@ function LinkComponent({
   href,
   text,
   icon,
+  title,
 }: {
   href: string;
   text: string;
   icon?: React.ReactNode;
+  title?: string;
 }) {
   const context = useContext(SideBarContext);
   if (!context) {
@@ -187,7 +184,10 @@ function LinkComponent({
       className="p-4 hover:bg-gray-700 text-lg flex items-center justify-center md:justify-start gap-3 truncate w-full"
       onClick={() => setIsOpen(false)}
     >
-      <div className="transition-none" title={!isOpen ? text : ""}>
+      <div
+        className="transition-none"
+        title={!isOpen ? (title ? title : text) : ""}
+      >
         {icon}
       </div>
       {isOpen && text}

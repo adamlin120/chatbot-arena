@@ -53,6 +53,7 @@ export default function DatasetPage() {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Download JSON!!
@@ -115,14 +116,20 @@ export default function DatasetPage() {
   };
 
   return (
-    <div id="dataset" className="p-5 px-10 md:px-44 fade-in hidden-scrollbar">
+    <div
+      id="dataset"
+      className="p-5 px-10 md:px-22 lg:px-44 fade-in hidden-scrollbar"
+    >
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Dataset</div>
         <div className="text-md">
           開源資料集下載區（下載資料集可能需要一些時間，請耐心等待）
           <br />
           想要上傳自己的資料集？請點擊
-          <Link href="/dataset/upload" className="underline text-blue-400">
+          <Link
+            href="/dataset/upload"
+            className="underline text-blue-400 hover:text-blue-500"
+          >
             這裡
           </Link>
           。
@@ -138,30 +145,34 @@ export default function DatasetPage() {
                   <JSONTree data={item} theme="flat" />
                 </div>
               ))}
-              <div className="flex justify-center items-center mt-4 space-x-4">
-                <button
-                  onClick={goToPreviousPage}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-                >
-                  &lt; Prev
-                </button>
-                <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
-                  {currentPage}/{ratingdata.length}
-                </span>
-                <button
-                  onClick={goToNextPage}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-                >
-                  Next &gt;
-                </button>
-                <button
-                  onClick={() => downloadJSON("rating", "rating_data.json")}
-                  className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingRating ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
-                  disabled={downloadingRating}
-                >
-                  Download Rating JSON
-                </button>
-                {downloadingRating && <CircularProgress size={24} />}
+              <div className="flex flex-col sm:flex-row justify-center items-center mt-4 space-x-0 sm:space-x-4 space-y-4 sm:space-y-0">
+                <div className="flex justify-center items-center space-x-4">
+                  <button
+                    onClick={goToPreviousPage}
+                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md whitespace-nowrap"
+                  >
+                    &lt; Prev
+                  </button>
+                  <span className="px-3 py-1 bg-gray-700 text-white rounded-md whitespace-nowrap">
+                    {currentPage}/{ratingdata.length}
+                  </span>
+                  <button
+                    onClick={goToNextPage}
+                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md whitespace-nowrap"
+                  >
+                    Next &gt;
+                  </button>
+                </div>
+                <div className="flex items-center justify-center space-x-4">
+                  <button
+                    onClick={() => downloadJSON("rating", "rating_data.json")}
+                    className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingRating ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
+                    disabled={downloadingRating}
+                  >
+                    Download Rating JSON
+                  </button>
+                  {downloadingRating && <CircularProgress size={24} />}
+                </div>
               </div>
             </div>
             <div className="text-xl">2. Chat資料預覽：（至多顯示100筆）</div>
@@ -171,30 +182,34 @@ export default function DatasetPage() {
                   <JSONTree data={item} theme="flat" />
                 </div>
               ))}
-              <div className="flex justify-center items-center mt-4 space-x-4">
-                <button
-                  onClick={goToPreviousPageChat}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-                >
-                  &lt; Prev
-                </button>
-                <span className="px-3 py-1 bg-gray-700 text-white rounded-md">
-                  {currentPageChat}/{chatdata.length}
-                </span>
-                <button
-                  onClick={goToNextPageChat}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md"
-                >
-                  Next &gt;
-                </button>
-                <button
-                  onClick={() => downloadJSON("chat", "chat_data.json")}
-                  className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingChat ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
-                  disabled={downloadingChat}
-                >
-                  Download Chat JSON
-                </button>
-                {downloadingChat && <CircularProgress size={24} />}
+              <div className="flex flex-col sm:flex-row justify-center items-center mt-4 space-x-0 sm:space-x-4 space-y-4 sm:space-y-0">
+                <div className="flex justify-center items-center space-x-4">
+                  <button
+                    onClick={goToPreviousPageChat}
+                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md whitespace-nowrap"
+                  >
+                    &lt; Prev
+                  </button>
+                  <span className="px-3 py-1 bg-gray-700 text-white rounded-md whitespace-nowrap">
+                    {currentPageChat}/{chatdata.length}
+                  </span>
+                  <button
+                    onClick={goToNextPageChat}
+                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow-md whitespace-nowrap"
+                  >
+                    Next &gt;
+                  </button>
+                </div>
+                <div className="flex items-center justify-center space-x-4">
+                  <button
+                    onClick={() => downloadJSON("chat", "chat_data.json")}
+                    className={`px-3 py-1 rounded-md shadow-md text-white ${downloadingChat ? "bg-gray-500 cursor-wait" : "bg-blue-500 hover:bg-blue-600"}`}
+                    disabled={downloadingChat}
+                  >
+                    Download Chat JSON
+                  </button>
+                  {downloadingChat && <CircularProgress size={24} />}
+                </div>
               </div>
             </div>
           </>
