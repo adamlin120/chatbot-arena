@@ -77,7 +77,8 @@ export default function CompletionContainer({
 
   const handleSubmit = async () => {
     setIsEditing(false);
-    if (!isUser && message === origMessage) {
+    setMessage(message.trim());
+    if (!isUser && message.trim() === origMessage) {
       return;
     }
 
