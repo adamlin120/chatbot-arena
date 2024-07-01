@@ -68,6 +68,7 @@ export const getRandomRatings = async (count: number, userId?: string) => {
         (userId && userInScore(pickedRating.scores, userId))
       ) {
         if (trials > rateEditingCount || trials > Math.max(count * 2, 10)) {
+          result.push(pickedRating);
           break;
         }
         i--;
