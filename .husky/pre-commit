@@ -1,1 +1,5 @@
-yarn format && yarn lint && git add .
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# yarn format && yarn lint && git add .
+yarn precommit
