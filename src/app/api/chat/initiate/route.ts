@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-      
   }
 
   const model_list = [
@@ -90,7 +89,6 @@ export async function POST(request: NextRequest) {
 
     const conversationRecordId = conversationRecords.map((record) => record.id);
 
-    
     await db.conversation.update({
       where: {
         id: conversation.id,

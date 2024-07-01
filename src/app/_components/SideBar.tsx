@@ -77,7 +77,7 @@ export default function SideBar() {
               className="text-2xl font-semibold text-nowrap"
               onClick={() => setIsOpen(false)}
             >
-              LLM Arena
+              Chatbot Arena
             </Link>
           )}
         </div>

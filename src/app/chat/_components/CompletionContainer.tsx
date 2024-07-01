@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 import MarkdownRenderer from "@/app/_components/MarkdownRenderer";
+import Button from "@/app/_components/Button";
 
 export default function CompletionContainer({
   origMessage,
@@ -153,28 +154,39 @@ export default function CompletionContainer({
           }`}
         >
           {isEditing ? (
-            <textarea
-              className="bg-transparent p-5 text-white px-2 pt-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
-              autoFocus
-              onCompositionStart={handleComposingStart}
-              onCompositionEnd={handleComposingEnd}
-              ref={messageTextAreaRef}
-              onKeyDown={async (
-                e: React.KeyboardEvent<HTMLTextAreaElement>,
-              ) => {
-                if (e.key === "Enter" && !e.shiftKey && !isComposing) {
-                  e.preventDefault();
-                  e.currentTarget.blur(); // will trigger handleSubmit
-                }
-              }}
-              onBlur={handleSubmit}
-              onFocus={(e) => {
-                e.target.selectionStart = e.target.value.length;
-                e.target.selectionEnd = e.target.value.length;
-              }}
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-            ></textarea>
+            <>
+              <textarea
+                className="bg-transparent p-5 text-white px-2 pt-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
+                autoFocus
+                onCompositionStart={handleComposingStart}
+                onCompositionEnd={handleComposingEnd}
+                ref={messageTextAreaRef}
+                onKeyDown={async (
+                  e: React.KeyboardEvent<HTMLTextAreaElement>,
+                ) => {
+                  if (e.key === "Enter" && !e.shiftKey && !isComposing) {
+                    e.preventDefault();
+                    e.currentTarget.blur(); // will trigger handleSubmit
+                  }
+                }}
+                onBlur={handleSubmit}
+                onFocus={(e) => {
+                  e.target.selectionStart = e.target.value.length;
+                  e.target.selectionEnd = e.target.value.length;
+                }}
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+              ></textarea>
+              <Button
+                className="w-fit mt-2 self-center bg-gray-500 hover:bg-gray-400"
+                text="完成"
+                onClick={async () => {
+                  if (!isComposing) {
+                    await handleSubmit();
+                  }
+                }}
+              />
+            </>
           ) : (
             <div
               className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg`}

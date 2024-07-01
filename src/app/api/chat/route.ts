@@ -6,7 +6,7 @@ import { getModelByConversationRecordId } from "@/data/conversation";
 import { increaseQuotaAndCheck, quotaExceedResponse } from "@/lib/auth/ipCheck";
 import { auth } from "@/lib/auth";
 export const dynamic = "force-dynamic";
-export const maxDuration = 250;
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {

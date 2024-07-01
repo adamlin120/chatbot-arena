@@ -21,7 +21,7 @@ export default function HeaderSubtitle() {
       href="/"
       className="text-2xl ml-[2rem] md:ml-[4rem] mt-6 font-semibold text-nowrap w-fit"
     >
-      LLM Arena
+      Chatbot Arena
       <span className="text-xl">
         {currentPath && subtitle[currentPath]
           ? ` - ${subtitle[currentPath]}`
