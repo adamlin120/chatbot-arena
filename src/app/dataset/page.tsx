@@ -116,14 +116,20 @@ export default function DatasetPage() {
   };
 
   return (
-    <div id="dataset" className="p-5 px-10 md:px-44 fade-in hidden-scrollbar">
+    <div
+      id="dataset"
+      className="p-5 px-10 md:px-22 lg:px-44 fade-in hidden-scrollbar"
+    >
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Dataset</div>
         <div className="text-md">
           開源資料集下載區（下載資料集可能需要一些時間，請耐心等待）
           <br />
           想要上傳自己的資料集？請點擊
-          <Link href="/dataset/upload" className="underline text-blue-400">
+          <Link
+            href="/dataset/upload"
+            className="underline text-blue-400 hover:text-blue-500"
+          >
             這裡
           </Link>
           。
