@@ -140,7 +140,7 @@ export default function Column({
         </div>
         {!isOriginal && togglePrompt && (
           <div
-            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32"
+            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32 break-words whitespace-normal"
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(originalPrompt, editedPrompt),
             }}
@@ -197,7 +197,7 @@ export default function Column({
         </div>
         {!isOriginal && toggleCompletion && (
           <div
-            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32"
+            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32 break-words whitespace-normal"
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(
                 originalCompletion,
