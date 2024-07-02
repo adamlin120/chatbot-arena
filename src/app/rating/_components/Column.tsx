@@ -140,9 +140,13 @@ export default function Column({
         </div>
         {!isOriginal && togglePrompt && (
           <div
-            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32 break-words whitespace-normal"
+            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32 !break-words whitespace-normal"
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(originalPrompt, editedPrompt),
+            }}
+            style={{
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
             }}
             onClick={(e) => e.stopPropagation()}
           />
@@ -197,12 +201,16 @@ export default function Column({
         </div>
         {!isOriginal && toggleCompletion && (
           <div
-            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32 break-words whitespace-normal"
+            className="bg-white p-3 rounded-lg text-black resize-none overflow-auto h-32 !break-words whitespace-normal"
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(
                 originalCompletion,
                 editedCompletion,
               ),
+            }}
+            style={{
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
             }}
             onClick={(e) => e.stopPropagation()}
           />
