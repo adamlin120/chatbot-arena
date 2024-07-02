@@ -144,6 +144,10 @@ export default function Column({
             dangerouslySetInnerHTML={{
               __html: highlightDifferences(originalPrompt, editedPrompt),
             }}
+            style={{
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+            }}
             onClick={(e) => e.stopPropagation()}
           />
         )}
@@ -203,6 +207,10 @@ export default function Column({
                 originalCompletion,
                 editedCompletion,
               ),
+            }}
+            style={{
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
             }}
             onClick={(e) => e.stopPropagation()}
           />
