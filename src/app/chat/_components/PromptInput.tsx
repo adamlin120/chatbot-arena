@@ -1,7 +1,7 @@
 import Button from "@/app/_components/Button";
-import { LoaderCircle, SendHorizonal } from "lucide-react";
+import { SendHorizonal, Square } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
 import { Message } from "@/lib/types/db";
@@ -33,8 +33,13 @@ export default function PromptInput() {
   const MAX_TOKENS = 2048;
 
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  const [isComposing, setIsComposing] = useState<boolean>(false);
+  const [stopStreaming, setStopStreaming] = useState<boolean>(false);
+  const stopStreamingRef = useRef(stopStreaming);
 
-  const [isComposing, setIsComposing] = useState(false);
+  useEffect(() => {
+    stopStreamingRef.current = stopStreaming;
+  }, [stopStreaming]);
 
   const handleComposingStart = () => {
     setIsComposing(true);
@@ -79,9 +84,10 @@ export default function PromptInput() {
       .then((res) => {
         if (!res.ok) {
           toast.error("伺服器沒有回應，請稍後再試");
+          setStopStreaming(true);
           setMessageWaiting(false);
           setMessages((messages) => {
-            return messages.slice(0, messages.length - 2);
+            return messages.slice(0, messageA.length - 2);
           });
           if (promptInputRef.current) {
             promptInputRef.current.value = currPrompt;
@@ -92,19 +98,20 @@ export default function PromptInput() {
       })
       .catch((error) => {
         if (error.name === "AbortError") {
-          // This may due to llm api error
+          // This may due to LLM api error
           console.error("Request timed out");
           toast.error("伺服器沒有回應，請稍後再試");
-          setMessageWaiting(false);
-          setMessages((messages) => {
-            return messages.slice(0, messages.length - 2);
-          });
-          if (promptInputRef.current) {
-            promptInputRef.current.value = currPrompt;
-          }
         } else {
           console.error("Error processing messages:", error);
           toast.error(serverErrorMessage);
+        }
+        setStopStreaming(true);
+        setMessageWaiting(false);
+        setMessages((messages) => {
+          return messages.slice(0, messages.length - 2);
+        });
+        if (promptInputRef.current) {
+          promptInputRef.current.value = currPrompt;
         }
         return;
       })
@@ -134,6 +141,11 @@ export default function PromptInput() {
     while (count < MAX_TOKENS) {
       const { value, done } = await reader.read();
       if (done) break;
+      if (stopStreamingRef.current) {
+        reader.cancel();
+        break;
+      }
+      console.log("stopStreaming", stopStreaming);
       const text = decoder.decode(value);
       buffer += text;
       // Check last the role of the last message
@@ -190,6 +202,7 @@ export default function PromptInput() {
       setMessageB,
       setMessageBWaiting,
     );
+    setStopStreaming(false);
     promptInputRef.current.value = "";
     promptInputRef.current.style.height = "auto";
   };
@@ -228,20 +241,37 @@ export default function PromptInput() {
           ></textarea>
         </div>
         <div>
-          <Button
-            text={
-              messageAWaiting || messageBWaiting ? (
-                <LoaderCircle size={25} className="animate-spin" />
-              ) : (
-                <SendHorizonal size={25} />
-              )
-            }
-            onClick={sendMessage}
-            disableCond={
-              messageAWaiting || messageBWaiting || ratingButtonDisabled
-            }
-            className="p-2 rounded-lg mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-          />
+          {messageAWaiting || messageBWaiting ? (
+            <Button
+              text={
+                <Square
+                  size={12.5}
+                  className="*animate-spin rounded-sm"
+                  strokeWidth={20}
+                />
+              }
+              onClick={() => setStopStreaming(true)}
+              disableCond={
+                ratingButtonDisabled && !(messageAWaiting || messageBWaiting)
+              }
+              className={
+                "p-3 rounded-full mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+              }
+              title="停止回應"
+            />
+          ) : (
+            <Button
+              text={<SendHorizonal size={25} />}
+              onClick={sendMessage}
+              disableCond={
+                messageAWaiting || messageBWaiting || ratingButtonDisabled
+              }
+              className={
+                "p-2 rounded-lg mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+              }
+              title="送出"
+            />
+          )}
         </div>
       </div>
     </div>

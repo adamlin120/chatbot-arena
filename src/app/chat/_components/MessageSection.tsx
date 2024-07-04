@@ -12,6 +12,8 @@ export default function MessageSection() {
   const {
     messageA,
     messageB,
+    setMessageA,
+    setMessageB,
     messageAWaiting,
     messageBWaiting,
     justSent,
@@ -59,6 +61,16 @@ export default function MessageSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageA, messageB, messageAWaiting, messageBWaiting, justSent]);
 
+  // Check message length is equal
+  useEffect(() => {
+    if (messageA.length !== messageB.length) {
+      const minLength = Math.min(messageA.length, messageB.length);
+      setMessageA(messageA.slice(0, minLength));
+      setMessageB(messageB.slice(0, minLength));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messageA, messageB]);
+
   const checkScroll = () => {
     const messageContainer = messageContainerRef.current;
     if (!messageContainer) return;
@@ -77,14 +89,14 @@ export default function MessageSection() {
 
   return (
     // Todo: think a better way to handle the height of the container
-    <div className="relative flex flex-col flex-grow justify-between border max-h-[62dvh]">
+    <div className="relative flex flex-col flex-grow justify-between border h-[50dvh]">
       <div
-        className="flex flex-col gap-8 py-4 overflow-y-auto"
+        className="relative flex flex-col flex-grow gap-8 py-4 overflow-y-auto"
         ref={messageContainerRef}
         onScroll={checkScroll}
       >
         {messageA.length <= 2 ? (
-          <div className="flex flex-col items-center justify-center h-screen gap-5 text-2xl">
+          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center  gap-5 text-2xl">
             <Bot size={45} /> 我今天要怎麼幫你呢？
           </div>
         ) : (
@@ -111,16 +123,18 @@ export default function MessageSection() {
                     messages={messageA}
                     isLeft={true}
                   />
-                  <CompletionContainer
-                    key={index}
-                    msgIndex={index}
-                    origMessage={messageB[index].content}
-                    isUser={false}
-                    isCompleted={!messageBWaiting}
-                    conversationRecordId={conversationRecordIds[1]}
-                    messages={messageB}
-                    isLeft={false}
-                  />
+                  {messageB[index] && (
+                    <CompletionContainer
+                      key={index}
+                      msgIndex={index}
+                      origMessage={messageB[index].content}
+                      isUser={false}
+                      isCompleted={!messageBWaiting}
+                      conversationRecordId={conversationRecordIds[1]}
+                      messages={messageB}
+                      isLeft={false}
+                    />
+                  )}
                 </div>
               ))
             );
@@ -128,7 +142,7 @@ export default function MessageSection() {
         )}
         <div ref={messageEndRef} />
       </div>
-      {showButton && (
+      {showButton && messageA.length > 2 && (
         <button
           className="absolute bottom-9 right-1/2 translate-x-1/2 z-10 p-1.5 rounded-full bg-gray-100 hover:bg-gray-300 hover:scale-105 ease-in-out transition-transform duration-300"
           ref={scrollToBottomButtonRef}
