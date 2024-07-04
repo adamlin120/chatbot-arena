@@ -3,8 +3,7 @@ import Button from "@/app/_components/Button";
 import { useContext, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
-
-const serverErrorMessage = "伺服器端錯誤，請稍後再試";
+import { serverErrorMessage } from "./getCompletion";
 
 export default function FunctionalButtons() {
   const context = useContext(MessageContext);
