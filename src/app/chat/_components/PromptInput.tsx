@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/app/_components/Button";
-import { SendHorizonal, Square } from "lucide-react";
+import { LoaderCircle, SendHorizonal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
@@ -158,37 +158,20 @@ export default function PromptInput() {
           ></textarea>
         </div>
         <div>
-          {messageAWaiting || messageBWaiting ? (
-            <Button
-              text={
-                <Square
-                  size={12.5}
-                  className="*animate-spin rounded-sm"
-                  strokeWidth={20}
-                />
-              }
-              onClick={() => setStopStreaming(true)}
-              disableCond={
-                ratingButtonDisabled && !(messageAWaiting || messageBWaiting)
-              }
-              className={
-                "p-3 rounded-full mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-              }
-              title="停止回應"
-            />
-          ) : (
-            <Button
-              text={<SendHorizonal size={25} />}
-              onClick={sendMessage}
-              disableCond={
-                messageAWaiting || messageBWaiting || ratingButtonDisabled
-              }
-              className={
-                "p-2 rounded-lg mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-              }
-              title="送出"
-            />
-          )}
+          <Button
+            text={
+              messageAWaiting || messageBWaiting ? (
+                <LoaderCircle size={25} className="animate-spin" />
+              ) : (
+                <SendHorizonal size={25} />
+              )
+            }
+            onClick={sendMessage}
+            disableCond={
+              messageAWaiting || messageBWaiting || ratingButtonDisabled
+            }
+            className="p-2 rounded-lg mr-5 bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          />
         </div>
       </div>
     </div>
