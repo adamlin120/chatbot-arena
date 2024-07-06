@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useContext } from "react";
+import React, { memo, useState, useRef, useContext, useEffect } from "react";
 import {
   Pencil,
   User,
@@ -15,26 +15,20 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
+import { getCompletion, serverErrorMessage } from "./getCompletion";
 
-const serverErrorMessage = "伺服器端錯誤，請稍後再試";
-const MAX_TOKENS = 2048;
-
-export default function PromptContainer({
+export default memo(function PromptContainer({
   msgIndex,
   isCompleted,
 }: {
   msgIndex: number;
   isCompleted: boolean;
 }) {
+  console.log("Rendering ", msgIndex);
   const router = useRouter();
   const { data: session } = useSession();
   const imageUrl = session?.user?.image;
   const imageSize = 30;
-
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const promptTextAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const [isComposing, setIsComposing] = useState(false);
 
   const context = useContext(MessageContext);
   if (!context) {
@@ -51,7 +45,19 @@ export default function PromptContainer({
     setMessageBWaiting,
     conversationRecordIds,
     setConversationRecordIds,
+    stopStreaming,
+    setStopStreaming,
   } = context;
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const promptTextAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const stopStreamingRef = useRef(stopStreaming);
+  useEffect(() => {
+    stopStreamingRef.current = stopStreaming;
+  }, [stopStreaming]);
+
+  const [isComposing, setIsComposing] = useState(false);
 
   const [childConversationIds, setChildConversationIds] = useState<string[][]>([
     conversationRecordIds,
@@ -199,78 +205,23 @@ export default function PromptContainer({
         return;
       }
 
-      // Abort the request if it takes too long (currently 10 second)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-      const response = await fetch("/api/chat/regenerate", {
-        method: "POST",
-        body: JSON.stringify({
-          messages: newMessages.slice(0, newMessages.length - 1),
-          conversationRecordId: newConversationRecordId,
-        }),
-        signal: controller.signal,
-      })
-        .catch((error) => {
-          if (error.name === "AbortError") {
-            // This may due to llm api error
-            console.error("Request timed out");
-            toast.error("伺服器沒有回應，請稍後再試");
-            setMessagesWaiting(false);
-            setMessages(oldMessages);
-          } else {
-            console.error("Error processing messages:", error);
-            toast.error(serverErrorMessage);
-          }
-          return;
-        })
-        .finally(() => clearTimeout(timeoutId));
+      console.log("newMessages", newMessages);
+      console.log("newConversationRecordId", newConversationRecordId);
 
-      if (!response || !response.body) {
-        return;
-      } else if (response.status === 429) {
-        toast.info("喜歡這個GPT測試嗎？立刻註冊！");
-        setTimeout(() => {
-          router.push("/login");
-        }, 3000);
-        return;
-      } else if (response.status !== 200) {
-        toast.error(serverErrorMessage);
-        return;
-      }
-
-      function fluent(ms: number | undefined) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-      }
-
-      const reader = response.body!.getReader();
-      const decoder = new TextDecoder();
-      let count = 0;
-      let buffer = "";
-      setRatingButtonDisabled(true);
-      while (count < MAX_TOKENS) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        const text = decoder.decode(value);
-        buffer += text;
-
-        setMessages((messages) => {
-          return [
-            ...messages.slice(0, messages.length - 1),
-            {
-              ...messages[messages.length - 1],
-              content: buffer,
-            },
-          ];
-        });
-        count++;
-        await fluent(50);
-      }
-
+      await getCompletion(
+        "/api/chat/regenerate",
+        router,
+        newMessages,
+        newConversationRecordId,
+        setMessages,
+        setMessagesWaiting,
+        setRatingButtonDisabled,
+        setStopStreaming,
+        stopStreamingRef,
+        "",
+      );
       newConversationRecordIds[conversationRecordIdIndex] =
         newConversationRecordId;
-
-      setRatingButtonDisabled(false);
-      setMessagesWaiting(false);
     };
 
     const newConversationRecordIds: string[] = ["", ""];
@@ -410,7 +361,7 @@ export default function PromptContainer({
       </div>
     </div>
   );
-}
+});
 
 function CopyToClipBoard({
   content,

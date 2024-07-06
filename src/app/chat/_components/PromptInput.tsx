@@ -1,12 +1,11 @@
+"use client";
 import Button from "@/app/_components/Button";
 import { LoaderCircle, SendHorizonal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MessageContext } from "@/context/message";
-import { toast } from "react-toastify";
 import { Message } from "@/lib/types/db";
-
-const serverErrorMessage = "伺服器端錯誤，請稍後再試";
+import { getCompletion } from "./getCompletion";
 
 export default function PromptInput() {
   const context = useContext(MessageContext);
@@ -27,14 +26,19 @@ export default function PromptInput() {
     ratingButtonDisabled,
     setRatingButtonDisabled,
     rated,
+    stopStreaming,
+    setStopStreaming,
     initiateChat,
   } = context;
   const router = useRouter();
-  const MAX_TOKENS = 2048;
 
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  const [isComposing, setIsComposing] = useState<boolean>(false);
 
-  const [isComposing, setIsComposing] = useState(false);
+  const stopStreamingRef = useRef(stopStreaming);
+  useEffect(() => {
+    stopStreamingRef.current = stopStreaming;
+  }, [stopStreaming]);
 
   const handleComposingStart = () => {
     setIsComposing(true);
@@ -65,94 +69,19 @@ export default function PromptInput() {
     ];
     setMessages(newMessages);
 
-    // Abort the request if it takes too long (currently 10 second)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({
-        messages: newMessages.slice(0, newMessages.length - 1),
-        conversationRecordId: conversationRecordId,
-      }),
-      signal: controller.signal,
-    })
-      .then((res) => {
-        if (!res.ok) {
-          toast.error("伺服器沒有回應，請稍後再試");
-          setMessageWaiting(false);
-          setMessages((messages) => {
-            return messages.slice(0, messages.length - 2);
-          });
-          if (promptInputRef.current) {
-            promptInputRef.current.value = currPrompt;
-          }
-          return;
-        }
-        return res;
-      })
-      .catch((error) => {
-        if (error.name === "AbortError") {
-          // This may due to llm api error
-          console.error("Request timed out");
-          toast.error("伺服器沒有回應，請稍後再試");
-          setMessageWaiting(false);
-          setMessages((messages) => {
-            return messages.slice(0, messages.length - 2);
-          });
-          if (promptInputRef.current) {
-            promptInputRef.current.value = currPrompt;
-          }
-        } else {
-          console.error("Error processing messages:", error);
-          toast.error(serverErrorMessage);
-        }
-        return;
-      })
-      .finally(() => clearTimeout(timeoutId));
-
-    if (!response || !response.body) {
-      return;
-    } else if (response.status === 429) {
-      toast.info("喜歡這個GPT測試嗎？立刻註冊！");
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
-      return;
-    } else if (response.status !== 200) {
-      toast.error(serverErrorMessage);
-      return;
-    }
-
-    function fluent(ms: number | undefined) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-    const reader = response.body!.getReader();
-    const decoder = new TextDecoder();
-    let count = 0;
-    let buffer = "";
-    setRatingButtonDisabled(true);
-    while (count < MAX_TOKENS) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      const text = decoder.decode(value);
-      buffer += text;
-      // Check last the role of the last message
-      // If it is user, then we have to create a new message
-      // If it is assistant, then we have to append to the last message
-      setMessages((messages) => {
-        return [
-          ...messages.slice(0, messages.length - 1),
-          {
-            ...messages[messages.length - 1],
-            content: buffer,
-          },
-        ];
-      });
-      count++;
-      await fluent(50);
-    }
-    setRatingButtonDisabled(false);
-    setMessageWaiting(false);
+    await getCompletion(
+      "/api/chat",
+      router,
+      newMessages,
+      conversationRecordId,
+      setMessages,
+      setMessageWaiting,
+      setRatingButtonDisabled,
+      setStopStreaming,
+      stopStreamingRef,
+      currPrompt,
+      promptInputRef,
+    );
   };
 
   // Auto resize the textarea
@@ -190,6 +119,7 @@ export default function PromptInput() {
       setMessageB,
       setMessageBWaiting,
     );
+    setStopStreaming(false);
     promptInputRef.current.value = "";
     promptInputRef.current.style.height = "auto";
   };

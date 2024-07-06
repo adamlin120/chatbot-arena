@@ -19,7 +19,7 @@ export default function HeaderSubtitle() {
   return (
     <Link
       href="/"
-      className="text-2xl ml-[2rem] md:ml-[4rem] mt-6 font-semibold text-nowrap w-fit"
+      className="text-2xl ml-5 md:ml-[4rem] mt-6 font-semibold text-nowrap w-fit"
     >
       Chatbot Arena
       <span className="text-xl">

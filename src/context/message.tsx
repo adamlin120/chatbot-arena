@@ -28,8 +28,11 @@ export const MessageContext = createContext<{
   setModelBName: React.Dispatch<React.SetStateAction<string>>;
   rated: boolean;
   setRated: React.Dispatch<React.SetStateAction<boolean>>;
+  stopStreaming: boolean;
+  setStopStreaming: React.Dispatch<React.SetStateAction<boolean>>;
   initiateChat: () => void;
   DEFAULT_MODEL_NAME: string;
+  origMessage: Message[];
 } | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
@@ -60,6 +63,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [justSent, setJustSent] = useState<boolean>(false);
   const [ratingButtonDisabled, setRatingButtonDisabled] =
     useState<boolean>(false);
+  const [stopStreaming, setStopStreaming] = useState<boolean>(false);
 
   const initiateChat = async () => {
     const response = await fetch("/api/chat/initiate", {
@@ -111,7 +115,10 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         setModelBName,
         rated,
         setRated,
+        stopStreaming,
+        setStopStreaming,
         DEFAULT_MODEL_NAME,
+        origMessage,
       }}
     >
       {children}

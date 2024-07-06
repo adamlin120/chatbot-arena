@@ -6,12 +6,14 @@ export default function Button({
   text,
   onClick,
   disableCond,
-  className = "",
+  className,
+  title,
 }: {
   text: string | JSX.Element;
   onClick: () => void;
   disableCond?: boolean;
   className?: string;
+  title?: string;
 }) {
   return (
     <button
@@ -21,6 +23,7 @@ export default function Button({
       )}
       onClick={onClick}
       disabled={disableCond}
+      title={title}
     >
       {text}
     </button>

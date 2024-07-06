@@ -3,8 +3,7 @@ import Button from "@/app/_components/Button";
 import { useContext, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
-
-const serverErrorMessage = "伺服器端錯誤，請稍後再試";
+import { serverErrorMessage } from "./getCompletion";
 
 export default function FunctionalButtons() {
   const context = useContext(MessageContext);
@@ -28,6 +27,7 @@ export default function FunctionalButtons() {
     setModelBName,
     setRated,
     DEFAULT_MODEL_NAME,
+    origMessage,
   } = context;
 
   const MIN_RATING_MESSAGE_COUNT = 3;
@@ -63,28 +63,8 @@ export default function FunctionalButtons() {
     if (messageA.length <= 2 && messageB.length <= 2) {
       return;
     }
-    setMessageA([
-      {
-        role: "user",
-        content:
-          "你是一個繁體中文人工智能助理，必須根據我的輸入做出適當的回覆以解決我的需求。",
-      },
-      {
-        role: "assistant",
-        content: "沒問題，我會竭盡所能地協助您。",
-      },
-    ]);
-    setMessageB([
-      {
-        role: "user",
-        content:
-          "你是一個繁體中文人工智能助理，必須根據我的輸入做出適當的回覆以解決我的需求。",
-      },
-      {
-        role: "assistant",
-        content: "沒問題，我會竭盡所能地協助您。",
-      },
-    ]);
+    setMessageA(origMessage);
+    setMessageB(origMessage);
     setModelAName(DEFAULT_MODEL_NAME);
     setModelBName(DEFAULT_MODEL_NAME);
     setRatingButtonDisabled(false);
