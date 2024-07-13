@@ -13,10 +13,9 @@ export async function getLeaderboard() {
         eloRating: true,
       },
     });
-    console.log("Leaderboard fetched");
     return leaderboard;
   } catch (error) {
-    console.log("Error in getLeaderboard", error);
+    console.error("Error in getLeaderboard", error);
     return null;
   }
 }

@@ -174,7 +174,7 @@ function LinkComponent({
 }) {
   const context = useContext(SideBarContext);
   if (!context) {
-    console.log("context is null");
+    console.error("context is null");
     return <></>;
   }
   const { isOpen, setIsOpen } = context;
