@@ -39,7 +39,7 @@ export async function GET() {
   });
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   const session = await auth();
   var userId;
   if (!session || !session.user) {

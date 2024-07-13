@@ -145,23 +145,16 @@ export default function RatingPage() {
   };
 
   const handleSubmit = async () => {
-    //console.log("Submit feedback");
-    //console.log(feedbackText);
-    //console.log(promptRating);
-    //console.log(completionRating! - 5);
 
     if (selected === undefined) {
       console.log("Please rate prompts & completions");
       toast.error("請選取何者較佳");
       return;
     }
-    var originalScore;
     var revisedScore;
     if (selected == "original") {
-      originalScore = 5;
       revisedScore = 1;
     } else if (selected == "edited") {
-      originalScore = 1;
       revisedScore = 5;
     }
     const res = await fetch("/api/rating", {

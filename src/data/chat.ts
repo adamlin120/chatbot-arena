@@ -1,5 +1,4 @@
 import { db } from "@/app/api/_base";
-import { RateEditing } from "@/prisma/client";
 export const maxDuration = 300;
 
 function selectNumbers(m: number, n: number): number[] | null {
@@ -25,7 +24,7 @@ function selectNumbers(m: number, n: number): number[] | null {
   return selectedNumbers;
 }
 
-export const getRandomChats = async (count: number, userId?: string) => {
+export const getRandomChats = async (count: number) => {
   const conversationCount = await db.conversationRecord.count();
   if (conversationCount === 0) {
     return [];
