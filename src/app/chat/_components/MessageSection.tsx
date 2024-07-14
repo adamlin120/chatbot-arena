@@ -117,7 +117,6 @@ export default function MessageSection() {
                   <CompletionContainer
                     msgIndex={index}
                     origMessage={message.content}
-                    isUser={false}
                     isCompleted={!messageAWaiting}
                     conversationRecordId={conversationRecordIds[0]}
                     messages={messageA}
@@ -128,7 +127,6 @@ export default function MessageSection() {
                       key={index}
                       msgIndex={index}
                       origMessage={messageB[index].content}
-                      isUser={false}
                       isCompleted={!messageBWaiting}
                       conversationRecordId={conversationRecordIds[1]}
                       messages={messageB}
