@@ -10,7 +10,7 @@ export async function checkIp(req: NextRequest, maxQuota: number = MAX_QUOTA) {
   if (ip === "127.0.0.1") {
     return true;
   }
-  var quota = 0;
+  let quota = 0;
   const existingtrial = await db.trial.findFirst({
     where: { ip: ip },
     select: { quota: true },
@@ -63,7 +63,7 @@ export const MAX_QUOTA = 10;
 
 export function getRedirectResponse(req: NextRequest, url: string = "/login") {
   const currentPath = req.url.split("/")[0] + "//" + req.url.split("/")[2];
-  var response = NextResponse.redirect(`${currentPath}${url}`);
+  let response = NextResponse.redirect(`${currentPath}${url}`);
   // Add a alert message to the response
   response.headers.set(
     "Set-Cookie",

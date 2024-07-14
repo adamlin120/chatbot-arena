@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 import { authSchema } from "@/validators/auth";
 import { generateVerificationToken } from "../token/tokens";
 import { sendVerificationEmail } from "../mail/mail";
-import { validate } from "uuid";
 import { db } from "@/app/api/_base";
 
 export default CredentialsProvider({

@@ -58,7 +58,7 @@ export default function DatasetPage() {
 
   // Download JSON!!
   const downloadJSON = async (type: any, filename: string) => {
-    var data;
+    let data;
     if (type == "rating") {
       setDownloadingRating(true);
       data = await fetchRandomRating(-1);

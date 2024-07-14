@@ -155,13 +155,10 @@ export default function RatingPage() {
       toast.error("請選取何者較佳");
       return;
     }
-    var originalScore;
-    var revisedScore;
+    let revisedScore;
     if (selected == "original") {
-      originalScore = 5;
       revisedScore = 1;
     } else if (selected == "edited") {
-      originalScore = 1;
       revisedScore = 5;
     }
     const res = await fetch("/api/rating", {
