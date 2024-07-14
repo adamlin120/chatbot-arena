@@ -297,7 +297,7 @@ export default function PromptContainer({
             />
           ) : (
             <div
-              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
+              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-all text-lg
             ${isEditing && "border-b border-solid"} focus:outline-none`}
             >
               {messageA[msgIndex].content}
