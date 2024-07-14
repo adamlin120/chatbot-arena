@@ -131,10 +131,13 @@ export default function PromptInput() {
 
   return (
     <div className="border border-t-0 p-5">
-      <div className="flex flex-grow gap-3 items-center border border-solid rounded-3xl has-[textarea:focus]:border-2">
-        <div className="flex-grow overflow-y-auto max-h-60 px-2 pr-5">
+      <div className="flex flex-grow gap-1 items-center border border-solid rounded-3xl has-[textarea:focus]:border-2">
+        <div className="flex-grow overflow-y-auto max-h-60 pl-2 ">
           <textarea
-            className="w-full p-5 bg-transparent text-white overflow-hidden resize-none focus:outline-none"
+            className={
+              "w-full p-5 pr-1 bg-transparent text-white overflow-hidden resize-none focus:outline-none" +
+              (rated ? " cursor-not-allowed" : "")
+            }
             autoFocus
             onCompositionStart={handleComposingStart}
             onCompositionEnd={handleComposingEnd}
