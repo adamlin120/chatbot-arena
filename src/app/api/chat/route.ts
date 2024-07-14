@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
     const conversationRecordId = requestBody.conversationRecordId as string;
 
     if (!messages || !conversationRecordId) {
-      console.log("requestBody", requestBody);
       return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
     }
 
