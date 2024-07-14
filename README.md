@@ -7,19 +7,28 @@ The Chatbot Arena for Traditional Chinese is an initiative by Yan-Ting Lin and N
 ## Methods
 
 ### chat
+
 Users can engage in conversations with a variety of models randomly, without initially knowing which model they are interacting with. For each message sent, two responses from different models are generated and displayed. After conversing with the models for a sufficient duration, users can determine which model's response is better using the provided buttons. Additionally, users can modify the models' outputs to help generate data that will be used to train improved models in the future.
+
 ### rating
+
 Two conversation fragments (before and after modifications) are randomly selected from the database and displayed on the screen. Users are asked to label which conversation better aligns with real-world scenarios and provide feedback if desired.
+
 ### dataset
+
 The page allows users to download .json data files from the database for model training purposes. Users can also upload conversations in a specified format (currently OpenAI) into the database, which can then be labeled in the /rating section.
+
 ### leaderboard
+
 The tab lists all available models on the website along with their Elo scores, which are automatically updated based on user feedback.
+
 ### profile
+
 The website also includes a simple profile for personal information, which is based on GitHub and Google accounts.
 
 ## Getting Started
 
-First, go get necessary API keys and DATABASE_URL, update it in the .env file. See the .env.example file for reference.
+First, go get necessary API keys and MONGODB_URI, update it in the .env file. See the .env.example file for reference. In this project, we use MongoDB as the database and host it on MongoDB Atlas. You can also use other hosting services, but you may need to modify the code accordingly.
 
 Then, run the following command.
 
