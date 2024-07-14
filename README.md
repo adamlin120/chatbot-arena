@@ -28,7 +28,9 @@ The website also includes a simple profile for personal information, which is ba
 
 ## Getting Started
 
-First, go get necessary API keys and MONGODB_URI, update it in the .env file. See the .env.example file for reference. In this project, we use MongoDB as the database and host it on MongoDB Atlas. You can also use other hosting services, but you may need to modify the code accordingly.
+First, go get necessary API keys and MONGODB_URI, update it in the .env file. See the .env.example file for reference.  
+In this project, we use MongoDB as the database and host it on MongoDB Atlas. You can also use other hosting services, but you may need to modify the code accordingly.  
+Besides, if you want to change the list of models evaluated on the website, you need to update relevant API keys in the .env file, model names in [`src/app/api/chat/initiate/route.ts`](src/app/api/chat/initiate/route.ts#50), and API clients in [`src/lib/chat/stream.ts`](src/lib/chat/stream.ts) accordingly.
 
 Then, run the following command.
 
