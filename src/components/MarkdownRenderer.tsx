@@ -77,7 +77,10 @@ export default function MarkdownRenderer({ children }: { children: string }) {
         },
       }}
     >
-      {children.replace(/\\\[/g, "$").replace(/\\\]/g, "$")}
+      {children
+        .replace(/\\\[/g, "$")
+        .replace(/\\\]/g, "$")
+        .replace(/\n\n/g, "\n")}
     </Markdown>
   );
 }
