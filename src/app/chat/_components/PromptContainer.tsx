@@ -133,8 +133,8 @@ export default function PromptContainer({
 
     if (!isRegen) {
       // edit
-      const newPrompt = promptTextAreaRef.current?.value;
-      if (!newPrompt) return;
+      const newPrompt = promptTextAreaRef.current?.value.trim();
+      if (!newPrompt || newPrompt === messageA[msgIndex].content) return;
 
       setIsEditing(false);
       processChildMessages(newPrompt);
@@ -274,6 +274,12 @@ export default function PromptContainer({
               ) => {
                 if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                   e.preventDefault();
+                  const inputText = promptTextAreaRef.current?.value || "";
+                  if (
+                    inputText.trim().length === 0 ||
+                    inputText.trim() === messageA[msgIndex].content
+                  )
+                    return;
                   e.currentTarget.blur(); // will trigger handleEdit
                 }
               }}

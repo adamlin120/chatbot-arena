@@ -81,6 +81,13 @@ export default function CompletionContainer({
     if (!isUser && message.trim() === origMessage) {
       return;
     }
+    if (message.trim() === "") {
+      setMessage(origMessage);
+      toast.error("模型輸出不能為空！", {
+        autoClose: 1000,
+      });
+      return;
+    }
 
     await saveEditedModelOutput();
     messages[msgIndex].content = message;
