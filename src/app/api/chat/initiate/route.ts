@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     "mistral-small-latest",
     //"gpt-4",
     //"gpt-3.5-turbo",
-    // "Llama-3-Taiwan-8B-Instruct", // this model has some issue now (premature close)
+    "Llama-3-Taiwan-8B-Instruct",
     "Llama-3-Taiwan-70B-Instruct",
   ];
 
