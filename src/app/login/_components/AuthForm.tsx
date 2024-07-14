@@ -3,10 +3,8 @@
 import { signIn } from "next-auth/react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { Suspense } from "react";
-//import AuthInput from "./AuthInput";
 import "react-toastify/dist/ReactToastify.css";
 import { useSearchParams } from "next/navigation";
-//import { toast } from "react-toastify";
 
 function AuthForm() {
   const handleGoogleSignIn = () => {

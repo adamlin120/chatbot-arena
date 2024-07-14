@@ -6,8 +6,8 @@ import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
-import MarkdownRenderer from "@/app/_components/MarkdownRenderer";
-import Button from "@/app/_components/Button";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
+import Button from "@/components/Button";
 
 export default function CompletionContainer({
   origMessage,

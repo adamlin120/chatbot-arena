@@ -1,5 +1,5 @@
 "use client";
-import Button from "@/app/_components/Button";
+import Button from "@/components/Button";
 import { useContext, useState } from "react";
 import { MessageContext } from "@/context/message";
 import { toast } from "react-toastify";
