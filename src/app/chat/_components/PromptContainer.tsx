@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import {
   Pencil,
   User,
@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 import { getCompletion, serverErrorMessage } from "./getCompletion";
 
-export default memo(function PromptContainer({
+export default function PromptContainer({
   msgIndex,
   isCompleted,
 }: {
@@ -357,7 +357,7 @@ export default memo(function PromptContainer({
       </div>
     </div>
   );
-});
+}
 
 function CopyToClipBoard({
   content,
@@ -382,41 +382,3 @@ function CopyToClipBoard({
     </button>
   );
 }
-
-// Todo: edit the prompt
-// const handleEditPrompt = async () => {
-//   let originalCompletion, editedCompletion;
-//   const index = msgIndex + 1;
-//   originalCompletion = messageA[index];
-//   editedCompletion = originalCompletion;
-//   try {
-//     const response = await fetch("/api/chat/editing", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         msgIndex: msgIndex,
-//         contributorEmail: userEmail,
-//         originalPrompt: origPrompt,
-//         editedPrompt: prompt,
-//         originalCompletion: originalCompletion.content,
-//         editedCompletion: editedCompletion.content,
-//         conversationRecordId: conversationRecordId,
-//       }),
-//     });
-//     if (response.ok)
-//       // After saving the new prompt, you can show a toast message to indicate the success
-//       toast.success("輸入提示已更新，請稍後", {
-//         autoClose: 1000,
-//       });
-//     else
-//       toast.error("輸入提示更新失敗，請再試一次", {
-//         autoClose: 1000,
-//       });
-//   } catch (error) {
-//     toast.error("輸入提示更新失敗，請再試一次", {
-//       autoClose: 1000,
-//     });
-//   }
-// };
