@@ -39,9 +39,9 @@ export const getRandomRatings = async (count: number, userId?: string) => {
         "Count is bigger than the number of products in the database",
       );
     }
-    var result: any[] = [];
-    var trials = 0;
-    for (var i = 0; i < count; i++) {
+    let result: any[] = [];
+    let trials = 0;
+    for (let i = 0; i < count; i++) {
       trials++;
       const skip = Math.floor(Math.random() * rateEditingCount);
       const pickedRating = await db.rateEditing.findFirst({
@@ -85,14 +85,14 @@ export const getRandomRatings = async (count: number, userId?: string) => {
     if (count > rateEditingCount || count == -1) {
       count = rateEditingCount;
     }
-    var result: any[] = [];
+    let result: any[] = [];
     const selected_index = selectNumbers(count, rateEditingCount);
     if (selected_index == null) {
       throw new Error(
         "Count is bigger than the number of products in the database",
       );
     }
-    for (var i = 0; i < count; i++) {
+    for (let i = 0; i < count; i++) {
       const pickedRating = await db.rateEditing.findFirst({
         skip: selected_index[i],
         select: {

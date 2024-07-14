@@ -4,11 +4,13 @@
 const path = require("path");
 
 const buildEslintCommand = (filenames) =>
-  `next lint --fix --file ${filenames.map((f) => path.relative(process.cwd(), f)).join(" --file ")}`;
+  `next lint --fix --max-warnings=0 --file ${filenames
+    .map((f) => path.relative(process.cwd(), f))
+    .join(" --file ")}`;
 
 const prettierCommand = (filenames) =>
   `prettier --write ${filenames.join(" ")}`;
 
 module.exports = {
-  "*.{js,jsx,ts,tsx}": [buildEslintCommand, prettierCommand],
+  "src/**/*.{js,jsx,ts,tsx}": [buildEslintCommand, prettierCommand],
 };

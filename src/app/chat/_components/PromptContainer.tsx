@@ -24,7 +24,6 @@ export default memo(function PromptContainer({
   msgIndex: number;
   isCompleted: boolean;
 }) {
-  console.log("Rendering ", msgIndex);
   const router = useRouter();
   const { data: session } = useSession();
   const imageUrl = session?.user?.image;
@@ -204,9 +203,6 @@ export default memo(function PromptContainer({
         setMessages(oldMessages);
         return;
       }
-
-      console.log("newMessages", newMessages);
-      console.log("newConversationRecordId", newConversationRecordId);
 
       await getCompletion(
         "/api/chat/regenerate",

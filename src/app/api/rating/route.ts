@@ -41,7 +41,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const session = await auth();
-  var userId;
+  let userId;
   if (!session || !session.user) {
     userId = ANONYMOUS_USER_ID;
   } else {

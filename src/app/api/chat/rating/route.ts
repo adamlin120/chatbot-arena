@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  var userId;
+  let userId;
   if (!session || !session.user) {
     userId = ANONYMOUS_USER_ID;
   } else {
@@ -77,11 +77,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No rounds found" }, { status: 404 });
   }
 
-  var conversationRoundRating = 0;
-  var siblingConversationRoundRating = 0;
-  var modelA = await getModelByConversationRecordId(conversationRecordId);
-  var modelB = await getModelByConversationRecordId(siblingRecordId);
-  var battle: Battle = {
+  let conversationRoundRating = 0;
+  let siblingConversationRoundRating = 0;
+  const modelA = await getModelByConversationRecordId(conversationRecordId);
+  const modelB = await getModelByConversationRecordId(siblingRecordId);
+  let battle: Battle = {
     modelA: modelA ? modelA : "",
     modelB: modelB ? modelB : "",
     winner: "Tie",

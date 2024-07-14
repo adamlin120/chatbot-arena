@@ -1,5 +1,4 @@
 import { db } from "@/app/api/_base";
-import { RateEditing } from "@/prisma/client";
 export const maxDuration = 300;
 
 function selectNumbers(m: number, n: number): number[] | null {
@@ -33,14 +32,14 @@ export const getRandomChats = async (count: number, userId?: string) => {
   if (count > conversationCount || count == -1) {
     count = conversationCount;
   }
-  var result: any[] = [];
+  let result: any[] = [];
   const selected_index = selectNumbers(count, conversationCount);
   if (selected_index == null) {
     throw new Error(
       "Count is bigger than the number of products in the database",
     );
   }
-  for (var i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     const pickedConversation = await db.conversationRecord.findFirst({
       skip: selected_index[i],
       select: {
