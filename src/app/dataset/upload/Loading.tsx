@@ -1,4 +1,4 @@
-import Loading from "../../_components/Loading";
+import Loading from "../../../components/Loading";
 
 export default function LoadingScreen() {
   return <Loading />;

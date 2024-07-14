@@ -388,3 +388,13 @@ body {
   height: 200px;
   overflow: auto;
 }
+
+ol {
+  list-style: decimal;
+  padding-left: 2rem;
+}
+
+ul {
+  list-style: disc;
+  padding-left: 2rem;
+}

@@ -1,5 +1,5 @@
 "use client";
-import Button from "@/app/_components/Button";
+import Button from "@/components/Button";
 import { LoaderCircle, SendHorizonal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";

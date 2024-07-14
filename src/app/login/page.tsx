@@ -1,25 +1,18 @@
 "use client";
-import AuthForm from "../_components/AuthForm";
+import AuthForm from "./_components/AuthForm";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
 
-type Props = {
-  searchParams?: Record<"error", string>;
-};
-
-export default function LoginPage(props: Props) {
+export default function LoginPage() {
   const router = useRouter();
   useEffect(() => {
     getSession().then((session) => {
-      /*if (session?.user?.verified == false) {
-                router.push('?error=NotVerified');
-            }
-            else */ if (session) {
+      if (session) {
         router.push("/chat");
       }
     });
-  }, []);
+  }, [router]);
   return (
     <div className="flex md:h-[90dvh] md:overflow-y-scroll fade-in">
       <div className="hidden w-1/2 md:flex justify-center items-center bg-gray-100 flyInFromTop">
@@ -27,7 +20,7 @@ export default function LoginPage(props: Props) {
       </div>
       <div className="md:w-1/2 w-full flex justify-center items-center overflow-hidden flyInFromBottom">
         <div className="w-full max-w-xs items-center">
-          <AuthForm error={props.searchParams?.error} />
+          <AuthForm />
         </div>
       </div>
     </div>

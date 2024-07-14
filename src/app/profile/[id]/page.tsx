@@ -2,7 +2,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Loading from "@/app/_components/Loading";
+import Loading from "@/components/Loading";
 import Image from "next/image";
 export const dynamic = "force-dynamic";
 
@@ -54,7 +54,7 @@ const ProfilePage = () => {
           console.error("Error fetching profile:", error);
         });
     }
-  }, [session]);
+  }, [params.id, session]);
 
   if (!session || !profile.username) {
     return <Loading />;

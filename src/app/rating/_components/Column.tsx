@@ -20,38 +20,12 @@ export default function Column({
   originalCompletion,
   editedPrompt,
   editedCompletion,
-  rating,
-  setRating,
   selected,
   isClick,
 }: Props) {
-  const feedbackDescription = [
-    {
-      id: 1 + (isOriginal ? 0 : 5),
-      text: "Much worse than Original",
-    },
-    {
-      id: 2 + (isOriginal ? 0 : 5),
-      text: "Worse than Original",
-    },
-    {
-      id: 3 + (isOriginal ? 0 : 5),
-      text: "No noticeable difference compared to the original",
-    },
-    {
-      id: 4 + (isOriginal ? 0 : 5),
-      text: "Better than Original",
-    },
-    {
-      id: 5 + (isOriginal ? 0 : 5),
-      text: "Much better than Original",
-    },
-  ];
 
   const [togglePrompt, setTogglePrompt] = useState(false);
   const [toggleCompletion, setToggleCompletion] = useState(false);
-
-  const type = isOriginal ? "Prompts" : "Completions";
   const handleClick = () => {
     selected(isOriginal);
   };
