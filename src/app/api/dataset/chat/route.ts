@@ -15,7 +15,7 @@ export async function GET(req: any) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const randomChats = await getRandomChats(amount, user.id); // Fetch 100 random chats
+  const randomChats = await getRandomChats(amount); // Fetch 100 random chats
 
   if (randomChats.length === 0) {
     return NextResponse.json(

@@ -24,7 +24,7 @@ function selectNumbers(m: number, n: number): number[] | null {
   return selectedNumbers;
 }
 
-export const getRandomChats = async (count: number, userId?: string) => {
+export const getRandomChats = async (count: number) => {
   const conversationCount = await db.conversationRecord.count();
   if (conversationCount === 0) {
     return [];

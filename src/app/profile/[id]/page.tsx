@@ -54,7 +54,7 @@ const ProfilePage = () => {
           console.error("Error fetching profile:", error);
         });
     }
-  }, [session]);
+  }, [params.id, session]);
 
   if (!session || !profile.username) {
     return <Loading />;
