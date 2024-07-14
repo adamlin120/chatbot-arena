@@ -26,7 +26,6 @@ export default CredentialsProvider({
     try {
       validatedCredentials = authSchema.parse(credentials);
     } catch (error) {
-      console.log("Wrong credentials. Try again.");
       return null;
     }
     const { email, username, password } = validatedCredentials;
@@ -39,7 +38,6 @@ export default CredentialsProvider({
     if (!existedUser) {
       // Sign up
       if (!username) {
-        console.log("Name is required.");
         return null;
       }
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -75,7 +73,6 @@ export default CredentialsProvider({
     }
     const isValid = await bcrypt.compare(password, existedUser.hashedPassword);
     if (!isValid) {
-      console.log("Wrong password. Try again.");
       return null;
     }
     if (!existedUser.verified) {
