@@ -31,7 +31,7 @@ export default function PromptContainer({
 
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
+    throw new Error("MessageContext is not provided");
   }
   const {
     ratingButtonDisabled,
@@ -241,7 +241,7 @@ export default function PromptContainer({
     setChildConversationIds([
       ...childConversationIds,
       newConversationRecordIds,
-    ]); // Todo: Needs to be checked
+    ]);
     setConversationRecordIds(newConversationRecordIds);
   };
 

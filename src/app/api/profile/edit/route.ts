@@ -5,7 +5,6 @@ import { db } from "../../_base";
 
 export async function POST(req: NextRequest) {
   const requestBody = await req.json();
-  //console.log(requestBody)
   try {
     const user = await db.user.update({
       where: {

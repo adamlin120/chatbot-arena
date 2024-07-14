@@ -8,7 +8,7 @@ import { serverErrorMessage } from "./getCompletion";
 export default function FunctionalButtons() {
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
+    throw new Error("MessageContext is not provided");
   }
   const {
     messageA,

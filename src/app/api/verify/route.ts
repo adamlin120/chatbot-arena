@@ -7,7 +7,6 @@ import { db } from "../_base";
 export async function POST(req: NextRequest) {
   try {
     const reqBody = await req.json();
-    //console.log(reqBody)
     const existingToken = await getVerificationTokenByToken(reqBody.token);
 
     if (!existingToken) {
@@ -16,8 +15,6 @@ export async function POST(req: NextRequest) {
 
     const hasExpired =
       !existingToken.expires || existingToken.expires < new Date();
-    //console.log(existingToken.expires);
-    //console.log(Date());
 
     if (hasExpired) {
       return NextResponse.json(

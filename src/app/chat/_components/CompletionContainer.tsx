@@ -38,7 +38,7 @@ export default function CompletionContainer({
 
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
+    throw new Error("MessageContext is not provided");
   }
   const { ratingButtonDisabled } = context;
 
@@ -214,8 +214,7 @@ export default function CompletionContainer({
                 >
                   {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
                 </button>
-                {ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
-                  // there are some bugs here, I will fix them later
+                {ratingButtonDisabled && (
                   <button
                     className="p-1 opacity-0 group-hover:opacity-100 self-end"
                     onClick={handleClickEdit}

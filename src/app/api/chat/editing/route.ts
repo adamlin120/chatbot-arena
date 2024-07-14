@@ -92,7 +92,5 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Failed to edit!" }, { status: 500 });
-  } finally {
-    // await db.$disconnect();
   }
 }

@@ -53,7 +53,6 @@ export default function RatingPage() {
     const res = await fetch("/api/rating");
     if (!res.ok) {
       toast.info("已經標注完所有對話資料！");
-      // TODO: @nukkk97 - Think about what to do when there are no more ratings
       return;
     }
     const data = await res.json();
@@ -145,11 +144,6 @@ export default function RatingPage() {
   };
 
   const handleSubmit = async () => {
-    //console.log("Submit feedback");
-    //console.log(feedbackText);
-    //console.log(promptRating);
-    //console.log(completionRating! - 5);
-
     if (selected === undefined) {
       toast.error("請選取何者較佳");
       return;
