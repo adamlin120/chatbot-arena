@@ -1,5 +1,5 @@
 "use client";
-import AuthForm from "../_components/AuthForm";
+import AuthForm from "./_components/AuthForm";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
@@ -20,7 +20,7 @@ export default function LoginPage() {
       </div>
       <div className="md:w-1/2 w-full flex justify-center items-center overflow-hidden flyInFromBottom">
         <div className="w-full max-w-xs items-center">
-          <AuthForm/>
+          <AuthForm />
         </div>
       </div>
     </div>
