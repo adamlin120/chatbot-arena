@@ -22,7 +22,6 @@ export default function FunctionalButtons() {
     conversationRecordIds,
     ratingButtonDisabled,
     setRatingButtonDisabled,
-    initiateChat,
     setModelAName,
     setModelBName,
     setRated,
@@ -70,7 +69,6 @@ export default function FunctionalButtons() {
     setRatingButtonDisabled(false);
     setMessageAWaiting(false);
     setMessageBWaiting(false);
-    initiateChat();
   };
 
   const sendRating = async (

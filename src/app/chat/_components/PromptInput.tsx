@@ -98,9 +98,14 @@ export default function PromptInput() {
       promptInputRef.current?.value.trim().length === 0
     )
       return;
-    if (!conversationRecordIds) {
-      // Todo: check if this is needed, and note that I cannot use await here.
-      initiateChat();
+
+    let convIds = conversationRecordIds;
+    if (conversationRecordIds.length === 0) {
+      const res = await initiateChat();
+      // initiateChat() would set conversationRecordIds
+      // However, it is not guaranteed that the conversationRecordIds are set immediately
+      if (!res) return;
+      convIds = res;
     }
     promptInputRef.current.value = promptInputRef.current.value.trim();
 
@@ -108,14 +113,14 @@ export default function PromptInput() {
     processMessages(
       promptInputRef.current?.value.trim(),
       messageA,
-      conversationRecordIds[0],
+      convIds[0],
       setMessageA,
       setMessageAWaiting,
     );
     processMessages(
       promptInputRef.current?.value.trim(),
       messageB,
-      conversationRecordIds[1],
+      convIds[1],
       setMessageB,
       setMessageBWaiting,
     );
@@ -137,10 +142,7 @@ export default function PromptInput() {
             placeholder={rated ? "評分完畢，歡迎編輯以上對話！" : "輸入訊息..."}
             ref={promptInputRef}
             disabled={
-              // I think it is better to make the textarea always focused. It is quite annoying to click on the textarea every time.
-              (ratingButtonDisabled && !messageAWaiting && !messageBWaiting) ||
-              !conversationRecordIds[0] ||
-              !conversationRecordIds[1]
+              ratingButtonDisabled && !messageAWaiting && !messageBWaiting
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && !isComposing) {
