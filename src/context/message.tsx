@@ -67,7 +67,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [stopStreaming, setStopStreaming] = useState<boolean>(false);
 
   const initiateChat = async () => {
-    console.log("Initiating chat...");
     const response = await fetch("/api/chat/initiate", {
       method: "POST",
     });
@@ -92,7 +91,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     setModelAName(DEFAULT_MODEL_NAME);
     setModelBName(DEFAULT_MODEL_NAME);
 
-    console.log("Conversation Record ID", data.conversationRecordId);
     return data.conversationRecordId;
   };
 
