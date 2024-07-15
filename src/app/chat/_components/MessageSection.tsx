@@ -7,7 +7,7 @@ import { Bot, ArrowDown } from "lucide-react";
 export default function MessageSection() {
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
+    throw new Error("MessageContext is not provided");
   }
   const {
     messageA,
@@ -88,7 +88,6 @@ export default function MessageSection() {
   };
 
   return (
-    // Todo: think a better way to handle the height of the container
     <div className="relative flex flex-col flex-grow justify-between border h-[50dvh]">
       <div
         className="relative flex flex-col flex-grow gap-8 py-4 overflow-y-auto"
@@ -117,7 +116,6 @@ export default function MessageSection() {
                   <CompletionContainer
                     msgIndex={index}
                     origMessage={message.content}
-                    isUser={false}
                     isCompleted={!messageAWaiting}
                     conversationRecordId={conversationRecordIds[0]}
                     messages={messageA}
@@ -128,7 +126,6 @@ export default function MessageSection() {
                       key={index}
                       msgIndex={index}
                       origMessage={messageB[index].content}
-                      isUser={false}
                       isCompleted={!messageBWaiting}
                       conversationRecordId={conversationRecordIds[1]}
                       messages={messageB}

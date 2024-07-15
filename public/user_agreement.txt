@@ -25,6 +25,7 @@ Uploading invalid data, viruses, worms, or other software agents through the Web
 Collecting or harvesting any personally identifiable information, including account names, from the Website.
 Using the Website for any commercial solicitation purposes.
 Impersonating another person or otherwise misrepresenting your affiliation with a person or entity, conducting fraud, hiding or attempting to hide your identity.
+
 5. Intellectual Property
 
 5.1 Ownership: The Website and its original content, features, and functionality are and will remain the exclusive property of TWLLM Chatbot Arena and its licensors. The Website is protected by copyright, trademark, and other laws of every countries in the world.
@@ -53,7 +54,7 @@ While we implement robust security measures to protect the integrity and confide
 
 The development team does not guarantee the continuous availability or functionality of the Website. There may be interruptions, delays, or errors in the Website's operation due to maintenance, updates, or unforeseen technical issues. We are not responsible for any loss or inconvenience caused by these disruptions.
 
-9.9. No Liability for User-Generated Content
+9.3. No Liability for User-Generated Content
 
 The Website allows users to generate and share content. The development team is not responsible for the content created or shared by users, and we do not endorse or guarantee the accuracy, completeness, or reliability of any user-generated content. Users are solely responsible for the content they generate and share on the Website.
 

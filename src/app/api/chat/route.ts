@@ -10,19 +10,15 @@ export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
-    // This is to test frontend time out
-    // await new Promise(resolve => setTimeout(resolve, 7000));
     const session = await auth();
     if (!session || !session.user) {
       if ((await increaseQuotaAndCheck(request)) === false) {
         return quotaExceedResponse();
       }
     }
-    // Get the message from the request query
     const requestBody = await request.json();
-    // Please use a validator in production
     const messages = requestBody.messages as Message[];
-    //ConversationId might be null, if it is, create a new conversation
+    // ConversationId might be null, if it is, create a new conversation
     const conversationRecordId = requestBody.conversationRecordId as string;
 
     if (!messages || !conversationRecordId) {

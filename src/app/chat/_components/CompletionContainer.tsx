@@ -6,13 +6,11 @@ import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
-import MarkdownRenderer from "@/components/MarkdownRenderer";
 import Button from "@/components/Button";
 
 export default function CompletionContainer({
   origMessage,
   msgIndex,
-  isUser,
   isCompleted,
   conversationRecordId,
   messages,
@@ -20,7 +18,6 @@ export default function CompletionContainer({
 }: {
   origMessage: string;
   msgIndex: number;
-  isUser: boolean;
   isCompleted: boolean;
   conversationRecordId: string;
   messages: Message[];
@@ -41,7 +38,7 @@ export default function CompletionContainer({
 
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
+    throw new Error("MessageContext is not provided");
   }
   const { ratingButtonDisabled } = context;
 
@@ -58,11 +55,9 @@ export default function CompletionContainer({
 
   const handleClickEdit = () => {
     setIsEditing(true);
-    if (!isUser) {
-      toast.info("編輯模型輸出，讓我們的模型有機會做得更好！", {
-        autoClose: 1000,
-      });
-    }
+    toast.info("編輯模型輸出，讓我們的模型有機會做得更好！", {
+      autoClose: 1000,
+    });
   };
 
   // below is copied from PromptInput.tsx
@@ -78,7 +73,14 @@ export default function CompletionContainer({
   const handleSubmit = async () => {
     setIsEditing(false);
     setMessage(message.trim());
-    if (!isUser && message.trim() === origMessage) {
+    if (message.trim() === origMessage) {
+      return;
+    }
+    if (message.trim() === "") {
+      setMessage(origMessage);
+      toast.error("模型輸出不能為空！", {
+        autoClose: 1000,
+      });
       return;
     }
 
@@ -190,15 +192,11 @@ export default function CompletionContainer({
             </>
           ) : (
             <div
-              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg`}
+              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-all text-lg`}
             >
-              {message === "思考中..." && !isUser ? (
-                `思考中${".".repeat(dotCount)}`
-              ) : isUser ? (
-                message
-              ) : (
-                <MarkdownRenderer>{message}</MarkdownRenderer>
-              )}
+              {message === "思考中..."
+                ? `思考中${".".repeat(dotCount)}`
+                : message}
             </div>
           )}
           <div className="self-start px-4 h-10">
@@ -216,16 +214,11 @@ export default function CompletionContainer({
                 >
                   {justCopied ? <Check size={20} /> : <Clipboard size={20} />}
                 </button>
-                {ratingButtonDisabled && ( // Todo: add a condition here to show the button only when the rating is sent
-                  // there are some bugs here, I will fix them later
+                {ratingButtonDisabled && (
                   <button
                     className="p-1 opacity-0 group-hover:opacity-100 self-end"
                     onClick={handleClickEdit}
-                    title={
-                      isUser
-                        ? "點擊以修改訊息"
-                        : "點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
-                    }
+                    title="點擊以編輯模型輸出，讓我們的模型有機會做得更好！"
                     disabled={isEditing}
                   >
                     <Pencil color="white" size={20} />

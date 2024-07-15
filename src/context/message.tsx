@@ -31,7 +31,7 @@ export const MessageContext = createContext<{
   setRated: React.Dispatch<React.SetStateAction<boolean>>;
   stopStreaming: boolean;
   setStopStreaming: React.Dispatch<React.SetStateAction<boolean>>;
-  initiateChat: () => void;
+  initiateChat: () => Promise<null | string[]>;
   DEFAULT_MODEL_NAME: string;
   origMessage: Message[];
 } | null>(null);
@@ -72,17 +72,17 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (!response.body) {
-      return;
+      return null;
     } else if (response.status === 429) {
       toast.info("喜歡這個GPT測試嗎？立刻註冊！");
       setTimeout(() => {
         router.push("/login");
       }, 3000);
-      return;
+      return null;
     } else if (response.status !== 200) {
       toast.error(serverErrorMessage);
       console.error("Error in response", response);
-      return;
+      return null;
     }
 
     const data = await response.json();
@@ -90,6 +90,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
     setModelAName(DEFAULT_MODEL_NAME);
     setModelBName(DEFAULT_MODEL_NAME);
+
+    return data.conversationRecordId;
   };
 
   return (

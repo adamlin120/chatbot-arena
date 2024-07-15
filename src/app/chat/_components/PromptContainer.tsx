@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import {
   Pencil,
   User,
@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 import { getCompletion, serverErrorMessage } from "./getCompletion";
 
-export default memo(function PromptContainer({
+export default function PromptContainer({
   msgIndex,
   isCompleted,
 }: {
@@ -31,7 +31,7 @@ export default memo(function PromptContainer({
 
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error("MessageContext is not provided"); // Todo: think an elegant way to handle this
+    throw new Error("MessageContext is not provided");
   }
   const {
     ratingButtonDisabled,
@@ -133,8 +133,8 @@ export default memo(function PromptContainer({
 
     if (!isRegen) {
       // edit
-      const newPrompt = promptTextAreaRef.current?.value;
-      if (!newPrompt) return;
+      const newPrompt = promptTextAreaRef.current?.value.trim();
+      if (!newPrompt || newPrompt === messageA[msgIndex].content) return;
 
       setIsEditing(false);
       processChildMessages(newPrompt);
@@ -241,7 +241,7 @@ export default memo(function PromptContainer({
     setChildConversationIds([
       ...childConversationIds,
       newConversationRecordIds,
-    ]); // Todo: Needs to be checked
+    ]);
     setConversationRecordIds(newConversationRecordIds);
   };
 
@@ -274,6 +274,12 @@ export default memo(function PromptContainer({
               ) => {
                 if (e.key === "Enter" && !e.shiftKey && !isComposing) {
                   e.preventDefault();
+                  const inputText = promptTextAreaRef.current?.value || "";
+                  if (
+                    inputText.trim().length === 0 ||
+                    inputText.trim() === messageA[msgIndex].content
+                  )
+                    return;
                   e.currentTarget.blur(); // will trigger handleEdit
                 }
               }}
@@ -291,7 +297,7 @@ export default memo(function PromptContainer({
             />
           ) : (
             <div
-              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
+              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-all text-lg
             ${isEditing && "border-b border-solid"} focus:outline-none`}
             >
               {messageA[msgIndex].content}
@@ -357,7 +363,7 @@ export default memo(function PromptContainer({
       </div>
     </div>
   );
-});
+}
 
 function CopyToClipBoard({
   content,
@@ -382,41 +388,3 @@ function CopyToClipBoard({
     </button>
   );
 }
-
-// Todo: edit the prompt
-// const handleEditPrompt = async () => {
-//   let originalCompletion, editedCompletion;
-//   const index = msgIndex + 1;
-//   originalCompletion = messageA[index];
-//   editedCompletion = originalCompletion;
-//   try {
-//     const response = await fetch("/api/chat/editing", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         msgIndex: msgIndex,
-//         contributorEmail: userEmail,
-//         originalPrompt: origPrompt,
-//         editedPrompt: prompt,
-//         originalCompletion: originalCompletion.content,
-//         editedCompletion: editedCompletion.content,
-//         conversationRecordId: conversationRecordId,
-//       }),
-//     });
-//     if (response.ok)
-//       // After saving the new prompt, you can show a toast message to indicate the success
-//       toast.success("輸入提示已更新，請稍後", {
-//         autoClose: 1000,
-//       });
-//     else
-//       toast.error("輸入提示更新失敗，請再試一次", {
-//         autoClose: 1000,
-//       });
-//   } catch (error) {
-//     toast.error("輸入提示更新失敗，請再試一次", {
-//       autoClose: 1000,
-//     });
-//   }
-// };

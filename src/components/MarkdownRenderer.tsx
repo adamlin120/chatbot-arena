@@ -26,7 +26,7 @@ export default function MarkdownRenderer({ children }: { children: string }) {
             : children && children.includes("\n")
               ? "text"
               : undefined;
-          // Todo: inline props is removed accoding to the latest version of react-markdown. I do not know how to distinguish inline code and block code. Currently, I use '\n' to distinguish them.
+          // Note: inline props is removed accoding to the latest version of react-markdown. I do not know how to distinguish inline code and block code. Currently, I use '\n' to distinguish them.
           // Some models will not give me the language
 
           return language ? (
@@ -77,7 +77,10 @@ export default function MarkdownRenderer({ children }: { children: string }) {
         },
       }}
     >
-      {children.replace(/\\\[/g, "$").replace(/\\\]/g, "$")}
+      {children
+        .replace(/\\\[/g, "$")
+        .replace(/\\\]/g, "$")
+        .replace(/\n\n/g, "\n")}
     </Markdown>
   );
 }
