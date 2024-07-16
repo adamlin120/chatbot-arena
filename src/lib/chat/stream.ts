@@ -191,6 +191,9 @@ export default async function getStream(
       .generateContentStream({
         contents: geminiMessages,
       });
+
+    console.log(response);
+
     const stream = GoogleGenerativeAIStream(response, {
       onCompletion: async (response) => {
         const ModelResponse: ModelResponse = {
