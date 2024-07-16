@@ -246,7 +246,7 @@ export default function PromptContainer({
   };
 
   return (
-    <div className="flex flex-col w-full group pt-6 px-5">
+    <div className="flex flex-col w-full max-w-full group pt-6 px-5">
       <div className="flex w-full gap-3 mb-2">
         <div className="self-start flex-shrink-0">
           {imageUrl ? (
@@ -261,7 +261,7 @@ export default function PromptContainer({
             <User size={imageSize} />
           )}
         </div>
-        <div className="flex-grow flex flex-col border rounded-sm mr-10">
+        <div className="flex-grow flex flex-col border rounded-sm mr-10 w-80">
           {isEditing ? (
             <textarea
               className="bg-transparent p-5 mx-5 px-0 text-white pb-0 flex-grow whitespace-pre-wrap text-pretty break-words text-lg border-b border-solid resize-none focus:outline-none overflow-hidden min-h-0 h-auto"
@@ -297,7 +297,7 @@ export default function PromptContainer({
             />
           ) : (
             <div
-              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-all text-lg
+              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg
             ${isEditing && "border-b border-solid"} focus:outline-none`}
             >
               {messageA[msgIndex].content}
