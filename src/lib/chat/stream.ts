@@ -12,7 +12,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { privateEnv } from "@/lib/env/private";
 import { ModelResponse } from "@/lib/types/db";
 import { db } from "@/app/api/_base";
+
 export const MAX_TOKENS = 1024;
+const temperature = 0.3;
 
 const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
@@ -55,7 +57,7 @@ export default async function getStream(
     const response = await openai.chat.completions.create({
       messages: messages,
       model: model,
-      temperature: 0,
+      temperature: temperature,
       max_tokens: MAX_TOKENS,
       stream: true,
     });
@@ -78,6 +80,7 @@ export default async function getStream(
     const response = await mistral.chatStream({
       model: model,
       maxTokens: MAX_TOKENS,
+      temperature: temperature,
       messages,
     });
     const stream = MistralStream(response, {
@@ -112,6 +115,7 @@ export default async function getStream(
       messages: filteredMessages,
       model: model,
       max_tokens: MAX_TOKENS,
+      temperature: temperature,
     });
 
     const stream = AnthropicStream(response, {
@@ -141,7 +145,7 @@ export default async function getStream(
     const response = await client.chat.completions.create({
       messages: messages,
       model: "yentinglin/" + model,
-      temperature: 0,
+      temperature: temperature,
       max_tokens: MAX_TOKENS,
       stream: true,
     });
@@ -174,7 +178,7 @@ export default async function getStream(
         model: model,
         generationConfig: {
           maxOutputTokens: MAX_TOKENS,
-          temperature: 0,
+          temperature: temperature,
         },
       })
       .generateContentStream({
