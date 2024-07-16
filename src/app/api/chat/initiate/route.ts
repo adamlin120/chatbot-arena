@@ -61,6 +61,8 @@ export async function POST(request: NextRequest) {
     model_list_without_A[
       Math.floor(Math.random() * model_list_without_A.length)
     ];
+  console.log("modelA:", modelA);
+  console.log("modelB:", modelB);
 
   if (!conversation) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
