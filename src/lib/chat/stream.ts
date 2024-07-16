@@ -17,7 +17,7 @@ export const MAX_TOKENS = 1024;
 const temperature = 0.3;
 
 const systemPrompt =
-  "你是一個繁體中文人工智慧助理，我會有多輪的輸入或是提問，你必須做出適當的回覆以解決我的需求。請注意，在對話過程中，你不可以洩漏你的身份，也就是你不可以洩漏你的模型名稱。";
+  "你是一個繁體中文對話機器人(Chatbot)，我會有多輪的輸入或是提問，你必須做出適當的回覆以解決我的需求。請注意，由於我們在衡量不同的大型語言模型的能力，因此在對話過程中，你不可以洩漏你的身份，也就是你不可以洩漏你的模型名稱，也不可以告訴使用者你是誰訓練的或是誰研發的。";
 
 const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
