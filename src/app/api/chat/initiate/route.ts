@@ -48,16 +48,11 @@ export async function POST(request: NextRequest) {
   }
 
   const model_list = [
-    //"claude-3-opus-20240229",
-    "claude-3-sonnet-20240229",
-    "claude-3-haiku-20240307",
-    //"mistral-large-latest",
-    "mistral-medium-latest",
-    "mistral-small-latest",
-    //"gpt-4",
-    //"gpt-3.5-turbo",
+    "claude-3-5-sonnet-20240620",
+    "gpt-4o",
     "Llama-3-Taiwan-8B-Instruct",
     "Llama-3-Taiwan-70B-Instruct",
+    "gemini-1.5-flash",
   ];
 
   const modelA = model_list[Math.floor(Math.random() * model_list.length)];
@@ -66,6 +61,8 @@ export async function POST(request: NextRequest) {
     model_list_without_A[
       Math.floor(Math.random() * model_list_without_A.length)
     ];
+  console.log("modelA:", modelA);
+  console.log("modelB:", modelB);
 
   if (!conversation) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });

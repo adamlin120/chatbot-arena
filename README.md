@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Chatbot Arena for Traditional Chinese is an initiative by Yan-Ting Lin and NTU MiuLab, based on the LMSYS open-source research project. This platform is designed to evaluate the performance of large language models (LLMs) in Traditional Chinese. We have developed an open testing platform where users can label and compare data from conversations with LLMs, assess the quality of interactions, and provide feedback. This approach enables the collection of performance data in real-world scenarios, facilitating the enhancement of LLM capabilities.
+The Chatbot Arena for Traditional Chinese is an initiative by Yen-Ting Lin and NTU MiuLab, based on the LMSYS open-source research project. This platform is designed to evaluate the performance of large language models (LLMs) in Traditional Chinese. We have developed an open testing platform where users can label and compare data from conversations with LLMs, assess the quality of interactions, and provide feedback. This approach enables the collection of performance data in real-world scenarios, facilitating the enhancement of LLM capabilities.
 
 ## Methods
 

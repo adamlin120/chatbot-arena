@@ -46,7 +46,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     {
       role: "user",
       content:
-        "你是一個繁體中文人工智能助理，必須根據我的輸入做出適當的回覆以解決我的需求。",
+        "你是一個繁體中文人工智慧助理，必須根據我的輸入提問做出適當的回覆以解決我的需求。",
     },
     {
       role: "assistant",

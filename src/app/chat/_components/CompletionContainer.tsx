@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Message } from "@/lib/types/db";
 import Button from "@/components/Button";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 export default function CompletionContainer({
   origMessage,
@@ -192,11 +193,13 @@ export default function CompletionContainer({
             </>
           ) : (
             <div
-              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-all text-lg`}
+              className={`px-5 pt-3 pb-4 flex-grow whitespace-pre-wrap text-pretty break-words text-lg`}
             >
-              {message === "思考中..."
-                ? `思考中${".".repeat(dotCount)}`
-                : message}
+              {message === "思考中..." ? (
+                `思考中${".".repeat(dotCount)}`
+              ) : (
+                <MarkdownRenderer>{message}</MarkdownRenderer>
+              )}
             </div>
           )}
           <div className="self-start px-4 h-10">

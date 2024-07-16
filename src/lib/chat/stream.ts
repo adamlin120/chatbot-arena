@@ -1,16 +1,29 @@
 import { Message } from "@/lib/types/db";
-import { OpenAIStream, MistralStream, AnthropicStream } from "ai";
+import {
+  OpenAIStream,
+  MistralStream,
+  AnthropicStream,
+  GoogleGenerativeAIStream,
+} from "ai";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
 import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { privateEnv } from "@/lib/env/private";
 import { ModelResponse } from "@/lib/types/db";
 import { db } from "@/app/api/_base";
-export const MAX_TOKENS = 1024;
+import { fetch as undici_fetch } from "undici";
+
+const MAX_TOKENS = 2048;
+const temperature = 0.3;
+
+const systemPrompt =
+  "你是一個繁體中文對話機器人(Chatbot)，我會有多輪的輸入或是提問，你必須做出適當的回覆以解決我的需求。請注意，由於我們在衡量不同的大型語言模型的能力，因此在對話過程中，你不可以洩漏你的身份，也就是你不可以洩漏你的模型名稱，也不可以告訴使用者你是誰訓練的或是誰研發的。";
 
 const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
 const anthropic = new Anthropic({ apiKey: privateEnv.ANTHROPIC_KEY });
+const google = new GoogleGenerativeAI(privateEnv.GEMINI_KEY);
 
 async function writeStreamToDatabase(
   conversationRecordId: string,
@@ -44,11 +57,15 @@ export default async function getStream(
   conversationRecordId: string,
   originalConversationRecordId?: string,
 ) {
+  const messagesWithSystem: Message[] = [
+    { role: "system", content: systemPrompt },
+    ...messages,
+  ];
   if (model.includes("gpt")) {
     const response = await openai.chat.completions.create({
-      messages: messages,
+      messages: messagesWithSystem,
       model: model,
-      temperature: 0,
+      temperature: temperature,
       max_tokens: MAX_TOKENS,
       stream: true,
     });
@@ -71,7 +88,8 @@ export default async function getStream(
     const response = await mistral.chatStream({
       model: model,
       maxTokens: MAX_TOKENS,
-      messages,
+      temperature: temperature,
+      messages: messagesWithSystem,
     });
     const stream = MistralStream(response, {
       onCompletion: async (response) => {
@@ -89,9 +107,6 @@ export default async function getStream(
     });
     return stream;
   } else if (model.includes("claude")) {
-    //First change the message to a messageParams object instead of a Message object
-
-    // TODO: temporary fix, need to fix the type of messages
     type MessageParams = {
       role: "user" | "assistant";
       content: string;
@@ -104,7 +119,9 @@ export default async function getStream(
     const response = await anthropic.messages.stream({
       messages: filteredMessages,
       model: model,
+      system: systemPrompt,
       max_tokens: MAX_TOKENS,
+      temperature: temperature,
     });
 
     const stream = AnthropicStream(response, {
@@ -125,20 +142,67 @@ export default async function getStream(
   } else if (model.includes("Llama-3-Taiwan")) {
     // "Llama-3-Taiwan-8B-Instruct" and "Llama-3-Taiwan-70B-Instruct"
     const client = new OpenAI({
-      apiKey: "",
+      apiKey: privateEnv.TWLLM_KEY,
       baseURL:
         model === "Llama-3-Taiwan-8B-Instruct"
           ? "http://api.openai.twllm.com:8001/v1"
           : "http://api.openai.twllm.com:8002/v1",
     });
     const response = await client.chat.completions.create({
-      messages: messages,
+      messages: messagesWithSystem,
       model: "yentinglin/" + model,
-      temperature: 0,
+      temperature: temperature,
       max_tokens: MAX_TOKENS,
       stream: true,
     });
     const stream = OpenAIStream(response, {
+      onCompletion: async (response) => {
+        const ModelResponse: ModelResponse = {
+          prompt: messages[messages.length - 1].content,
+          completion: response,
+          model_name: model,
+        };
+        await writeStreamToDatabase(
+          conversationRecordId,
+          ModelResponse,
+          originalConversationRecordId,
+        );
+      },
+    });
+    return stream;
+  } else if (model.includes("gemini")) {
+    const geminiMessages = messages
+      .filter(
+        (message) => message.role === "user" || message.role === "assistant",
+      )
+      .map((message) => ({
+        role: message.role === "user" ? "user" : "model",
+        parts: [{ text: message.content }],
+      }));
+
+    const genModel = google.getGenerativeModel({
+      model: model,
+      generationConfig: {
+        maxOutputTokens: MAX_TOKENS,
+        temperature: temperature,
+      },
+      systemInstruction: systemPrompt,
+    });
+
+    // https://github.com/google-gemini/generative-ai-js/issues/43#issuecomment-2118905242
+    const currentFetch = global.fetch;
+    global.fetch = undici_fetch as (
+      input: RequestInfo | URL,
+      init?: RequestInit,
+    ) => Promise<Response>;
+
+    const response = await genModel.generateContentStream({
+      contents: geminiMessages,
+    });
+
+    global.fetch = currentFetch;
+
+    const stream = GoogleGenerativeAIStream(response, {
       onCompletion: async (response) => {
         const ModelResponse: ModelResponse = {
           prompt: messages[messages.length - 1].content,

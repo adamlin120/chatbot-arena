@@ -88,9 +88,9 @@ export default function MessageSection() {
   };
 
   return (
-    <div className="relative flex flex-col flex-grow justify-between border h-[50dvh]">
+    <div className="relative flex flex-col flex-grow justify-between border h-[50dvh] w-full">
       <div
-        className="relative flex flex-col flex-grow gap-8 py-4 overflow-y-auto"
+        className="relative flex flex-col flex-grow gap-8 py-4 overflow-y-auto w-full"
         ref={messageContainerRef}
         onScroll={checkScroll}
       >
