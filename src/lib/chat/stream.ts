@@ -16,6 +16,9 @@ import { db } from "@/app/api/_base";
 export const MAX_TOKENS = 1024;
 const temperature = 0.3;
 
+const systemPrompt =
+  "你是一個繁體中文人工智慧助理，我會有多輪的輸入或是提問，你必須做出適當的回覆以解決我的需求。請注意，在對話過程中，你不可以洩漏你的身份，也就是你不可以洩漏你的模型名稱。";
+
 const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
 const anthropic = new Anthropic({ apiKey: privateEnv.ANTHROPIC_KEY });
@@ -53,9 +56,13 @@ export default async function getStream(
   conversationRecordId: string,
   originalConversationRecordId?: string,
 ) {
+  const messagesWithSystem: Message[] = [
+    { role: "system", content: systemPrompt },
+    ...messages,
+  ];
   if (model.includes("gpt")) {
     const response = await openai.chat.completions.create({
-      messages: messages,
+      messages: messagesWithSystem,
       model: model,
       temperature: temperature,
       max_tokens: MAX_TOKENS,
@@ -81,7 +88,7 @@ export default async function getStream(
       model: model,
       maxTokens: MAX_TOKENS,
       temperature: temperature,
-      messages,
+      messages: messagesWithSystem,
     });
     const stream = MistralStream(response, {
       onCompletion: async (response) => {
@@ -99,9 +106,6 @@ export default async function getStream(
     });
     return stream;
   } else if (model.includes("claude")) {
-    //First change the message to a messageParams object instead of a Message object
-
-    // TODO: temporary fix, need to fix the type of messages
     type MessageParams = {
       role: "user" | "assistant";
       content: string;
@@ -114,6 +118,7 @@ export default async function getStream(
     const response = await anthropic.messages.stream({
       messages: filteredMessages,
       model: model,
+      system: systemPrompt,
       max_tokens: MAX_TOKENS,
       temperature: temperature,
     });
@@ -143,7 +148,7 @@ export default async function getStream(
           : "http://api.openai.twllm.com:8002/v1",
     });
     const response = await client.chat.completions.create({
-      messages: messages,
+      messages: messagesWithSystem,
       model: "yentinglin/" + model,
       temperature: temperature,
       max_tokens: MAX_TOKENS,
@@ -173,6 +178,7 @@ export default async function getStream(
         role: message.role === "user" ? "user" : "model",
         parts: [{ text: message.content }],
       }));
+
     const response = await google
       .getGenerativeModel({
         model: model,
@@ -180,6 +186,7 @@ export default async function getStream(
           maxOutputTokens: MAX_TOKENS,
           temperature: temperature,
         },
+        systemInstruction: systemPrompt,
       })
       .generateContentStream({
         contents: geminiMessages,
