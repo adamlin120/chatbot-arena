@@ -20,6 +20,7 @@ export default function FunctionalButtons() {
     setMessageAWaiting,
     setMessageBWaiting,
     conversationRecordIds,
+    setConversationRecordIds,
     ratingButtonDisabled,
     setRatingButtonDisabled,
     setModelAName,
@@ -64,6 +65,7 @@ export default function FunctionalButtons() {
     }
     setMessageA(origMessage);
     setMessageB(origMessage);
+    setConversationRecordIds([]);
     setModelAName(DEFAULT_MODEL_NAME);
     setModelBName(DEFAULT_MODEL_NAME);
     setRatingButtonDisabled(false);
