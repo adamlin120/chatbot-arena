@@ -1,8 +1,14 @@
 import { Message } from "@/lib/types/db";
-import { OpenAIStream, MistralStream, AnthropicStream } from "ai";
+import {
+  OpenAIStream,
+  MistralStream,
+  AnthropicStream,
+  GoogleGenerativeAIStream,
+} from "ai";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
 import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { privateEnv } from "@/lib/env/private";
 import { ModelResponse } from "@/lib/types/db";
 import { db } from "@/app/api/_base";
@@ -11,6 +17,7 @@ export const MAX_TOKENS = 1024;
 const openai = new OpenAI({ apiKey: privateEnv.OPENAI_KEY });
 const mistral = new MistralClient(privateEnv.MISTRAL_KEY);
 const anthropic = new Anthropic({ apiKey: privateEnv.ANTHROPIC_KEY });
+const google = new GoogleGenerativeAI(privateEnv.GEMINI_KEY);
 
 async function writeStreamToDatabase(
   conversationRecordId: string,
@@ -125,7 +132,7 @@ export default async function getStream(
   } else if (model.includes("Llama-3-Taiwan")) {
     // "Llama-3-Taiwan-8B-Instruct" and "Llama-3-Taiwan-70B-Instruct"
     const client = new OpenAI({
-      apiKey: "",
+      apiKey: privateEnv.TWLLM_KEY,
       baseURL:
         model === "Llama-3-Taiwan-8B-Instruct"
           ? "http://api.openai.twllm.com:8001/v1"
@@ -139,6 +146,41 @@ export default async function getStream(
       stream: true,
     });
     const stream = OpenAIStream(response, {
+      onCompletion: async (response) => {
+        const ModelResponse: ModelResponse = {
+          prompt: messages[messages.length - 1].content,
+          completion: response,
+          model_name: model,
+        };
+        await writeStreamToDatabase(
+          conversationRecordId,
+          ModelResponse,
+          originalConversationRecordId,
+        );
+      },
+    });
+    return stream;
+  } else if (model.includes("gemini")) {
+    const geminiMessages = messages
+      .filter(
+        (message) => message.role === "user" || message.role === "assistant",
+      )
+      .map((message) => ({
+        role: message.role === "user" ? "user" : "model",
+        parts: [{ text: message.content }],
+      }));
+    const response = await google
+      .getGenerativeModel({
+        model: model,
+        generationConfig: {
+          maxOutputTokens: MAX_TOKENS,
+          temperature: 0,
+        },
+      })
+      .generateContentStream({
+        contents: geminiMessages,
+      });
+    const stream = GoogleGenerativeAIStream(response, {
       onCompletion: async (response) => {
         const ModelResponse: ModelResponse = {
           prompt: messages[messages.length - 1].content,
