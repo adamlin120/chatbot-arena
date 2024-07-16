@@ -12,8 +12,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { privateEnv } from "@/lib/env/private";
 import { ModelResponse } from "@/lib/types/db";
 import { db } from "@/app/api/_base";
+import { fetch as undici_fetch } from "undici";
 
-export const MAX_TOKENS = 1024;
+const MAX_TOKENS = 2048;
 const temperature = 0.3;
 
 const systemPrompt =
@@ -179,20 +180,27 @@ export default async function getStream(
         parts: [{ text: message.content }],
       }));
 
-    const response = await google
-      .getGenerativeModel({
-        model: model,
-        generationConfig: {
-          maxOutputTokens: MAX_TOKENS,
-          temperature: temperature,
-        },
-        systemInstruction: systemPrompt,
-      })
-      .generateContentStream({
-        contents: geminiMessages,
-      });
+    const genModel = google.getGenerativeModel({
+      model: model,
+      generationConfig: {
+        maxOutputTokens: MAX_TOKENS,
+        temperature: temperature,
+      },
+      systemInstruction: systemPrompt,
+    });
 
-    console.log(response);
+    // https://github.com/google-gemini/generative-ai-js/issues/43#issuecomment-2118905242
+    const currentFetch = global.fetch;
+    global.fetch = undici_fetch as (
+      input: RequestInfo | URL,
+      init?: RequestInit,
+    ) => Promise<Response>;
+
+    const response = await genModel.generateContentStream({
+      contents: geminiMessages,
+    });
+
+    global.fetch = currentFetch;
 
     const stream = GoogleGenerativeAIStream(response, {
       onCompletion: async (response) => {
