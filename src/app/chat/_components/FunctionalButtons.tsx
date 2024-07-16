@@ -190,12 +190,12 @@ function RuleDialog({
         <ul className="list-disc list-outside px-6 pt-2 text-indent">
           <li>
             向兩個匿名模型（例如
-            GPT-4、ChatGPT、Claude、Gemini-Pro、Mistral-Medium、Taiwan-LLM、Breeze）提問，並為較佳者投票！
+            GPT-4o、Gemini、Taiwan-LLM、Claude）提問，並為較佳者投票！
           </li>
           <li>您可以持續對話，直到確定贏家。</li>
           <li>如果在對話過程中透露了模型身份，則不計入投票。</li>
           <li>
-            確定贏家並評分後，您可以編輯模型的輸出以及您的輸入，讓我們的模型有機會做得更好！
+            確定贏家並評分後，您可以編輯模型的輸出，讓我們的模型有機會做得更好！
           </li>
         </ul>
         <div className="flex justify-end mt-5">
