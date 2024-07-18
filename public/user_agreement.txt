@@ -70,11 +70,15 @@ The development team does not guarantee performance or assume responsibility for
 
 We may update this Responsibility-Free Declaration from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new declaration on the Website and updating the effective date.
 
-10. Changes to this Agreement
+10. Limitation of Liability and Waiver of Right to Sue
 
-We may update this Agreement from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new Agreement on the Website and updating the effective date.
+By using our services, you agree that you will not bring any legal action, claim, or suit against Chatbot Arena, its affiliates, directors, officers, employees, or agents, for any damages, losses, or liabilities arising out of or in connection with your use of our services. This includes, but is not limited to, claims related to the collection, use, storage, or disclosure of your personal data, except in cases of willful misconduct or gross negligence by Chatbot Arena.
 
-11. Contact Us
+11. Changes to this Agreement
+
+We may update this Agreement from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will post the new version of the agreement on our website when updated.
+
+12. Contact Us
 
 If you have any questions or concerns about this Agreement, please contact us at:
 

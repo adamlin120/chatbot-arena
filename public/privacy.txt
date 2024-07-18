@@ -6,7 +6,7 @@ Welcome to TWLLM Chatbot Arena ("the Website"). We value your privacy and are co
 
 2.1 Conversations and Activities
 
-We collect and store all user conversations and activities on the Website. This data is collected for academic and research purposes. While the conversation records may be published, any personal information will be anonymized to ensure your privacy.
+We collect and store all user conversations and activities on the Website. This data is collected for academic and research purposes. Your name, email address, and personal photo will be retained in our database, but they will be anonymized in the data that we disclose to the public. The term "public" refers to anyone except of our development team, National Taiwan University, and the g0v team.  However, your conversation records and other activities will be published on our website as part of an open dataset.
 
 2.2 Email Address
 
@@ -22,9 +22,12 @@ The information we collect is used for the following purposes:
 
 To improve and optimize the performance and functionality of the Website.
 To conduct academic and research activities.
+To serve as an open dataset.
 To ensure the security and integrity of the Website.
 To provide user support and communicate with users regarding their account or the Website's services.
 To use the information collected as a sponsored project by g0v, a Taiwanese NGO for digital society.
+
+You acknowledge and agree that Chatbot Arena reserves the right to delete, anonymize, or otherwise dispose of any data collected from you without prior notice, provided that such actions do not constitute willful misconduct. In the absence of willful misconduct, Chatbot Arena shall not be liable for any consequences resulting from the deletion, anonymization, or disposal of data.
 
 4. Data Security
 
@@ -32,7 +35,7 @@ We implement appropriate technical and organizational measures to protect the pe
 
 5. Changes to this Privacy Agreement
 
-We may update this Privacy Agreement from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new Privacy Agreement on the Website and updating the effective date.
+We may update this Privacy Agreement from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. The privacy agreement will be updated on the /privacy.txt path of our website.
 
 6. Contact Us
 
