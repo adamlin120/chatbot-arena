@@ -28,11 +28,7 @@ export default function RatingPage() {
   const [editedCompletion, setEditedCompletion] = useState<
     string | undefined
   >();
-  const [contributorName, setContributorName] = useState<string | undefined>();
-  const [contributorAvatar, setContributorAvatar] = useState<
-    string | undefined
-  >();
-
+  
   const [selected, setSelected] = useState<string>();
 
   const imageSize = 30;
@@ -92,10 +88,6 @@ export default function RatingPage() {
     setOriginalCompletion(data.originalCompletion);
     setEditedPrompt(data.editedPrompt);
     setEditedCompletion(data.editedCompletion);
-    setContributorName(data.contributorName);
-    if (data.contributorAvatar !== null) {
-      setContributorAvatar(data.contributorAvatar);
-    }
   };
 
   useEffect(() => {
@@ -203,22 +195,6 @@ export default function RatingPage() {
           <div className="text-xl">請點選表現較好的conversation：</div>
         </div>
         <div className="flex flex-col mt-10">
-          <div className="flex items-center">
-            <div className="text-l">Contributor: &nbsp;</div>
-            {contributorAvatar &&
-              (contributorAvatar === "anonymous.com" ? (
-                <User size={imageSize} />
-              ) : (
-                <Image
-                  src={contributorAvatar}
-                  alt="Contributor Image"
-                  width={imageSize}
-                  height={imageSize}
-                  className="rounded-full"
-                />
-              ))}
-            <div> &nbsp; {contributorName}</div>
-          </div>
           <div className="flex flex-col md:flex-row mt-5 gap-8 p-1">
             <Column
               isOriginal={true}
