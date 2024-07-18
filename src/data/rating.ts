@@ -54,12 +54,6 @@ export const getRandomRatings = async (count: number, userId?: string) => {
           editedCompletion: true,
           contributorId: true,
           scores: true,
-          contributor: {
-            select: {
-              username: true,
-              avatarUrl: true,
-            },
-          },
         },
       });
       if (
@@ -104,12 +98,6 @@ export const getRandomRatings = async (count: number, userId?: string) => {
           editedCompletion: true,
           contributorId: true,
           scores: true,
-          contributor: {
-            select: {
-              username: true,
-              avatarUrl: true,
-            },
-          },
         },
       });
       result.push(pickedRating);
