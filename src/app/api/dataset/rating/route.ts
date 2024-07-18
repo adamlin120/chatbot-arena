@@ -34,9 +34,6 @@ export async function GET(req: any) {
     originalCompletion: rating.originalCompletion,
     editedPrompt: rating.editedPrompt,
     editedCompletion: rating.editedCompletion,
-    contributorId: rating.contributorId,
-    contributorName: rating.contributor?.username,
-    contributorAvatar: rating.contributor?.avatarUrl,
     scores: rating.scores,
   }));
 
