@@ -97,7 +97,7 @@ export default function UploadPage() {
   };
 
   return (
-    <main className="p-5 px-10 md:px-22 fade-in hidden-scrollbar">
+    <main className="p-5 md:px-22 fade-in hidden-scrollbar">
       <ToastContainer
         position="top-center"
         autoClose={3000}

@@ -181,7 +181,7 @@ export default function RatingPage() {
       />
       <div
         id="content"
-        className="p-5 px-10 md:px-12 lg:px-36 fade-in hidden-scrollbar"
+        className="p-5 md:px-12 lg:px-36 fade-in hidden-scrollbar"
       >
         <div className="flex flex-col gap-3">
           <div className="text-3xl font-bold">Review Feedback</div>

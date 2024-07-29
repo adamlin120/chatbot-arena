@@ -91,7 +91,7 @@ const ProfilePage = () => {
     setNewBio(profile.bio); // Reset newBio to the current bio
   };
   return (
-    <div className="bg-[rgb(31,41,55,0.3)] p-5 px-10 md:px-16 lg:px-40 xl:px-60 fade-in hidden-scrollbar rounded-lg">
+    <div className="bg-[rgb(31,41,55,0.3)] p-5 md:px-16 lg:px-40 xl:px-60 fade-in hidden-scrollbar rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Profile</div>
         <div className="text-md">使用者個人檔案管理</div>
