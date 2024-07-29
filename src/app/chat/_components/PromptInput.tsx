@@ -55,7 +55,6 @@ export default function PromptInput() {
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setMessageWaiting: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
-    setMessageWaiting(true);
     const newMessages: Message[] = [
       ...messages,
       {
@@ -99,6 +98,8 @@ export default function PromptInput() {
     )
       return;
 
+    setMessageAWaiting(true);
+    setMessageBWaiting(true);
     let convIds = conversationRecordIds;
     if (conversationRecordIds.length === 0) {
       const res = await initiateChat();

@@ -23,7 +23,6 @@ export default function Column({
   selected,
   isClick,
 }: Props) {
-
   const [togglePrompt, setTogglePrompt] = useState(false);
   const [toggleCompletion, setToggleCompletion] = useState(false);
   const handleClick = () => {

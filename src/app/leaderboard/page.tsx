@@ -13,7 +13,7 @@ export default async function LeaderboardPage() {
   return (
     <div
       id="leaderboard"
-      className="py-5 mx-8 md:mx-24 lg:mx-44 fade-in overflow-x-auto"
+      className="py-5 mx-5 md:mx-24 lg:mx-44 fade-in overflow-x-auto"
     >
       <div className="flex flex-col gap-3">
         <div className="text-3xl font-bold">Leaderboard</div>

@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
   }
 
   const { conversationRecordId } = await request.json();

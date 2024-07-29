@@ -6,8 +6,6 @@ import { getSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "./Loading";
-import Image from "next/image";
-import { User } from "lucide-react";
 export const dynamic = "force-dynamic";
 export default function RatingPage() {
   const [feedbackText, setFeedbackText] = useState<string>("");
@@ -28,10 +26,8 @@ export default function RatingPage() {
   const [editedCompletion, setEditedCompletion] = useState<
     string | undefined
   >();
-  
-  const [selected, setSelected] = useState<string>();
 
-  const imageSize = 30;
+  const [selected, setSelected] = useState<string>();
 
   const handleColumnClick = (isOriginal: boolean) => {
     if (isOriginal) {
@@ -185,16 +181,16 @@ export default function RatingPage() {
       />
       <div
         id="content"
-        className="p-5 px-10 md:px-12 lg:px-36 fade-in hidden-scrollbar"
+        className="p-5 md:px-12 lg:px-36 fade-in hidden-scrollbar"
       >
         <div className="flex flex-col gap-3">
           <div className="text-3xl font-bold">Review Feedback</div>
           <div className="text-md">
-            對其他使用者編輯後的prompts和completions進行評分
+            對其他使用者編輯後的 prompts 和 completions 進行評分
           </div>
-          <div className="text-xl">請點選表現較好的conversation：</div>
+          <div className="text-xl">請點選表現較好的 conversation：</div>
         </div>
-        <div className="flex flex-col mt-10">
+        <div className="flex flex-col">
           <div className="flex flex-col md:flex-row mt-5 gap-8 p-1">
             <Column
               isOriginal={true}

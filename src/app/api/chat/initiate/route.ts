@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
   const model_list = [
     "claude-3-5-sonnet-20240620",
     "gpt-4o",
-    "Llama-3-Taiwan-8B-Instruct",
     "Llama-3-Taiwan-70B-Instruct",
     "gemini-1.5-flash",
   ];

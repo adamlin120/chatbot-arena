@@ -140,13 +140,10 @@ export default async function getStream(
     });
     return stream;
   } else if (model.includes("Llama-3-Taiwan")) {
-    // "Llama-3-Taiwan-8B-Instruct" and "Llama-3-Taiwan-70B-Instruct"
+    // "Llama-3-Taiwan-70B-Instruct"
     const client = new OpenAI({
       apiKey: privateEnv.TWLLM_KEY,
-      baseURL:
-        model === "Llama-3-Taiwan-8B-Instruct"
-          ? "http://api.openai.twllm.com:8001/v1"
-          : "http://api.openai.twllm.com:8002/v1",
+      baseURL: "http://api.twllm.com:20001/v1",
     });
     const response = await client.chat.completions.create({
       messages: messagesWithSystem,
@@ -191,7 +188,7 @@ export default async function getStream(
 
     // https://github.com/google-gemini/generative-ai-js/issues/43#issuecomment-2118905242
     const currentFetch = global.fetch;
-    global.fetch = undici_fetch as (
+    global.fetch = undici_fetch as unknown as (
       input: RequestInfo | URL,
       init?: RequestInit,
     ) => Promise<Response>;
