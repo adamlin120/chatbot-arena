@@ -33,9 +33,6 @@ export async function GET() {
     originalCompletion: randomRatings[0].originalCompletion,
     editedPrompt: randomRatings[0].editedPrompt,
     editedCompletion: randomRatings[0].editedCompletion,
-    contributorId: randomRatings[0].contributorId,
-    contributorName: contributor?.username,
-    contributorAvatar: contributor?.avatarUrl,
   });
 }
 
