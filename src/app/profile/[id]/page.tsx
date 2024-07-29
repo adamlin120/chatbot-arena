@@ -144,7 +144,7 @@ const ProfilePage = () => {
                       onChange={(e) => setNewBio(e.target.value)}
                     />
                   ) : (
-                    <p className="w-full h-full text-lg mb-4 overflow-auto border-none">
+                    <p className="w-full h-full text-lg mb-4 overflow-y-auto border-none whitespace-pre-wrap break-words">
                       {profile.bio}
                     </p> // Added text-lg class here
                   )}
