@@ -191,7 +191,7 @@ export default async function getStream(
 
     // https://github.com/google-gemini/generative-ai-js/issues/43#issuecomment-2118905242
     const currentFetch = global.fetch;
-    global.fetch = undici_fetch as (
+    global.fetch = undici_fetch as unknown as (
       input: RequestInfo | URL,
       init?: RequestInit,
     ) => Promise<Response>;
