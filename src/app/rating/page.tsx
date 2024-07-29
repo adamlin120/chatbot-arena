@@ -6,8 +6,6 @@ import { getSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "./Loading";
-import Image from "next/image";
-import { User } from "lucide-react";
 export const dynamic = "force-dynamic";
 export default function RatingPage() {
   const [feedbackText, setFeedbackText] = useState<string>("");
@@ -28,10 +26,8 @@ export default function RatingPage() {
   const [editedCompletion, setEditedCompletion] = useState<
     string | undefined
   >();
-  
-  const [selected, setSelected] = useState<string>();
 
-  const imageSize = 30;
+  const [selected, setSelected] = useState<string>();
 
   const handleColumnClick = (isOriginal: boolean) => {
     if (isOriginal) {
