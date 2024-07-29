@@ -186,11 +186,11 @@ export default function RatingPage() {
         <div className="flex flex-col gap-3">
           <div className="text-3xl font-bold">Review Feedback</div>
           <div className="text-md">
-            對其他使用者編輯後的prompts和completions進行評分
+            對其他使用者編輯後的 prompts 和 completions 進行評分
           </div>
-          <div className="text-xl">請點選表現較好的conversation：</div>
+          <div className="text-xl">請點選表現較好的 conversation：</div>
         </div>
-        <div className="flex flex-col mt-10">
+        <div className="flex flex-col">
           <div className="flex flex-col md:flex-row mt-5 gap-8 p-1">
             <Column
               isOriginal={true}
